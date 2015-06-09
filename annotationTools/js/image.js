@@ -194,7 +194,7 @@ function image(id) {
         }
     if (threed_mode){
         $("#cnvs").width(this.width_curr).height(this.height_curr);
-        $("#container").width(this.width_curr).height(this.height_curr);
+        //$("#container").width(this.width_curr).height(this.height_curr);
         $(".kineticjs-content").width(this.width_curr).height(this.height_curr);
         stage.width = this.width_curr;
         stage.height = this.height_curr;
