@@ -10,14 +10,14 @@ function StartupLabelMe() {
     // Write "start up" messages:
     WriteLogMsg('*start_loading');
     console.log('LabelMe: starting up...');
-    
+
     // Initialize global variables:
     main_handler = new handler();
     main_canvas = new canvas('myCanvas_bg');
     main_media = new image('im');
-    // Parse the input URL.  Returns false if the URL does not set the 
-    // annotation folder or image filename.  If false is returned, the 
-    // function fetches a new image and sets the URL to reflect the 
+    // Parse the input URL.  Returns false if the URL does not set the
+    // annotation folder or image filename.  If false is returned, the
+    // function fetches a new image and sets the URL to reflect the
     // fetched image.
     if(!main_media.GetFileInfo().ParseURL()) return;
 
@@ -27,7 +27,7 @@ function StartupLabelMe() {
         main_media = new video('videoplayer');
         main_media.GetFileInfo().ParseURL();
         console.log("Video mode...");
-        
+
         function main_media_onload_helper(){
           var anno_file = main_media.GetFileInfo().GetFullName();
           anno_file = 'VLMAnnotations/' + anno_file + '.xml' + '?' + Math.random();
@@ -35,16 +35,34 @@ function StartupLabelMe() {
         }
         main_media.GetNewVideo(main_media_onload_helper);
       });
-    }
-    else if (threed_mode){
+    }else if (threed_mode){
       // 3D Code Starts here
-    }
-    else {
+        console.log("3D mode...");
+      function main_media_onload_helper2() {//renamed because else it collides with below
+      // Set the image dimensions:
+         main_media.SetImageDimensions();
+
+          // Read the XML annotation file: this needs to be replaced with something that reads the gp data
+          var anno_file = main_media.GetFileInfo().GetFullName();
+          anno_file = 'Annotations/' + anno_file.substr(0,anno_file.length-4) + '.xml' + '?' + Math.random();
+          ReadXML(anno_file,LoadAnnotationSuccess,LoadAnnotation404);
+        init_kinetic_stage();
+        init();
+      };
+      // Get the image:
+        main_media.GetNewImage(main_media_onload_helper2);
+        $('#myCanvas_bg_div').remove();
+        $('#select_canvas_div').remove();
+        $('#draw_canvas_div').remove();
+        $('#query_canvas_div').remove();    
+        FinishStartup();
+    }else{
       // This function gets run after image is loaded:
+      console.log("else");
       function main_media_onload_helper() {
       // Set the image dimensions:
       main_media.SetImageDimensions();
-          
+
       // Read the XML annotation file:
       var anno_file = main_media.GetFileInfo().GetFullName();
       anno_file = 'Annotations/' + anno_file.substr(0,anno_file.length-4) + '.xml' + '?' + Math.random();
@@ -66,7 +84,7 @@ function StartupLabelMe() {
   * @param {string} xml - the xml regarding the current file
 */
 function LoadAnnotationSuccess(xml) {
-  
+
   console.time('load success');
 
   // Set global variable:
@@ -105,7 +123,7 @@ function LoadAnnotationSuccess(xml) {
 function SetAllAnnotationsArray() {
   var obj_elts = LM_xml.getElementsByTagName("object");
   var num_obj = obj_elts.length;
-  
+
   num_orig_anno = num_obj;
 
   console.time('initialize XML');
@@ -122,8 +140,8 @@ function SetAllAnnotationsArray() {
 
     /*************************************************************/
     /*************************************************************/
-    // Scribble: 
-    // Initialize username if empty in the XML file. Check first if we 
+    // Scribble:
+    // Initialize username if empty in the XML file. Check first if we
     // have a polygon or a segmentation:
     if(curr_obj.children("polygon").length == 0) { // Segmentation
       if(curr_obj.children("segm").children("username").length == 0) {
@@ -142,13 +160,13 @@ function SetAllAnnotationsArray() {
   console.timeEnd('addPartFields()');
 
   console.time('loop annotated');
-  
+
   console.timeEnd('loop annotated');
 }
 
 /** Annotation file does not exist, so load template. */
 function LoadAnnotation404(jqXHR,textStatus,errorThrown) {
-  if(jqXHR.status==404) 
+  if(jqXHR.status==404)
     ReadXML(main_media.GetFileInfo().GetTemplatePath(),LoadTemplateSuccess,LoadTemplate404);
   else
     alert(jqXHR.status);
@@ -164,7 +182,7 @@ function LoadTemplate404(jqXHR,textStatus,errorThrown) {
     alert(jqXHR.status);
 }
 
-/** Actions after template load success 
+/** Actions after template load success
   * @param {string} xml - the xml regarding the current file
 */
 function LoadTemplateSuccess(xml) {
@@ -192,7 +210,7 @@ function FinishStartup() {
   if($('#img_url')){
     if (!video_mode) $('#img_url').attr('onclick','javascript:location.href=main_media.GetFileInfo().GetImagePath();');
     else $('#img_url').attr('onclick','javascript:location.href=main_media.GetFileInfo().GetVideoPath();');
-  } 
+  }
   $('#changeuser').attr("onclick","javascript:show_enterUserNameDIV(); return false;");
   $('#userEnter').attr("onkeyup","javascript:var c; if(event.keyCode)c=event.keyCode; if(event.which)c=event.which; if(c==13 || c==27) changeAndDisplayUserName(c);");
   $('#xml_url').attr("onclick","javascript:GetXMLFile();");
@@ -200,7 +218,7 @@ function FinishStartup() {
   if (video_mode){
     $('#nextImage').attr("title", "Next Video");
     $('#img_url').attr("title", "Download Video");
-  } 
+  }
   $('#zoomin').attr("onclick","javascript:main_media.Zoom(1.15)");
   $('#zoomout').attr("onclick","javascript:main_media.Zoom(1.0/1.15)");
   $('#fit').attr("onclick","javascript:main_media.Zoom('fitted')");
@@ -217,11 +235,13 @@ function FinishStartup() {
   initUserName();
 
   // Enable scribble mode:
-  InitializeAnnotationTools('label_buttons_drawing','main_media');
-  
+  if (!threed_mode){
+      InitializeAnnotationTools('label_buttons_drawing','main_media');
+  }
+
   // Set action when the user presses a key:
   document.onkeyup = main_handler.KeyPress;
-  
+
   // Collect statistics:
   ref = document.referrer;
 
@@ -232,7 +252,7 @@ function FinishStartup() {
   console.timeEnd('startup');
 }
 
-// Initialize the segmentation tool. This function is called when the field 
+// Initialize the segmentation tool. This function is called when the field
 // scribble of the url is true
 function InitializeAnnotationTools(tag_button, tag_canvas){
     if (scribble_mode) scribble_canvas = new scribble_canvas(tag_canvas);
@@ -258,7 +278,7 @@ function InitializeAnnotationTools(tag_button, tag_canvas){
         <img src="Icons/erase.png" width="28" height="38" /> \
         </button><input type="button" class="segbut" id="segmentbtn" value="Process" title="Press this button to see the segmentation results." onclick="scribble_canvas.segmentImage(0)"/><input type="button" class="segbut"  id="donebtn" value="Done" title="Press this button after you are done with the scribbling." onclick="scribble_canvas.segmentImage(1)"/> \
         <p> </p><div id="loadspinner" style="display: none;"><img src="Icons/segment_loader.gif"/> </div></div>';
-     
+
 
       var html_str2 = '<button xmlns="http://www.w3.org/1999/xhtml" id="img_url" class="labelBtn" type="button" title="Download Pack" onclick="javascript:GetPackFile();"> \
           <img src="Icons/download_all.png" height="30" /> \
@@ -270,9 +290,9 @@ function InitializeAnnotationTools(tag_button, tag_canvas){
          </form>';
 
       $('#tool_buttons').append(html_str3);
-      $('#help').before(html_str2); 
+      $('#help').before(html_str2);
     }
-    $('#'+tag_button).append(html_str);  
+    $('#'+tag_button).append(html_str);
     if (document.getElementById("polygon")) document.getElementById("polygon").setAttribute('style', 'background-color: #faa');
     if (document.getElementById("segmDiv")){
       document.getElementById("segmDiv").setAttribute('style', 'opacity: 1');
@@ -283,10 +303,10 @@ function InitializeAnnotationTools(tag_button, tag_canvas){
       document.getElementById("polygonDiv").setAttribute('style', 'border-color: #f00');
     }
     if (video_mode) SetPolygonDrawingMode(true);
-    
+
 }
 
-// Switch between polygon and scribble mode. If a polygon is open or the user 
+// Switch between polygon and scribble mode. If a polygon is open or the user
 // is in the middle of the segmentation an alert appears to indicate so.
 function SetDrawingMode(mode){
     if (drawing_mode == mode || active_canvas == QUERY_CANVAS) return;
@@ -307,7 +327,7 @@ function SetDrawingMode(mode){
         alert("Need to close current polygon first.");
         return;
     }
-    
+
     document.getElementById("segmDiv").setAttribute('style', 'border-color: #f00');
     document.getElementById("polygonDiv").setAttribute('style', 'border-color: #000');
     scribble_canvas.startSegmentationMode();
