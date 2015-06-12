@@ -195,23 +195,9 @@ function image(id) {
     if (threed_mode){
         $("#cnvs").width(this.width_curr).height(this.height_curr);
         $("#container").width(this.width_curr).height(this.height_curr);
-        /*camera.aspect = this.width_curr / this.height_curr;
-        camera.updateProjectionMatrix();
-        renderer.setSize( this.width_curr, this.height_curr );*/
-
         $(".kineticjs-content").width(this.width_curr).height(this.height_curr);
         stage.setWidth(this.width_curr);
         stage.setHeight(this.height_curr);
-        /*if (camera){
-            camera.aspect = $("#cnvs").width()/$("#cnvs").height();
-            camera.updateProjectionMatrix();
-        }
-        if (renderer){
-            renderer.setSize($("#cnvs").width(), $("#cnvs").height());
-            update_plane();
-        }*/
-        //var stage_ratio = document.getElementById("im").width/document.getElementById("im").naturalWidth;// need to scale kinetic canvas correctly
-        //stage.scale(stage_ratio, stage_ratio);
         if (amt != "fitted"){
             stage.setScaleX(amt*stage.getScaleX());
             stage.setScaleY(amt*stage.getScaleY());

@@ -14,7 +14,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:svg="http://www.w3.org/2000/svg" 
+      xmlns:svg="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
 <head>
@@ -27,7 +27,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 // <![CDATA[
 <!--#include virtual="./annotationTools/js/jquery-1.9.1.js" -->
 <!--#include virtual="./annotationTools/js/jquery-ui.js" -->
-<!--#include virtual="./annotationTools/js/browser.js" -->  
+<!--#include virtual="./annotationTools/js/browser.js" -->
 <!--#include virtual="./annotationTools/js/globals.js" -->
 <!--#include virtual="./annotationTools/js/io.js" -->
 <!--#include virtual="./annotationTools/js/plot.js" -->
@@ -49,6 +49,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 <!--#include virtual="./annotationTools/js/adjust_event.js" -->
 <!--#include virtual="./annotationTools/js/scribble.js" -->
 <!--#include virtual="./annotationTools/js/xml_accessors.js" -->
+<!--#include virtual="./annotationTools/js/kinetic-v5.0.1.min.js" -->
+<!--#include virtual="./annotationTools/js/Detector.js" -->
+<!--#include virtual="./annotationTools/js/three_r59.min.js" -->
+<!--#include virtual="./annotationTools/js/3d/3d_handling.js" -->
+<!--#include virtual="./annotationTools/js/3d/groundplane.js" -->
+<!--#include virtual="./annotationTools/js/3d/3d_globals.js" -->
+<!--#include virtual="./annotationTools/js/3d/mouse_keyboard_inputs.js" -->
+<!--#include virtual="./annotationTools/js/3d/gl-matrix-min.js" -->
+
 // ]]>
 </script>
 <style>
@@ -67,14 +76,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
   <!-- Mechanical Turk instructions and submit button -->
   <div id="mt_submit_form"></div>
-  
-  <!-- HEADER AND LOGO -->  
+
+  <!-- HEADER AND LOGO -->
   <div class="header" id="header">
     <!-- LOGO-->
     <div id="logo">
       <a href="index.html"><img src="Icons/LabelMe_logo3.png" width="216" height="69" alt="LabelMe logo"></img></a>
     </div>
-    
+
     <!-- USERNAME FORM-->
     <div id="username_main_div">
       <div id="display_user" style="display:block;">
@@ -89,7 +98,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       </div>
     </div>
   </div>
-  
+
   <!-- BUTTONS -->
   <div id="tool_buttons">
     <!-- NAVIGATION BUTTONS  -->
@@ -98,23 +107,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       <button id="img_url" class="labelBtn" type="button" title="Download image">
         <img src="Icons/download_img.png"  height="30" />
       </button>
-      
+
       <!-- DOWNLOAD XML BUTTON -->
       <button id="xml_url" class="labelBtn" type="button" title="Download XML file">
         <img src="Icons/download_xml.png"  height="30" />
       </button>
-      
+
       <!-- HELP BUTTON -->
       <button id="help" class="labelBtn" type="button" title="Show help page" onclick="location.href='annotationTools/html/labeling_instructions.html'" >
         <img src="Icons/help_new.png"  height="30" />
       </button>
-      
+
       <!-- NEXT IMAGE BUTTON -->
       <button id="nextImage" class="labelBtn" type="button" title="Next Image">
         <img src="Icons/next_2.png" height="30" />
       </button>
     </div>
-    
+
     <!-- DRAWING BUTTONS -->
     <div id="label_buttons_drawing">
       <div id ="generic_buttons" class="annotatemenu">
@@ -133,50 +142,58 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       </div>
     </div>
   </div>
-  
+
   <!-- IMAGE CANVAS -->
   <div class="image_canvas" id="main_section">
     <div id="loading">Loading image...</div>
     <div id="main_media" class="top" style="visibility:hidden; overflow:visible;">
-      <img id="im" style="vertical-align:bottom;z-index:-3;" />
-      
+      <img id="im" style="vertical-align:bottom;z-index:-3; position:absolute" />
+      <canvas width="100%" height="100%" id="cnvs" style = "position:absolute"></canvas> <!--HTML 5 canvas-->
+      <div id = "container" style = "position:absolute"> </div>
       <div id="myCanvas_bg_div" style="position:absolute;left:0px;top:0px;z-index:0;cursor:crosshair;width:100%;height:100%;background-color:rgba(128,64,0,0);">
-        <svg:svg 
+        <svg:svg
            id="myCanvas_bg"
            width="100%"
-           height="100%" 
+           height="100%"
            style="position:absolute;left:0px;top:0px;z-index:0;" />
       </div>
-      
+
       <div id="select_canvas_div" style="position:absolute;left:0px;top:0px;z-index:-2;cursor:default;width:100%;height:100%;background-color:rgba(128,64,0,0);">
-        <svg:svg 
+        <svg:svg
            id="select_canvas"
            width="100%"
            height="100%"
            style="position:absolute;left:0px;top:0px;z-index:-2;" />
-      </div>	      
-      
+      </div>
+
       <div id="draw_canvas_div" style="position:absolute;left:0px;top:0px;z-index:-2;cursor:crosshair;width:100%;height:100%;background-color:rgba(128,64,0,0);">
-        <svg:svg 
+        <svg:svg
            id="draw_canvas"
            width="100%"
            height="100%"
            style="position:absolute;left:0px;top:0px;z-index:-2;" />
       </div>
-      
+
       <div id="query_canvas_div" style="position:absolute;left:0px;top:0px;z-index:-2;cursor:default;width:100%;height:100%;background-color:rgba(128,64,0,0);">
-        <svg:svg 
+        <svg:svg
            id="query_canvas"
            width="100%"
            height="100%"
            style="position:absolute;left:0px;top:0px;z-index:-2;" />
       </div>
+      <div id = "icon_wrapper">
+      <span style="font-size:20px"><b>BOX Selection:</b></span> Select the object to edit. Double-click button to change name.<br/>
+      <div id ="icon_container">
+        <button id = "GP" class = "gp_icon" value= "Groundplane"><font size= "3 "><b>Groundplane</b></font></button>
+      </div>
+    </div>
     </div>
   </div>
-  
   <!-- DIV that will contain the object list -->
   <div id="anno_anchor"></div>
-  
+
+
+
   <!-- DIV for Mechanical Turk feedback form -->
   <div id="mt_feedback" style="position:absolute;bottom:4px;" />
 
