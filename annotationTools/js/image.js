@@ -207,6 +207,7 @@ function image(id) {
             stage.setScaleY(1);
         }
         stage.draw();
+        $("#icon_wrapper").width(this.width_curr);
     }
 	/*************************************************************/
 	/*************************************************************/
@@ -261,10 +262,17 @@ function image(id) {
     /** gets available height (6.14.06) */
     this.GetAvailHeight = function() {
         var m = main_media.GetFileInfo().GetMode();
-        if(m=='mt') {
-            return $(window).height() - $("#main_media").offset().top -75;
+        if (threed_mode){
+            if(m=='mt') {
+                return $(window).height() - $("#main_media").offset().top -75 - 90;
+            }
+            return $(window).height() - $("#main_media").offset().top -10 -90;
+        }else{
+            if(m=='mt') {
+                return $(window).height() - $("#main_media").offset().top -75;
+            }
+            return $(window).height() - $("#main_media").offset().top -10;
         }
-        return $(window).height() - $("#main_media").offset().top -10;
     };
 
 

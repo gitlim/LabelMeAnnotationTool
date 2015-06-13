@@ -6,7 +6,7 @@ function category_list_load(filelist){
             link.addEventListener("click", model_list_populate, false);
             var tmp_param = filelist[i].split("/");
             if (typeof tmp_param[1] != "undefined"){
-                var img = "data/models/"+ tmp_param[1].substring(0, 2)  + "/" + tmp_param[1].substring(0,4) +"/"+ tmp_param[1]+"/"+tmp_param[1]+"_thumb.jpg";
+                var img = "model_list/models/"+ tmp_param[1].substring(0, 2)  + "/" + tmp_param[1].substring(0,4) +"/"+ tmp_param[1]+"/"+tmp_param[1]+"_thumb.jpg";
                 link.innerHTML = tmp_param[0] + "<img class='model_item' name='"+tmp_param[0]+"' src='"+img+"'></br>";
                 model_container.appendChild(link);
             }
@@ -25,7 +25,7 @@ function category_list_populate(event) {
             category_list_load(filelist);
         }
     }
-    xmlhttp.open("GET","php/model_server.php?task=submodel&param="+param,true);
+    xmlhttp.open("GET","./annotationTools/php/3d/model_server.php?task=submodel&param="+param,true);
     xmlhttp.send();
 }
 
@@ -55,9 +55,18 @@ function createObject(container, name) {
     });
 }
 
+function CreateModelList(){
+    var html_str = '<div id="model_column"> \
+      <div id="model"> \
+      </div> \
+    </div> ';
+    InsertAfterDiv(html_str, 'body');
+    $('#model_column').css('display', 'block');
+}
+
 function model_click_load(event) {
     var param = event.target.name;
-    var name = "data/models/"+param.substring(0,2) + "/" + param.substring(0,4) + "/" + param+"/untitled.obj";
+    var name = "model_list/models/"+param.substring(0,2) + "/" + param.substring(0,4) + "/" + param+"/untitled.obj";
     createObject(window.select.cube, name);
     setup_model_list();
 }
@@ -79,7 +88,7 @@ function model_list_load(filelist){
         var link = document.createElement("a");
         link.addEventListener("click", model_click_load, false);
         var tmp_param = filelist[i];
-        var name = "data/models/"+tmp_param.substring(0,2) + "/" + tmp_param.substring(0,4) + "/" + tmp_param+"/"+tmp_param+"_thumb.jpg";
+        var name = "model_list/models/"+tmp_param.substring(0,2) + "/" + tmp_param.substring(0,4) + "/" + tmp_param+"/"+tmp_param+"_thumb.jpg";
         link.innerHTML = "<img class='model_item' name='"+filelist[i]+"' src='"+name+"'></br>"
         model_container.appendChild(link);
     }
@@ -107,7 +116,7 @@ function model_list_populate(event) {
             });
         }
     }
-    xmlhttp.open("GET","php/model_server.php?task=submodel&param="+param,true);
+    xmlhttp.open("GET","./annotationTools/php/3d/model_server.php?task=submodel&param="+param,true);
     xmlhttp.send();
 }
 
@@ -133,6 +142,6 @@ function setup_model_list() {
             }
         }
     }
-    xmlhttp.open("GET","php/model_server.php?task=model_list",true);
+    xmlhttp.open("GET","./annotationTools/php/3d/model_server.php?task=model_list",true);
     xmlhttp.send();
 }

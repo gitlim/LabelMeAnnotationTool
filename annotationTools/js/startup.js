@@ -55,8 +55,10 @@ function StartupLabelMe() {
         $('#myCanvas_bg_div').remove();
         $('#select_canvas_div').remove();
         $('#draw_canvas_div').remove();
-        $('#query_canvas_div').remove();    
+        $('#query_canvas_div').remove();
+        $('#anno_anchor').remove();
         document.getElementById("icon_wrapper").style.display = "block";
+        CreateModelList();
         FinishStartup();
     }else{
       // This function gets run after image is loaded:

@@ -101,3 +101,7 @@ var stage;
 var selected_line_id;
 var lineOn = false;
 var original_number_of_lines = 0;
+
+var small_d = -0.05;
+var small_h = 0.05;
+var small_w = 0.05;

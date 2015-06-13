@@ -22,6 +22,22 @@ function WaitForInput() {
   alert("Need to enter object name.");
 }
 
+function InsertAfterDiv(html_str,tag_id) {
+  var elt = document.getElementById(tag_id);
+  if(IsMicrosoft()) elt.insertAdjacentHTML("BeforeEnd",html_str);
+  else {
+    var x = document.createRange();
+    try {
+      x.setStartAfter(elt);
+    }
+    catch(err) {
+      alert(tag_id);
+    }
+    x = x.createContextualFragment(html_str);
+    elt.appendChild(x);
+  }
+}
+
 // Return true if the username is "anonymous".
 function IsUserAnonymous() {
   return (username=='anonymous');
