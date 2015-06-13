@@ -265,8 +265,11 @@ function Initialize3dButtons(){
         <button id = "clone" type = "submit" name = "clone" onclick = "clone_box()">Clone</button> \
     </div>';
     $('#label_buttons_drawing').append(html_str);
+<<<<<<< HEAD
     $( "#add" ).on("click", function() { add_box(); buttonClicked(this); } );
     $( "#remove" ).on("click", function() { remove_box(); buttonClicked(this);  });
+=======
+>>>>>>> d954997a4f02a147babc2f4a0e8576e91e20bd80
 }
 
 // Initialize the segmentation tool. This function is called when the field
