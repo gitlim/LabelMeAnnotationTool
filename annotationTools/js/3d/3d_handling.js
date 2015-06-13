@@ -1,15 +1,4 @@
 function init(){
-     //--------------------------------------------------------------------Resizing Start----------------------------------------------------------------------------//
-    /*document.getElementById("cnvs").height = document.getElementById("im").naturalHeight;
-    document.getElementById("cnvs").width = document.getElementById("im").naturalWidth;
-    document.getElementById("container").height = document.getElementById("im").naturalHeight;
-    document.getElementById("container").width = document.getElementById("im").naturalWidth;
-    document.getElementById("container").style.overflow = "hidden";
-    $(".kineticjs-content").width(document.getElementById("im").naturalWidth).height(document.getElementById("im").naturalHeight);*/
-    //$("canvas").width(document.getElementById("im").naturalWidth).height(document.getElementById("im").naturalHeight);
-
-
-    //--------------------------------------------------------------------Resizing End----------------------------------------------------------------------------//
     if (!Detector.webgl) {
         console.log("webgl error");
     }
@@ -47,12 +36,11 @@ function init(){
     }
     catch (e) {
         console.log(e);
-        //document.getElementById("message").innerHTML = "Sorry, an error occurred: " + e;
     }
 
-    /*document.addEventListener( 'mousedown', makeDoubleClick(onDocumentDoubleClick, onDocumentMouseDown), false );
+    document.addEventListener( 'mousedown', makeDoubleClick(onDocumentDoubleClick, onDocumentMouseDown), false );
     document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-    document.addEventListener( 'mousemove', onDocumentMouseMove, false );*/
+    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
     $("#GP").on("click", function() { buttonClicked(this); } );
 
@@ -65,6 +53,7 @@ function init(){
 
     ID_dict["GP"] = plane;
     render();
+    hovering();
 
 }
 
@@ -101,13 +90,8 @@ function createWorld() {// split into different parts for 3d and gp later
     empty_plane = gp_plane.clone();
     empty_plane.matrixAutoUpdate = false;
     plane_object = new THREE.Object3D();
-    //vert_plane.rotation.z = Math.PI/4;
-    //vert_plane.rotation.x = 3*Math.PI/2;
-    //vert_plane.rotation.y = Math.PI/4;
-
     plane_object.add(vert_plane);
     plane_object.rotation.z = Math.PI/2;
-    //plane_object.rotation.x = Math.PI/2;
 
     // Add Z-direction guide line
     var line_material = new THREE.LineBasicMaterial({color: 0x0000ff});
@@ -127,7 +111,6 @@ function createWorld() {// split into different parts for 3d and gp later
     if ((typeof mode_guide_box != 'undefined')&&(mode_guide_box)) {
         for (var i = 0; i < 3; i++) {
             guide_Z_line = new THREE.Line(line_geometry, line_material);
-            //guide_Z_line.position.set(1-(i+1)*.1,1-(i+1)*.1,0);
             guide_box.add(guide_Z_line);
             guide_box.lines[i]=guide_Z_line;
         }
@@ -137,11 +120,10 @@ function createWorld() {// split into different parts for 3d and gp later
     scene.add(plane);
     scene.add(gp_plane);
     scene.add(empty_plane);
-    //plane.add(vert_plane);
     scene.add(plane_object);
 
         // 3D box related
-/*    small_d = -0.05;
+    small_d = -0.05;
     small_h = 0.05;
     small_w = 0.05;
     window.select = plane; //initializing the first selected object to be the plane
@@ -150,12 +132,11 @@ function createWorld() {// split into different parts for 3d and gp later
     window.select.parent = scene;
     var sphereGeom = new THREE.SphereGeometry(1);
 
-        // Resizing arrowhelper
+        // Initializing arrowhelper
     arrowHelper = new THREE.Object3D();
     arrowHelper.matrixAutoUpdate = false;
     arrowHelper.arrow_box = new THREE.Object3D();
     arrowHelper.arrow_list = new Array();
-    //var origin = new THREE.Vector3(0.025, 0.025, -0.025);
     var origin = new THREE.Vector3(0,0,0);
     arrowHelper.arrow_list[0] = new THREE.ArrowHelper(new THREE.Vector3(0,0,100), origin, .05, 0xff0000, 0.01, 0.01);
     arrowHelper.arrow_list[0].direction = new THREE.Vector3(0,0,1);
@@ -174,10 +155,8 @@ function createWorld() {// split into different parts for 3d and gp later
     arrowHelper.arrow_list[0].cone.geometry.needsUpdate = true;
     arrowHelper.arrow_box.add(arrowHelper.arrow_list[0]);
     for (var i = 1; i < arrowHelper.arrow_list.length; i++){
-        //sphereGeom.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0.05, 0 ) );
         arrowHelper.arrow_list[i].cone.geometry = sphereGeom;
         arrowHelper.arrow_list[i].line.material.visible = false;
-        //arrowHelper.arrow_list[i].line.material.linewidth = 0;
         arrowHelper.arrow_list[i].cone.geometry.needsUpdate = true;
         arrowHelper.arrow_box.add(arrowHelper.arrow_list[i]);
         scene.add(arrowHelper);
@@ -217,12 +196,6 @@ function createWorld() {// split into different parts for 3d and gp later
     rotate_mode_indicators[0].cone.material.visible = false;
     rotate_mode_indicators[0].line.material.visible = false;
     rotate_mode_indicators[1].material.visible = false;
-
-    if (document.getElementById("scale_x")) {
-        document.getElementById("scale_x").value = 0;
-        document.getElementById("scale_y").value = 0;
-        document.getElementById("scale_z").value = 0;
-    }*/
 }
 
 function setupRay(event){
@@ -237,12 +210,6 @@ function setupRay(event){
 
 function render() {
     if ((window.select) && (window.select.cube)) {
-        document.getElementById("scale_x").value = (window.select.cube.scale.x-1)/0.1;
-        document.getElementById("scale_y").value = (window.select.cube.scale.y-1)/0.1;
-        document.getElementById("scale_z").value = (window.select.cube.scale.z-1)/0.1;
-        document.getElementById("input_x").value = window.select.cube.scale.x;
-        document.getElementById("input_y").value = window.select.cube.scale.y;
-        document.getElementById("input_z").value = window.select.cube.scale.z;
         if (typeof proportion_array[window.select.ID] == "undefined"){
             proportion_array[window.select.ID] = 1;
         }
@@ -264,6 +231,107 @@ function render() {
         plane_object.position.setY(window.select.cube.position.clone().applyMatrix4(window.select.support_plane.matrixWorld).y);
         plane_object.position.setZ(window.select.cube.position.clone().applyMatrix4(window.select.support_plane.matrixWorld).z);
     }
+    if (typeof window.select.cube != "undefined"){
+        plane_object.position.setX(window.select.cube.position.clone().applyMatrix4(window.select.support_plane.matrixWorld).x);
+        plane_object.position.setY(window.select.cube.position.clone().applyMatrix4(window.select.support_plane.matrixWorld).y);
+        plane_object.position.setZ(window.select.cube.position.clone().applyMatrix4(window.select.support_plane.matrixWorld).z);
+    }
     renderer.render(scene, camera);
 }
+function check_plane_box_collision(object) {
+    if (typeof object == "undefined"){
+        object = window.select;
+    }
+    var pts0 = [0, 0, 0, 1, 1, 2, 2, 3, 4, 4, 5, 6];
+    var pts1 = [1, 2, 5, 3, 4, 3, 7, 6, 5, 6, 7, 7];
+    var length = intersect_box.children.length;
+    for (var i = length - 1; i > -1; i--){
+        if (typeof plane_cube == "undefined" || intersect_box.children[i] != plane_cube){
+            intersect_box.remove(intersect_box.children[i]);
+        }
+    }
+    var cubeGeometry = new THREE.CubeGeometry(.005, .005, .005);
+    var cubeMaterial = new THREE.MeshBasicMaterial({color: 0x0000ff});
+    var eps = 0.0001;
+    var raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3());
 
+    if (object_list.length && object.hparent != gp_plane) {
+        for (var i = 0; i < object_list.length; i++) {
+            if (object_list[i].support_plane == object.support_plane || object_list[i].cube.visible == false){
+                continue;
+            }
+            vert = object_list[i].cube.children[0].geometry.vertices;
+            for (var j = 0; j < pts0.length; j++) {
+                var vert0 = vert[pts0[j]].clone().applyMatrix4(object_list[i].cube.matrixWorld);
+                var vert1 = vert[pts1[j]].clone().applyMatrix4(object_list[i].cube.matrixWorld);
+                var direction = new THREE.Vector3().subVectors(vert1, vert0);
+                var direction_len = direction.length();
+                raycaster.set(vert0.clone(), direction);
+                intersects = raycaster.intersectObject(object.support_plane, false);
+                if (intersects.length) {
+                    for (var k = 0; k < intersects.length; k++) {
+                        var vec_len = new THREE.Vector3().subVectors(intersects[k].point, vert0).length();
+                        if (vec_len > direction_len + eps){
+                            continue;
+                        }
+                        var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
+                        cube.position.set(intersects[k].point.x,intersects[k].point.y,intersects[k].point.z);
+                        intersect_box.add(cube);
+                    }
+                }
+            }
+        }
+        scene.add(intersect_box);
+    }
+
+    if (object_list.length && (object.hparent != "unassigned") && (object.hparent != gp_plane) && object != plane) {
+        var line_raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3());
+        var line_vert1 = new THREE.Vector3(.985, .985, -100).applyMatrix4(plane.matrixWorld);
+        var line_vert2 = new THREE.Vector3(.985, .985, 100).applyMatrix4(plane.matrixWorld);
+        var direction = new THREE.Vector3().subVectors(line_vert2, line_vert1);
+
+        line_raycaster.set(line_vert1, direction);
+        line_intersect = line_raycaster.intersectObject(object.support_plane, false);
+        var cubeGeometry2 = new THREE.CubeGeometry(.02, .02, .02);
+        var cubeMaterial2 = new THREE.MeshBasicMaterial({color: 0xff0000});
+        if ((line_intersect.length > 0) && (typeof plane_cube == "undefined")){
+            plane_cube = new THREE.Mesh( cubeGeometry2, cubeMaterial2 );
+            intersect_box.add(plane_cube);
+            scene.add(intersect_box);
+            plane_cube.material.visible = true;
+            var position = new THREE.Vector3(1, 1, 0).applyMatrix4(object.support_plane.matrixWorld.clone());
+            plane_cube.position.set(position.x, position.y, position.z);
+        }else if (line_intersect.length){
+            plane_cube.material.visible = true;
+            var position = new THREE.Vector3(1, 1, 0).applyMatrix4(object.support_plane.matrixWorld.clone());
+            plane_cube.position.set(position.x, position.y, position.z);
+        }
+    }else{
+        for (var i = 0; i < intersect_box.children.length; i++){
+            intersect_box.children[i].material.visible = false;
+        }
+    }
+    render();
+}
+function cube_rotate(radians){
+    if (slidersOn || (current_mode == ROTATE_MODE)){
+        if (typeof radians == "undefined"){
+            var radians = document.getElementById("rotation").value*Math.PI*2/100-Math.PI;}
+        else{
+            var radians = radians;
+        }
+    boxSelect();
+    }
+    else{
+        var radians = document.getElementById("input_r").value*2*Math.PI/360;
+    }
+    window.select.cube.rotation.set(0,0,radians);
+    for (var i = 0; i < cube_move_mode_arrows.length; i++){
+        cube_move_mode_arrows[i].cone.material.visible = false;
+        cube_move_mode_arrows[i].line.material.visible = false;
+    }
+    rotate_mode_indicators[0].cone.material.visible = true;
+    rotate_mode_indicators[0].line.material.visible = true;
+    rotate_mode_indicators[1].material.visible = true;
+    render();
+}

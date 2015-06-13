@@ -1,3 +1,4 @@
+
 /** @file This file contains the scripts used when LabelMe starts up. */
 
 /** Main entry point for the annotation tool. */
@@ -55,6 +56,7 @@ function StartupLabelMe() {
         $('#select_canvas_div').remove();
         $('#draw_canvas_div').remove();
         $('#query_canvas_div').remove();    
+        document.getElementById("icon_wrapper").style.display = "block";
         FinishStartup();
     }else{
       // This function gets run after image is loaded:
@@ -237,6 +239,8 @@ function FinishStartup() {
   // Enable scribble mode:
   if (!threed_mode){
       InitializeAnnotationTools('label_buttons_drawing','main_media');
+  }else{
+      Initialize3dButtons(); //create tool buttons and iccon container
   }
 
   // Set action when the user presses a key:
@@ -250,6 +254,19 @@ function FinishStartup() {
   console.log('LabelMe: finished loading');
 
   console.timeEnd('startup');
+}
+
+function Initialize3dButtons(){
+    var html_str = '<!--BUTTONS FOR 3D--> \
+    <div id = "3d_mode_buttons" class = "annotatemenu"> \
+        <button id="add" type="button" name="add" value="Add">Add</button> \
+        <button id="remove" type="button" name="remove" value="Remove">Remove</button> \
+        <button id = "height" type = "submit" name = "height" onclick = "assign_height()" >Support</button> \
+        <button id = "clone" type = "submit" name = "clone" onclick = "clone_box()">Clone</button> \
+    </div>';
+    $('#label_buttons_drawing').append(html_str);
+    $( "#add" ).on("click", function() { add_box(); buttonClicked(this); } );
+    $( "#remove" ).on("click", function() { remove_box(); buttonClicked(this);  });
 }
 
 // Initialize the segmentation tool. This function is called when the field
@@ -303,7 +320,6 @@ function InitializeAnnotationTools(tag_button, tag_canvas){
       document.getElementById("polygonDiv").setAttribute('style', 'border-color: #f00');
     }
     if (video_mode) SetPolygonDrawingMode(true);
-
 }
 
 // Switch between polygon and scribble mode. If a polygon is open or the user
