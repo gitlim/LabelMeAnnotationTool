@@ -140,94 +140,92 @@ function buttonClicked(event) {
 }
 
 function hovering(){
-    $(document).ready(function () {
-        $(document).on('mouseover', function (event) {
-            if (typeof ID_dict[event.target.id] != "undefined" && ID_dict[event.target.id] != window.select && event.target.id != "GP"){// hovering over icons that are not GP
-                gp_plane.material.visible = false;
+    $(document).on('mouseover', function (event) {
+        if (typeof ID_dict[event.target.id] != "undefined" && ID_dict[event.target.id] != window.select && event.target.id != "GP"){// hovering over icons that are not GP
+            gp_plane.material.visible = false;
+            guide_Z_line.material.visible = false;
+            for (var i = 0; i < stage.children.length; i++) {// shows GP tools
+                stage.children[i].hide();
+            }
+            for (var i = 0; i < object_list.length; i++){//turns every cube white and disappears groundplane of current selected object
+                if (event.target.tagName != "FONT"){
+                    if (object_list[i] != window.select){
+                        changeColor(object_list[i].cube, 0xffffff);
+                    }
+                    if (object_list[i] != event.target.id){
+                            object_list[i].support_plane.material.visible = false;
+                    }
+                }
+            }
+            var oldest_ancestor = check_oldest_ancestor(ID_dict[event.target.id]);
+            if (oldest_ancestor != "unassigned"){
+                check_plane_box_collision(ID_dict[event.target.id]);
+                ID_dict[event.target.id].support_plane.material.visible = true;//shows groundplane of cube that is being hovered over
+            }
+            changeColor(ID_dict[event.target.id].cube, 0xff0000);//makes cube that is hovered over red
+        }
+        else if (event.target.id == "GP" && window.select != plane){// hovering over the GP icon
+            toggle_cube_resize_arrows(false);
+            toggle_cube_rotate_indicators(false);
+            toggle_cube_move_indicators(false);
+            for (var i = intersect_box.children.length - 1; i > -1; i--){
+                if (typeof plane_cube != "undefined" && intersect_box.children[i] != plane_cube){
+                    intersect_box.remove(intersect_box.children[i]);
+                    plane_cube.material.visible = false;
+                }
+            }
+            for (var i = 0; i < stage.children.length; i++) {// shows GP tools
+                stage.children[i].show();
+            }
+            guide_Z_line.material.visible = true;
+            for (var i=0; i<object_list.length; i++){// disappears cubes and all support planes
+                object_list[i].cube.traverse( function ( object ) { object.visible = false; } );
+                object_list[i].support_plane.material.visible = false;
+            }
+            gp_plane.material.visible = true;// shows GP
+        }
+        else{ // not hovering over any icon
+            for (var i=0; i<object_list.length; i++){// making visible all cubes as white, dissappearing all of their support planes
+                object_list[i].cube.traverse( function ( object ) { object.visible = true; } );
+                changeColor(object_list[i].cube, 0xffffff);
+                if (object_list[i].hparent != "unassigned"){
+                    object_list[i].support_plane.material.visible = false;
+                }
+            }
+            for (var i = intersect_box.children.length - 1; i > -1; i--){
+                if (typeof plane_cube != "undefined" && intersect_box.children[i] != plane_cube){
+                    intersect_box.remove(intersect_box.children[i]);
+                    plane_cube.material.visible = false;
+                }
+            }
+            if (window.select != plane){// hiding GP tools and making visible resize arrows if groundplane is not the selected object
                 guide_Z_line.material.visible = false;
-                for (var i = 0; i < stage.children.length; i++) {// shows GP tools
+                for (var i = 0; i < stage.children.length; i++) {
                     stage.children[i].hide();
                 }
-                for (var i = 0; i < object_list.length; i++){//turns every cube white and disappears groundplane of current selected object
-                    if (event.target.tagName != "FONT"){
-                        if (object_list[i] != window.select){
-                            changeColor(object_list[i].cube, 0xffffff);
-                        }
-                        if (object_list[i] != event.target.id){
-                                object_list[i].support_plane.material.visible = false;
-                        }
-                    }
-                }
-                var oldest_ancestor = check_oldest_ancestor(ID_dict[event.target.id]);
+                gp_plane.material.visible = false;
+                toggle_cube_resize_arrows(true);
+                var oldest_ancestor = check_oldest_ancestor(window.select);
                 if (oldest_ancestor != "unassigned"){
-                    check_plane_box_collision(ID_dict[event.target.id]);
-                    ID_dict[event.target.id].support_plane.material.visible = true;//shows groundplane of cube that is being hovered over
+                    window.select.support_plane.material.visible = true;
+                    check_plane_box_collision();
                 }
-                changeColor(ID_dict[event.target.id].cube, 0xff0000);//makes cube that is hovered over red
-            }
-            else if (event.target.id == "GP" && window.select != plane){// hovering over the GP icon
-                toggle_cube_resize_arrows(false);
-                toggle_cube_rotate_indicators(false);
-                toggle_cube_move_indicators(false);
-                for (var i = intersect_box.children.length - 1; i > -1; i--){
-                    if (typeof plane_cube != "undefined" && intersect_box.children[i] != plane_cube){
-                        intersect_box.remove(intersect_box.children[i]);
-                        plane_cube.material.visible = false;
-                    }
-                }
+                changeColor(window.select.cube, 0xffff00);
+            }else{
                 for (var i = 0; i < stage.children.length; i++) {// shows GP tools
                     stage.children[i].show();
                 }
-                guide_Z_line.material.visible = true;
-                for (var i=0; i<object_list.length; i++){// disappears cubes and all support planes
-                    object_list[i].cube.traverse( function ( object ) { object.visible = false; } );
-                    object_list[i].support_plane.material.visible = false;
-                }
-                gp_plane.material.visible = true;// shows GP
-            }
-            else{ // not hovering over any icon
-                for (var i=0; i<object_list.length; i++){// making visible all cubes as white, dissappearing all of their support planes
-                    object_list[i].cube.traverse( function ( object ) { object.visible = true; } );
-                    changeColor(object_list[i].cube, 0xffffff);
-                    if (object_list[i].hparent != "unassigned"){
-                        object_list[i].support_plane.material.visible = false;
-                    }
-                }
                 for (var i = intersect_box.children.length - 1; i > -1; i--){
-                    if (typeof plane_cube != "undefined" && intersect_box.children[i] != plane_cube){
+                    if ((typeof plane_cube != "undefined") && (intersect_box.children[i] != plane_cube)){
                         intersect_box.remove(intersect_box.children[i]);
                         plane_cube.material.visible = false;
                     }
                 }
-                if (window.select != plane){// hiding GP tools and making visible resize arrows if groundplane is not the selected object
-                    guide_Z_line.material.visible = false;
-                    for (var i = 0; i < stage.children.length; i++) {
-                        stage.children[i].hide();
-                    }
-                    gp_plane.material.visible = false;
-                    toggle_cube_resize_arrows(true);
-                    var oldest_ancestor = check_oldest_ancestor(window.select);
-                    if (oldest_ancestor != "unassigned"){
-                        window.select.support_plane.material.visible = true;
-                        check_plane_box_collision();
-                    }
-                    changeColor(window.select.cube, 0xffff00);
-                }else{
-                    for (var i = 0; i < stage.children.length; i++) {// shows GP tools
-                        stage.children[i].show();
-                    }
-                    for (var i = intersect_box.children.length - 1; i > -1; i--){
-                        if ((typeof plane_cube != "undefined") && (intersect_box.children[i] != plane_cube)){
-                            intersect_box.remove(intersect_box.children[i]);
-                            plane_cube.material.visible = false;
-                        }
-                    }
-                    guide_Z_line.material.visible = true;
-                    gp_plane.material.visible = true;//if GP is selected, make GP visible
-                }
+                guide_Z_line.material.visible = true;
+                gp_plane.material.visible = true;//if GP is selected, make GP visible
             }
-            render();
-        });
+        }
+        render();
     });
 }
 function reset_icon() {

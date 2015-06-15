@@ -202,7 +202,7 @@ function onDocumentMouseMove(event) {
             resize_pos0 = window.select.cube.position.clone();
             render();
         }
-        else if ($(event.target).parents('div#main_media').length) { //event.target.id != "icon_wrapper" && event.target.tagName != "BUTTON" && event.target.tagName != "FONT") && (event.target.id != "icon_container")) { // && (event.target.tagName == "canvas")) {
+        else if ($(event.target).parents('div#main_media').length && !$(event.target).parents('div#icon_wrapper').length && event.target.id != "icon_wrapper") { //event.target.id != "icon_wrapper" && event.target.tagName != "BUTTON" && event.target.tagName != "FONT") && (event.target.id != "icon_container")) { // && (event.target.tagName == "canvas")) {
             var cube_hover = [];
             if (window.select.support_plane) {
                 cube_hover = ray.intersectObject(window.select.cube, true);
