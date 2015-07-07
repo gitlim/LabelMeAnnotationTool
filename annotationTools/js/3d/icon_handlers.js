@@ -11,7 +11,6 @@ function add_icon(box_label) {// adding icons
 }
 
 function buttonClicked(event) {
-    console.log(event.id);
     for (var i = 0; i < intersect_box.children.length; i++){
         if (typeof plane_cube != "undefined" && intersect_box.children[i] != plane_cube){
             intersect_box.children[i].material.color.setHex(0x0000ff);
@@ -31,9 +30,9 @@ function buttonClicked(event) {
             window.select.hparent = gp_plane;
             var i_mat = new THREE.Matrix4().getInverse(window.select.support_plane.matrixWorld.clone());
             cube_position_0 = window.select.cube.position.clone();
-            cube_position_0.setZ(window.select.cube.position.z - window.select.cube.scale.z*0.05/2);
+            cube_position_0.setZ(window.select.cube.position.z - window.select.cube.scale.z*small_h/2);
             cube_position_0_static = window.select.cube.position.clone();
-            cube_position_0_static.setZ(window.select.cube.position.z - window.select.cube.scale.z*0.05/2);
+            cube_position_0_static.setZ(window.select.cube.position.z - window.select.cube.scale.z*small_h/2);
             cube_position_0.applyMatrix4(window.select.support_plane.matrixWorld.clone());
             cube_position_0_static.applyMatrix4(window.select.support_plane.matrixWorld.clone());
             old_x = window.select.cube.scale.x;
@@ -56,9 +55,9 @@ function buttonClicked(event) {
             if (oldest_ancestor == gp_plane){
                 var i_mat = new THREE.Matrix4().getInverse(window.select.support_plane.matrixWorld.clone());
                 cube_position_0 = window.select.cube.position.clone();
-                cube_position_0.setZ(window.select.cube.position.z - window.select.cube.scale.z*0.05/2);
+                cube_position_0.setZ(window.select.cube.position.z - window.select.cube.scale.z*small_h/2);
                 cube_position_0_static = window.select.cube.position.clone();
-                cube_position_0_static.setZ(window.select.cube.position.z - window.select.cube.scale.z*0.05/2);
+                cube_position_0_static.setZ(window.select.cube.position.z - window.select.cube.scale.z*small_h/2);
                 cube_position_0.applyMatrix4(window.select.support_plane.matrixWorld.clone());
                 cube_position_0_static.applyMatrix4(window.select.support_plane.matrixWorld.clone());
                 window.select.support_plane.material.visible = true;

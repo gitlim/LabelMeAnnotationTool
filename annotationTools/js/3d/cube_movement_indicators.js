@@ -18,21 +18,21 @@ function toggle_cube_resize_arrows(toggle){
     }
 }
 function initialize_cube_indicators(){
-    var sphereGeom = new THREE.SphereGeometry(1);
+    var sphereGeom = new THREE.SphereGeometry(2);
     arrowHelper = new THREE.Object3D();
     arrowHelper.matrixAutoUpdate = false;
     arrowHelper.arrow_box = new THREE.Object3D();
     arrowHelper.arrow_list = new Array();
     var origin = new THREE.Vector3(0,0,0);
-    arrowHelper.arrow_list[0] = new THREE.ArrowHelper(new THREE.Vector3(0,0,100), origin, .05, 0xff0000, 0.01, 0.01);
+    arrowHelper.arrow_list[0] = new THREE.ArrowHelper(new THREE.Vector3(0,0,100), origin, small_w, 0xff0000, 0.01, 0.01);
     arrowHelper.arrow_list[0].direction = new THREE.Vector3(0,0,1);
-    arrowHelper.arrow_list[1] = new THREE.ArrowHelper(new THREE.Vector3(0,-100,0), origin, .05, 0xff0000, 0.01, 0.01);
+    arrowHelper.arrow_list[1] = new THREE.ArrowHelper(new THREE.Vector3(0,-100,0), origin, small_w, 0xff0000, 0.01, 0.01);
     arrowHelper.arrow_list[1].direction = new THREE.Vector3(0,-1,0);
-    arrowHelper.arrow_list[2] = new THREE.ArrowHelper(new THREE.Vector3(-100,0,0), origin, .05, 0xff0000, 0.01, 0.01);
+    arrowHelper.arrow_list[2] = new THREE.ArrowHelper(new THREE.Vector3(-100,0,0), origin, small_w, 0xff0000, 0.01, 0.01);
     arrowHelper.arrow_list[2].direction = new THREE.Vector3(-1,0,0);
-    arrowHelper.arrow_list[3] = new THREE.ArrowHelper(new THREE.Vector3(0, 100, 0), origin, .05, 0xff0000, 0.01, 0.01);
+    arrowHelper.arrow_list[3] = new THREE.ArrowHelper(new THREE.Vector3(0, 100, 0), origin, small_w, 0xff0000, 0.01, 0.01);
     arrowHelper.arrow_list[3].direction = new THREE.Vector3(0, 1, 0);
-    arrowHelper.arrow_list[4] = new THREE.ArrowHelper(new THREE.Vector3(100, 0, 0), origin, .05, 0xff0000, 0.01, 0.01);
+    arrowHelper.arrow_list[4] = new THREE.ArrowHelper(new THREE.Vector3(100, 0, 0), origin, small_w, 0xff0000, 0.01, 0.01);
     arrowHelper.arrow_list[4].direction = new THREE.Vector3(1, 0, 0);
     arrowHelper.add(arrowHelper.arrow_box);
     sphereGeom0 = sphereGeom.clone();

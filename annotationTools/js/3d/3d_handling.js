@@ -151,10 +151,10 @@ function render() {
         arrowHelper.matrixWorld = window.select.support_plane.matrixWorld.clone();
         arrowHelper.arrow_box.rotation.z = window.select.cube.rotation.z;
         arrowHelper.arrow_box.position.set(window.select.cube.position.x,window.select.cube.position.y,window.select.cube.position.z + small_h*0.5*window.select.cube.scale.z);
-        arrowHelper.arrow_list[1].setLength(window.select.cube.scale.y*0.025/proportion_array[window.select.ID], 0.01, 0.01);
-        arrowHelper.arrow_list[2].setLength(window.select.cube.scale.x*0.025/proportion_array[window.select.ID], 0.01, 0.01);
-        arrowHelper.arrow_list[3].setLength(window.select.cube.scale.y*0.025/proportion_array[window.select.ID], 0.01, 0.01);
-        arrowHelper.arrow_list[4].setLength(window.select.cube.scale.x*0.025/proportion_array[window.select.ID], 0.01, 0.01);
+        arrowHelper.arrow_list[1].setLength(window.select.cube.scale.y*small_d/2/proportion_array[window.select.ID], 0.01, 0.01);
+        arrowHelper.arrow_list[2].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], 0.01, 0.01);
+        arrowHelper.arrow_list[3].setLength(window.select.cube.scale.y*small_d/2/proportion_array[window.select.ID], 0.01, 0.01);
+        arrowHelper.arrow_list[4].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], 0.01, 0.01);
         indicator_box.position.set(window.select.cube.position.x,window.select.cube.position.y,window.select.cube.position.z + small_h*0.5*window.select.cube.scale.z);
         arrowHelper.arrow_box.scale.x = proportion_array[window.select.ID];
         arrowHelper.arrow_box.scale.y = proportion_array[window.select.ID];

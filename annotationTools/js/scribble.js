@@ -554,7 +554,7 @@ function scribble_canvas(tag) {
   // last time the user segmented the image it will avoid calculating 
   // the new mask.
   this.segmentImage = function(annotation_ended){
-    if (drawing_mode == 0){
+    if (drawing_mode == 0 || drawing_mode == 2){
       SetDrawingMode(1);
       if(draw_anno) return;
     }
@@ -694,7 +694,7 @@ function scribble_canvas(tag) {
 
   // changes to foreground/backgorund/rubber
   this.setCurrentDraw = function(val){
-    if (drawing_mode == 0){ 
+    if (drawing_mode == 0 || drawing_mode == 2){ 
       SetDrawingMode(1);
       if(draw_anno) return;
     }

@@ -23,7 +23,7 @@ function StartupLabelMe() {
     if(!main_media.GetFileInfo().ParseURL()) return;
 
     if(video_mode) {
-      $('#generic_buttons').remove();
+      //$('#generic_buttons').remove();
       $.getScript("annotationTools/js/video.js", function(){
         main_media = new video('videoplayer');
         main_media.GetFileInfo().ParseURL();
@@ -52,14 +52,10 @@ function StartupLabelMe() {
       };
       // Get the image:
         main_media.GetNewImage(main_media_onload_helper2);
-        $('#myCanvas_bg_div').remove();
-        $('#select_canvas_div').remove();
-        $('#draw_canvas_div').remove();
-        $('#query_canvas_div').remove();
-        $('#anno_anchor').remove();
         document.getElementById("icon_wrapper").style.display = "block";
         CreateModelList();
         FinishStartup();
+        SetDrawingMode(0);
     }else{
       // This function gets run after image is loaded:
       console.log("else");
@@ -239,9 +235,8 @@ function FinishStartup() {
   initUserName();
 
   // Enable scribble mode:
-  if (!threed_mode){
-      InitializeAnnotationTools('label_buttons_drawing','main_media');
-  }else{
+  InitializeAnnotationTools('label_buttons_drawing','main_media');
+  if (threed_mode){
       Initialize3dButtons(); //create tool buttons and iccon container
   }
 
@@ -261,10 +256,10 @@ function FinishStartup() {
 function Initialize3dButtons(){
     var html_str = '<!--BUTTONS FOR 3D--> \
     <div id = "3d_mode_buttons" class = "annotatemenu"> \
-        <button id="add" type="button" name="add" value="Add">Add</button> \
-        <button id="remove" type="button" name="remove" value="Remove">Remove</button> \
-        <button id = "height" type = "submit" name = "height" onclick = "assign_height()" >Support</button> \
-        <button id = "clone" type = "submit" name = "clone" onclick = "clone_box()">Clone</button> \
+        <button id="add" type="button" name="add" value="Add" onclick = "SetDrawingMode(2);">Add</button> \
+        <button id="remove" type="button" name="remove" value="Remove" onclick = "SetDrawingMode(2);">Remove</button> \
+        <button id = "height" type = "submit" name = "height" onclick = "assign_height(); SetDrawingMode(2);" >Support</button> \
+        <button id = "clone" type = "submit" name = "clone" onclick = "clone_box(); SetDrawingMode(2);">Clone</button> \
     </div>';
     $('#label_buttons_drawing').append(html_str);
     $( "#add" ).on("click", function() { add_box(); buttonClicked(this); } );
@@ -289,7 +284,7 @@ function InitializeAnnotationTools(tag_button, tag_canvas){
 
     if (!video_mode){
       html_str += '<div id= "segmDiv" class="annotatemenu">Mask<br></br>Tool \
-        <button id="ScribbleObj" class="labelBtnDraw" type="button" title="Use the red pencil to mark areas inside the object you want to segment" onclick="scribble_canvas.setCurrentDraw(OBJECT_DRAWING)" > \
+        <button id="ScribbleObj" class="labelBtnDraw" type="button" title="Use the red pencil to mark areas inside the object you want to segment" onclick="scribble_canvas.setCurrentDraw(OBJECT_DRAWING); " > \
         <img src="Icons/object.png" width="28" height="38" /></button> \
         <button id="ScribbleBg" class="labelBtnDraw" type="button" title="Use the blue pencil to mark areas outside the object" onclick="scribble_canvas.setCurrentDraw(BG_DRAWING)" > \
         <img src="Icons/background.png" width="28" height="38" /></button> \
@@ -332,25 +327,50 @@ function SetDrawingMode(mode){
         if (scribble_canvas.annotationid != -1){
             alert("You can't change drawing mode while editting scribbles.");
             return;
-        }
-
+        }  
+        $("#container").css('display', 'none');
+        $("#cnvs").css('display', 'none');
+        $("#container").css('z-index', '-3');
+        $('#myCanvas_bg_div').css('display', 'block');
+        $('#select_canvas_div').css('display', 'block');
+        $('#draw_canvas_div').css('display', 'block');
+        $('#query_canvas_div').css('display', 'block');
+        $('#anno_anchor').css('display', 'block');
         document.getElementById("segmDiv").setAttribute('style', 'border-color: #000');
         document.getElementById("polygonDiv").setAttribute('style', 'border-color: #f00');
-        scribble_canvas.scribble_image = "";
-        scribble_canvas.cleanscribbles();
-        scribble_canvas.CloseCanvas();
+        if (document.getElementById("canvasDiv")){
+          scribble_canvas.scribble_image = "";
+          scribble_canvas.cleanscribbles();
+          scribble_canvas.CloseCanvas();
+        }
     }
     if (mode == 1) {
+        $("#container").css('display', 'none');
+        $("#cnvs").css('display', 'none');
         if(draw_anno) {
         alert("Need to close current polygon first.");
         return;
     }
-
     document.getElementById("segmDiv").setAttribute('style', 'border-color: #f00');
     document.getElementById("polygonDiv").setAttribute('style', 'border-color: #000');
     scribble_canvas.startSegmentationMode();
     }
-    drawing_mode = mode;
+    if (mode == 2){
+      $("#container").css('display', 'block');
+      $("#cnvs").css('display', 'block');
+      $("#container").css('z-index', '0');
+      $('#myCanvas_bg_div').css('display', 'none');
+      $('#select_canvas_div').css('display', 'none');
+      $('#draw_canvas_div').css('display', 'none');
+      $('#query_canvas_div').css('display', 'none');
+      if (document.getElementById("canvasDiv")){
+        scribble_canvas.scribble_image = "";
+        scribble_canvas.cleanscribbles();
+        scribble_canvas.CloseCanvas();
+      }
+    }
+  drawing_mode = mode;
+  console.log(drawing_mode);
 }
 
 function SetPolygonDrawingMode(bounding){

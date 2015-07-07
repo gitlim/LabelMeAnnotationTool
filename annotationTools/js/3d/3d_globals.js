@@ -32,9 +32,9 @@ var resize_x0, resize_y0, resize_vx, resize_vy;
 var object_list = new Array();
 
 
-var small_h;
-var small_w;
-var small_d;
+var small_h = 0.1;
+var small_w = 0.1;
+var small_d = -0.1;
 var f;
 
 var model3d_loader;
@@ -102,6 +102,3 @@ var selected_line_id;
 var lineOn = false;
 var original_number_of_lines = 0;
 
-var small_d = -0.05;
-var small_h = 0.05;
-var small_w = 0.05;
