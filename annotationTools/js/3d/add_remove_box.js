@@ -3,21 +3,25 @@ function add_box() {// adding a new box//
 }
 
 function add_box_internal(support_object) {
-    if (window.location.pathname.split("/").pop() == "box_tester.php"){
+    /*if (window.location.pathname.split("/").pop() == "box_tester.php"){
         var box_label = "undefined";
     }else{
         var box_label = prompt("Please choose a label for the box", "Box");
         box_label = box_label.replace(/ /g,"_");
-    }
+    }*/
+    var numItems = $(LM_xml).children('annotation').children('object').length;
+    threed_anno = new annotation(numItems);
+    threed_anno.SetType(3);
     object_list.push(new object_instance);
+    mkThreeDPopup(1, 1);
     window.select = object_list[object_list.length-1];//window.select is now the new object
-    window.select.hparent = "unassigned";
-    if (object_list.length == 1) {
+    /*if (object_list.length == 1) {
         window.select.ID = 1;
     }
     else {
         window.select.ID = object_list[object_list.length-2].ID + 1;
-    } //making ID of object the max ID of object currently in list + 1
+    }*///making ID of object the max ID of object currently in list + 1
+    window.select.ID = numItems; // making the 3d objects ID in sync with LabelMe system
     ID_dict[window.select.ID] = window.select;
     var sp_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var sp_plane_geometry = new THREE.PlaneGeometry(20, 20, 40, 40);
@@ -33,10 +37,10 @@ function add_box_internal(support_object) {
     object_list[object_list.length-1].cube.position.setY(0.95);
     object_list[object_list.length-1].cube.position.setZ(small_h/2);
 
-    window.select.label = box_label;
+    //window.select.label = box_label;
 
-    var tmp_button = add_icon(box_label);
-    tmp_button.innerHTML = "<font size= '3'><b>"+tmp_button.innerHTML+"</b></font>";
+    //var tmp_button = add_icon(box_label);
+    //tmp_button.innerHTML = "<font size= '3'><b>"+tmp_button.innerHTML+"</b></font>";
 
     for (var i = 0; i < stage.children.length; i++) {
         stage.children[i].hide();
@@ -68,7 +72,9 @@ function remove_box_internal(object) {
         scene.remove(object.support_plane);
     }
     object_list.splice(object_list.indexOf(object),1);
-    window.select = plane;
-    remove_icon();
+    window.select = null;
+    toggle_cube_resize_arrows(false);
+    toggle_cube_rotate_indicators(false);
+    toggle_cube_move_indicators(false);
     render();
 }

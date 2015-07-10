@@ -1,5 +1,5 @@
 function object_instance(){
-    this.hparent;
+    this.hparent = "unassigned";
     this.hchildren = [];
     this.ID;
     this.label;

@@ -14,6 +14,7 @@ function StartupLabelMe() {
 
     // Initialize global variables:
     main_handler = new handler();
+    main_threed_handler = new threed_handler();
     main_canvas = new canvas('myCanvas_bg');
     main_media = new image('im');
     // Parse the input URL.  Returns false if the URL does not set the
@@ -52,10 +53,9 @@ function StartupLabelMe() {
       };
       // Get the image:
         main_media.GetNewImage(main_media_onload_helper2);
-        document.getElementById("icon_wrapper").style.display = "block";
-        CreateModelList();
+        //document.getElementById("icon_wrapper").style.display = "block";
+        //CreateModelList();
         FinishStartup();
-        SetDrawingMode(0);
     }else{
       // This function gets run after image is loaded:
       console.log("else");
@@ -262,8 +262,8 @@ function Initialize3dButtons(){
         <button id = "clone" type = "submit" name = "clone" onclick = "clone_box(); SetDrawingMode(2);">Clone</button> \
     </div>';
     $('#label_buttons_drawing').append(html_str);
-    $( "#add" ).on("click", function() { add_box(); buttonClicked(this); } );
-    $( "#remove" ).on("click", function() { remove_box(); buttonClicked(this);  });
+    $( "#add" ).on("click", function() { add_box();} );
+    $( "#remove" ).on("click", function() { remove_box_internal(ID_dict[threed_anno.GetAnnoID()]); main_threed_handler.DeleteButton();});
 }
 
 // Initialize the segmentation tool. This function is called when the field
@@ -331,11 +331,7 @@ function SetDrawingMode(mode){
         $("#container").css('display', 'none');
         $("#cnvs").css('display', 'none');
         $("#container").css('z-index', '-3');
-        $('#myCanvas_bg_div').css('display', 'block');
-        $('#select_canvas_div').css('display', 'block');
-        $('#draw_canvas_div').css('display', 'block');
-        $('#query_canvas_div').css('display', 'block');
-        $('#anno_anchor').css('display', 'block');
+        ShowAllPolygons();
         document.getElementById("segmDiv").setAttribute('style', 'border-color: #000');
         document.getElementById("polygonDiv").setAttribute('style', 'border-color: #f00');
         if (document.getElementById("canvasDiv")){
@@ -358,11 +354,8 @@ function SetDrawingMode(mode){
     if (mode == 2){
       $("#container").css('display', 'block');
       $("#cnvs").css('display', 'block');
-      $("#container").css('z-index', '0');
-      $('#myCanvas_bg_div').css('display', 'none');
-      $('#select_canvas_div').css('display', 'none');
-      $('#draw_canvas_div').css('display', 'none');
-      $('#query_canvas_div').css('display', 'none');
+      $("#container").css('z-index', '1');
+      HideAllPolygons();
       if (document.getElementById("canvasDiv")){
         scribble_canvas.scribble_image = "";
         scribble_canvas.cleanscribbles();

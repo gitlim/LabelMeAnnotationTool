@@ -5,12 +5,12 @@ function add_icon(box_label) {// adding icons
     tmp_button.className = "icon"
     tmp_button.id = object_list[object_list.length-1].ID;
     icon_container.appendChild(tmp_button);
-    $( "#" + object_list[object_list.length-1].ID ).on( "click", function() { buttonClicked(this); } );
+    $( "#" + object_list[object_list.length-1].ID ).on( "click", function() { ThreeDObjectSelect(this); } );
     reset_icon();
     return tmp_button;
 }
 
-function buttonClicked(event) {
+function ThreeDObjectSelect(event) {
     for (var i = 0; i < intersect_box.children.length; i++){
         if (typeof plane_cube != "undefined" && intersect_box.children[i] != plane_cube){
             intersect_box.children[i].material.color.setHex(0x0000ff);
@@ -249,7 +249,7 @@ function remove_icon() {
     var icon_container = document.getElementById('icon_container');
     icon_container.innerHTML='<button id = "GP" class = "gp_icon"  value= "GP"><font size="3"><b>GP</b></font></button>';
     $("#GP").on("click", function() {
-        buttonClicked(this);
+        ThreeDObjectSelect(this);
     });
 
     for (var i = 0; i < object_list.length; i++) {
@@ -258,8 +258,8 @@ function remove_icon() {
         tmp_button.className = "icon";
         tmp_button.value = object_list[i].label;
         icon_container.appendChild(tmp_button);
-        $( "#" + (object_list[i].ID) ).on( "click", function() { buttonClicked(this); } );
+        $( "#" + (object_list[i].ID) ).on( "click", function() { ThreeDObjectSelect(this); } );
     }
     reset_icon();
-    buttonClicked(document.getElementById('GP'));// select GP
+    ThreeDObjectSelect(document.getElementById('GP'));// select GP
 }
