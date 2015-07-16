@@ -1,4 +1,4 @@
-function add_icon(box_label) {// adding icons
+/*function add_icon(box_label) {// adding icons
     var icon_container = document.getElementById('icon_container');
     var tmp_button = document.createElement('button');
     tmp_button.value = box_label;
@@ -8,9 +8,9 @@ function add_icon(box_label) {// adding icons
     $( "#" + object_list[object_list.length-1].ID ).on( "click", function() { ThreeDObjectSelect(this); } );
     reset_icon();
     return tmp_button;
-}
+}*/
 
-function ThreeDObjectSelect(event) {
+/*function ThreeDObjectSelect(event) {
     for (var i = 0; i < intersect_box.children.length; i++){
         if (typeof plane_cube != "undefined" && intersect_box.children[i] != plane_cube){
             intersect_box.children[i].material.color.setHex(0x0000ff);
@@ -28,13 +28,13 @@ function ThreeDObjectSelect(event) {
             Apprise("You cannot assign a support object to the groundplane", okAlert);
         }else if (event.id == "GP"){
             window.select.hparent = gp_plane;
-            var i_mat = new THREE.Matrix4().getInverse(window.select.support_plane.matrixWorld.clone());
+            var i_mat = new THREE.Matrix4().getInverse(window.select.plane.matrixWorld.clone());
             cube_position_0 = window.select.cube.position.clone();
             cube_position_0.setZ(window.select.cube.position.z - window.select.cube.scale.z*small_h/2);
             cube_position_0_static = window.select.cube.position.clone();
             cube_position_0_static.setZ(window.select.cube.position.z - window.select.cube.scale.z*small_h/2);
-            cube_position_0.applyMatrix4(window.select.support_plane.matrixWorld.clone());
-            cube_position_0_static.applyMatrix4(window.select.support_plane.matrixWorld.clone());
+            cube_position_0.applyMatrix4(window.select.plane.matrixWorld.clone());
+            cube_position_0_static.applyMatrix4(window.select.plane.matrixWorld.clone());
             old_x = window.select.cube.scale.x;
             old_y = window.select.cube.scale.y;
             old_z = window.select.cube.scale.z;
@@ -53,14 +53,14 @@ function ThreeDObjectSelect(event) {
             }
             var oldest_ancestor = check_oldest_ancestor(ID_dict[event.id]);
             if (oldest_ancestor == gp_plane){
-                var i_mat = new THREE.Matrix4().getInverse(window.select.support_plane.matrixWorld.clone());
+                var i_mat = new THREE.Matrix4().getInverse(window.select.plane.matrixWorld.clone());
                 cube_position_0 = window.select.cube.position.clone();
                 cube_position_0.setZ(window.select.cube.position.z - window.select.cube.scale.z*small_h/2);
                 cube_position_0_static = window.select.cube.position.clone();
                 cube_position_0_static.setZ(window.select.cube.position.z - window.select.cube.scale.z*small_h/2);
-                cube_position_0.applyMatrix4(window.select.support_plane.matrixWorld.clone());
-                cube_position_0_static.applyMatrix4(window.select.support_plane.matrixWorld.clone());
-                window.select.support_plane.material.visible = true;
+                cube_position_0.applyMatrix4(window.select.plane.matrixWorld.clone());
+                cube_position_0_static.applyMatrix4(window.select.plane.matrixWorld.clone());
+                window.select.plane.material.visible = true;
                 old_x = window.select.cube.scale.x;
                 old_y = window.select.cube.scale.y;
                 old_z = window.select.cube.scale.z;
@@ -80,13 +80,13 @@ function ThreeDObjectSelect(event) {
         temp_z_pos = ID_dict[event.id].cube.position.z;
         add_box_internal(ID_dict[event.id].hparent);
         window.select.hparent = ID_dict[event.id].hparent;
-        window.select.support_plane.matrixWorld = ID_dict[event.id].support_plane.matrixWorld.clone();
+        window.select.plane.matrixWorld = ID_dict[event.id].plane.matrixWorld.clone();
         window.select.cube.scale.x = temp_x;
         window.select.cube.scale.y = temp_y;
         window.select.cube.scale.z = temp_z;
         window.select.cube.rotation.z = temp_rotation_z;
         window.select.cube.position.setZ(temp_z_pos);
-        window.select.support_plane.material.visible = true;
+        window.select.plane.material.visible = true;
     }else if (event.id == "GP") {
         reset_icon();
         event.innerHTML = "<b><font size='3'>"+event.value+"</font></b>";
@@ -97,7 +97,7 @@ function ThreeDObjectSelect(event) {
         for (var i = 0; i<object_list.length; i++){
             changeColor(object_list[i].cube, 0xffffff);
             if (object_list[i].hparent != "unassigned"){
-                object_list[i].support_plane.material.visible = false;
+                object_list[i].plane.material.visible = false;
             }
         }
         gp_plane.material.visible = true;
@@ -121,7 +121,7 @@ function ThreeDObjectSelect(event) {
     }
     var oldest_ancestor = check_oldest_ancestor(window.select);
     if (oldest_ancestor != "unassigned" && typeof oldest_ancestor != "undefined"){
-        window.select.support_plane.material.visible = true;
+        window.select.plane.material.visible = true;
         check_plane_box_collision();
     }
     for (var i=0; i<object_list.length; i++){
@@ -136,9 +136,9 @@ function ThreeDObjectSelect(event) {
         }
     }
     render();
-}
+}*/
 
-function hovering(){
+/*function hovering(){
     $(document).on('mouseover', function (event) {
         if (typeof ID_dict[event.target.id] != "undefined" && ID_dict[event.target.id] != window.select && event.target.id != "GP"){// hovering over icons that are not GP
             gp_plane.material.visible = false;
@@ -152,14 +152,14 @@ function hovering(){
                         changeColor(object_list[i].cube, 0xffffff);
                     }
                     if (object_list[i] != event.target.id){
-                            object_list[i].support_plane.material.visible = false;
+                            object_list[i].plane.material.visible = false;
                     }
                 }
             }
             var oldest_ancestor = check_oldest_ancestor(ID_dict[event.target.id]);
             if (oldest_ancestor != "unassigned"){
                 check_plane_box_collision(ID_dict[event.target.id]);
-                ID_dict[event.target.id].support_plane.material.visible = true;//shows groundplane of cube that is being hovered over
+                ID_dict[event.target.id].plane.material.visible = true;//shows groundplane of cube that is being hovered over
             }
             changeColor(ID_dict[event.target.id].cube, 0xff0000);//makes cube that is hovered over red
         }
@@ -179,7 +179,7 @@ function hovering(){
             guide_Z_line.material.visible = true;
             for (var i=0; i<object_list.length; i++){// disappears cubes and all support planes
                 object_list[i].cube.traverse( function ( object ) { object.visible = false; } );
-                object_list[i].support_plane.material.visible = false;
+                object_list[i].plane.material.visible = false;
             }
             gp_plane.material.visible = true;// shows GP
         }
@@ -188,7 +188,7 @@ function hovering(){
                 object_list[i].cube.traverse( function ( object ) { object.visible = true; } );
                 changeColor(object_list[i].cube, 0xffffff);
                 if (object_list[i].hparent != "unassigned"){
-                    object_list[i].support_plane.material.visible = false;
+                    object_list[i].plane.material.visible = false;
                 }
             }
             for (var i = intersect_box.children.length - 1; i > -1; i--){
@@ -206,7 +206,7 @@ function hovering(){
                 toggle_cube_resize_arrows(true);
                 var oldest_ancestor = check_oldest_ancestor(window.select);
                 if (oldest_ancestor != "unassigned"){
-                    window.select.support_plane.material.visible = true;
+                    window.select.plane.material.visible = true;
                     check_plane_box_collision();
                 }
                 changeColor(window.select.cube, 0xffff00);
@@ -226,8 +226,73 @@ function hovering(){
         }
         render();
     });
+}*/
+
+function ThreeDHoverHighlight(object){// need third options for planes
+    if (!(object)){
+        for (var i=0; i<object_list.length; i++){// making visible all cubes as white, dissappearing all of their support planes
+            object_list[i].cube.traverse( function ( object ) { object.visible = true; } );
+            changeColor(object_list[i].cube, 0xffffff);
+            if (object_list[i].hparent != "unassigned"){
+                object_list[i].plane.material.visible = false;
+            }
+        }
+        for (var i = intersect_box.children.length - 1; i > -1; i--){
+            if (typeof plane_cube != "undefined" && intersect_box.children[i] != plane_cube){
+                intersect_box.remove(intersect_box.children[i]);
+                plane_cube.material.visible = false;
+            }
+        }
+        if (window.select != plane){// hiding GP tools and making visible resize arrows if groundplane is not the selected object
+            guide_Z_line.material.visible = false;
+            for (var i = 0; i < stage.children.length; i++) {
+                stage.children[i].hide();
+            }
+            gp_plane.material.visible = false;
+            toggle_cube_resize_arrows(true);
+            var oldest_ancestor = check_oldest_ancestor(window.select);
+            if (oldest_ancestor != "unassigned"){
+                window.select.plane.material.visible = true;
+                check_plane_box_collision();
+            }
+            changeColor(window.select.cube, 0xffff00);
+        }
+    }else if (object.cube){//for cube
+        gp_plane.material.visible = false;
+        guide_Z_line.material.visible = false;
+        for (var i = 0; i < stage.children.length; i++) {// shows GP tools
+            stage.children[i].hide();
+        }
+        for (var i = 0; i < object_list.length; i++){//turns every cube white and disappears groundplane of current selected object
+            if (object_list[i] != window.select){
+                changeColor(object_list[i].cube, 0xffffff);
+            }
+            if (object_list[i] != object){
+                object_list[i].plane.material.visible = false;
+            }
+        }
+        /*var oldest_ancestor = check_oldest_ancestor(ID_dict[idx]);
+        if (oldest_ancestor != "unassigned"){
+            check_plane_box_collision(ID_dict[event.target.id]);
+            ID_dict[event.target.id].plane.material.visible = true;//shows groundplane of cube that is being hovered over
+        }*/
+        if (object != window.select) changeColor(object.cube, 0xff0000);//makes cube that is hovered over red
+    }else{//for plane
+        for (var i = 0; i < stage.children.length; i++) {// shows GP tools
+            stage.children[i].show();
+        }
+        for (var i = intersect_box.children.length - 1; i > -1; i--){
+            if ((typeof plane_cube != "undefined") && (intersect_box.children[i] != plane_cube)){
+                intersect_box.remove(intersect_box.children[i]);
+                plane_cube.material.visible = false;
+            }
+        }
+        guide_Z_line.material.visible = true;
+        gp_plane.material.visible = true;//if GP is selected, make GP visible
+    }
+    render();
 }
-function reset_icon() {
+/*function reset_icon() {
     var label_list = [];
     icon_container.children[0].innerHTML = icon_container.children[0].value;
 
@@ -262,4 +327,4 @@ function remove_icon() {
     }
     reset_icon();
     ThreeDObjectSelect(document.getElementById('GP'));// select GP
-}
+}*/

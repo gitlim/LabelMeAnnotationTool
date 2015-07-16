@@ -87,14 +87,14 @@ function gp_drag(e) {
     var direction = mouse3D.sub(camera.position).normalize();
     ray = new THREE.Raycaster(camera.position, mouse3D);
     ray.set(camera.position, direction);
-    var current_plane = plane; //window.select.support_plane;
-    a = ray.intersectObject(current_plane, true);
+    var current_selected_plane = selected_plane; //window.select.selected_plane;
+    a = ray.intersectObject(current_selected_plane, true);
 
     var hitAny = false;
     for (var i = 0; i < a.length; i++) {
-        if (a[i].object.id == current_plane.id) {
+        if (a[i].object.id == current_selected_plane.id) {
             hitAny = true;
-            var i_mat = new THREE.Matrix4().getInverse(current_plane.matrixWorld);
+            var i_mat = new THREE.Matrix4().getInverse(current_selected_plane.matrixWorld);
             a[i].point.applyMatrix4(i_mat);
             guide_box.lines[gp_line.gp_id].position.set(a[i].point.x,a[i].point.y,a[i].point.z);
             render();
@@ -352,7 +352,7 @@ function changeLineType(){
 
 
 function update_plane() {
-    console.log("plane updated");
+    console.log("selected_plane updated");
     var d = new Date();
     current_time = d.getTime();
     if (current_time - last_update > 100) {
@@ -674,50 +674,52 @@ function addVPCircles(id, layer){
 
 
 function rerender_plane(K) {//where K is the new matrix after vanishing point recalculation
+    if (window.select != plane) var selected_plane = window.select.plane
+    else var selected_plane = plane;
     camera.matrixAutoUpdate=false;
-    plane.matrixAutoUpdate=false;
-    plane.matrixWorld.elements= K;// setting plane to camera transformation
+    selected_plane.matrixAutoUpdate=false;
+    selected_plane.matrixWorld.elements= K;// setting selected_plane to camera transformation
 
-    gp_plane.matrixAutoUpdate = false;
+    gp_plane.matrixAutoUpdate = false;  
     gp_plane.matrixWorld.elements = K;
 
-    var z_vector1 = new THREE.Vector4(0,0,0,1).applyMatrix4(plane.matrixWorld);
-    var z_vector2 = new THREE.Vector4(0,0,1,1).applyMatrix4(plane.matrixWorld);
-    var z_vector3 = new THREE.Vector4(0,1,0,1).applyMatrix4(plane.matrixWorld);
+    var z_vector1 = new THREE.Vector4(0,0,0,1).applyMatrix4(selected_plane.matrixWorld);
+    var z_vector2 = new THREE.Vector4(0,0,1,1).applyMatrix4(selected_plane.matrixWorld);
+    var z_vector3 = new THREE.Vector4(0,1,0,1).applyMatrix4(selected_plane.matrixWorld);
     var D1 = (z_vector2.y - z_vector1.y) / (z_vector2.z - z_vector1.z);
     var D2 = (z_vector3.y - z_vector1.y) / (z_vector3.z - z_vector1.z);
     if (Math.abs(D1) < Math.abs(D2)) {
         console.log("flip3");
 
         var a = new THREE.Matrix4(1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1);
-        z_vector1 = new THREE.Vector4(1,1,0,1).applyMatrix4(plane.matrixWorld);
-        plane.matrixWorld.multiplyMatrices(plane.matrixWorld,a);
-        z_vector2 = new THREE.Vector4(1,1,0,1).applyMatrix4(plane.matrixWorld);
-        plane.matrixWorld.elements[12] -= z_vector2.x - z_vector1.x;
-        plane.matrixWorld.elements[13] -= z_vector2.y - z_vector1.y;
-        plane.matrixWorld.elements[14] -= z_vector2.z - z_vector1.z;
+        z_vector1 = new THREE.Vector4(1,1,0,1).applyMatrix4(selected_plane.matrixWorld);
+        selected_plane.matrixWorld.multiplyMatrices(selected_plane.matrixWorld,a);
+        z_vector2 = new THREE.Vector4(1,1,0,1).applyMatrix4(selected_plane.matrixWorld);
+        selected_plane.matrixWorld.elements[12] -= z_vector2.x - z_vector1.x;
+        selected_plane.matrixWorld.elements[13] -= z_vector2.y - z_vector1.y;
+        selected_plane.matrixWorld.elements[14] -= z_vector2.z - z_vector1.z;
     }
 
-    var z_vector1 = new THREE.Vector4(0,0,0,1).applyMatrix4(plane.matrixWorld);
-    var z_vector2 = new THREE.Vector4(0,0,1,1).applyMatrix4(plane.matrixWorld);
-    var z_vector3 = new THREE.Vector4(1,0,0,1).applyMatrix4(plane.matrixWorld);
+    var z_vector1 = new THREE.Vector4(0,0,0,1).applyMatrix4(selected_plane.matrixWorld);
+    var z_vector2 = new THREE.Vector4(0,0,1,1).applyMatrix4(selected_plane.matrixWorld);
+    var z_vector3 = new THREE.Vector4(1,0,0,1).applyMatrix4(selected_plane.matrixWorld);
     var D1 = (z_vector2.y - z_vector1.y) / (z_vector2.z - z_vector1.z);
     var D2 = (z_vector3.y - z_vector1.y) / (z_vector3.z - z_vector1.z);
     if (Math.abs(D1) < Math.abs(D2)) {
         console.log("flip2");
 
     var a = new THREE.Matrix4(0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1);
-    z_vector1 = new THREE.Vector4(1,1,0,1).applyMatrix4(plane.matrixWorld);
-    plane.matrixWorld.multiplyMatrices(plane.matrixWorld,a);
-    z_vector2 = new THREE.Vector4(1,1,0,1).applyMatrix4(plane.matrixWorld);
-    plane.matrixWorld.elements[12] -= z_vector2.x - z_vector1.x;
-    plane.matrixWorld.elements[13] -= z_vector2.y - z_vector1.y;
-    plane.matrixWorld.elements[14] -= z_vector2.z - z_vector1.z;
+    z_vector1 = new THREE.Vector4(1,1,0,1).applyMatrix4(selected_plane.matrixWorld);
+    selected_plane.matrixWorld.multiplyMatrices(selected_plane.matrixWorld,a);
+    z_vector2 = new THREE.Vector4(1,1,0,1).applyMatrix4(selected_plane.matrixWorld);
+    selected_plane.matrixWorld.elements[12] -= z_vector2.x - z_vector1.x;
+    selected_plane.matrixWorld.elements[13] -= z_vector2.y - z_vector1.y;
+    selected_plane.matrixWorld.elements[14] -= z_vector2.z - z_vector1.z;
     }
 
 
-    var z_vector1 = new THREE.Vector3(1,1,0,1).applyMatrix4(plane.matrixWorld);
-    var z_vector2 = new THREE.Vector3(1,1,10,1).applyMatrix4(plane.matrixWorld);
+    var z_vector1 = new THREE.Vector3(1,1,0,1).applyMatrix4(selected_plane.matrixWorld);
+    var z_vector2 = new THREE.Vector3(1,1,10,1).applyMatrix4(selected_plane.matrixWorld);
     var proj = new THREE.Projector();
     z_vector1 = proj.projectVector(z_vector1, camera);
     z_vector2 = proj.projectVector(z_vector2, camera);
@@ -726,28 +728,28 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
 
         var a = new THREE.Matrix4().makeRotationX(Math.PI);
         var c = new THREE.Matrix4().makeRotationZ(Math.PI/2*3);
-        plane.matrixWorld.multiplyMatrices(plane.matrixWorld,a);
-        plane.matrixWorld.multiplyMatrices(plane.matrixWorld,c);
+        selected_plane.matrixWorld.multiplyMatrices(selected_plane.matrixWorld,a);
+        selected_plane.matrixWorld.multiplyMatrices(selected_plane.matrixWorld,c);
     }
 
-    var v1 = new THREE.Vector4(0,0,0,1).applyMatrix4(plane.matrixWorld);
-    var v2 = new THREE.Vector4(0,0,1,1).applyMatrix4(plane.matrixWorld);
+    var v1 = new THREE.Vector4(0,0,0,1).applyMatrix4(selected_plane.matrixWorld);
+    var v2 = new THREE.Vector4(0,0,1,1).applyMatrix4(selected_plane.matrixWorld);
     if (v1.y > v2.y) {
-        console.log('flip plane');
-        console.log(plane.matrixWorld);
+        console.log('flip selected_plane');
+        console.log(selected_plane.matrixWorld);
         var a = new THREE.Matrix4().makeRotationX(Math.PI);
         var c = new THREE.Matrix4().makeRotationZ(Math.PI/2*3);
-        plane.matrixWorld.multiplyMatrices(plane.matrixWorld,a);
-        plane.matrixWorld.multiplyMatrices(plane.matrixWorld,c);
+        selected_plane.matrixWorld.multiplyMatrices(selected_plane.matrixWorld,a);
+        selected_plane.matrixWorld.multiplyMatrices(selected_plane.matrixWorld,c);
         //gp_plane.matrixWorld.multiplyMatrices(gp_plane.matrixWorld,a);
         //gp_plane.matrixWorld.multiplyMatrices(gp_plane.matrixWorld,c);
-        console.log(plane.matrixWorld);
+        console.log(selected_plane.matrixWorld);
     }
 
     var theCanvas = document.getElementById("cnvs"); //setting up the camera so that it is using the canvas parameters
     camera = new THREE.PerspectiveCamera(Math.atan(theCanvas.height/f/2)/Math.PI*180*2, theCanvas.width/theCanvas.height, .01, 20000);
     camera.position.z = 0;
-    plane.material.visible = false;
+    selected_plane.material.visible = false;
 
     renderer.render(scene, camera);
 }

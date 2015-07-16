@@ -256,14 +256,15 @@ function FinishStartup() {
 function Initialize3dButtons(){
     var html_str = '<!--BUTTONS FOR 3D--> \
     <div id = "3d_mode_buttons" class = "annotatemenu"> \
-        <button id="add" type="button" name="add" value="Add" onclick = "SetDrawingMode(2);">Add</button> \
-        <button id="remove" type="button" name="remove" value="Remove" onclick = "SetDrawingMode(2);">Remove</button> \
-        <button id = "height" type = "submit" name = "height" onclick = "assign_height(); SetDrawingMode(2);" >Support</button> \
+        <button id="add_box" type="button" name="add" value="Add" onclick = "SetDrawingMode(2);">Add Box</button> \
+        <button id = "add_plane" type = "submit" name = "height" onclick = "SetDrawingMode(2);" >Add Plane</button> \
+        <button id="remove" type="button" name="remove" value="Remove" onclick = "SetDrawingMode(2);">Delete</button> \
         <button id = "clone" type = "submit" name = "clone" onclick = "clone_box(); SetDrawingMode(2);">Clone</button> \
     </div>';
     $('#label_buttons_drawing').append(html_str);
-    $( "#add" ).on("click", function() { add_box();} );
-    $( "#remove" ).on("click", function() { remove_box_internal(ID_dict[threed_anno.GetAnnoID()]); main_threed_handler.DeleteButton();});
+    $( "#add_box" ).on("click", function() { add_box_internal();} );
+    $( "#add_plane" ).on("click", function() { add_plane();} );
+    $( "#remove" ).on("click", function() { main_threed_handler.EditBubbleDeleteButton(); main_threed_handler.DeleteButton();});
 }
 
 // Initialize the segmentation tool. This function is called when the field

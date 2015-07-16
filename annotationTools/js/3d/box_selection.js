@@ -1,12 +1,12 @@
-function boxSelect() {//now really only highlighting
+function HighlightSelectedThreeDObject() {//now really only highlighting
     for (var i = 0; i < object_list.length; i++) {
-        changeColor(object_list[i].cube, 0xffffff);
-        object_list[i].support_plane.material.visible = false;
+        if (object_list[i].cube) changeColor(object_list[i].cube, 0xffffff);
+        object_list[i].plane.material.visible = false;
     }
     if (object_list.length && window.select.ID != 0) {
-        changeColor(window.select.cube, 0xffff00);
+        if (window.select.cube) changeColor(window.select.cube, 0xffff00);
         if (window.select.hparent != "unassigned"){
-            window.select.support_plane.material.visible = true;
+            window.select.plane.material.visible = true;
             console.log("click");
         }
         toggle_cube_resize_arrows(true);
@@ -18,6 +18,8 @@ function boxSelect() {//now really only highlighting
     }
     render();
 }
+
+
 
 function changeColor(container, color) {
     for (var i = 0; i < container.children.length; i++) {

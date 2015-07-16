@@ -85,13 +85,18 @@ function RenderObjectList() {
 	// if it is a part, use part style
 	html_str += '<li class="children_tree">';
       }
-      
-      // show object name:
-      html_str += '<a class="objectListLink"  id="Link' + ii + '" '+
-	'href="javascript:main_handler.AnnotationLinkClick('+ii+');" '+
-	'onmouseover="main_handler.AnnotationLinkMouseOver('+ii+');" ' +
-	'onmouseout="main_handler.AnnotationLinkMouseOut();" ';
-      
+      if (main_canvas.annotations[ii].GetType() == 2 || main_canvas.annotations[ii].GetType() == 3){
+        html_str += '<a class="objectListLink"  id="Link' + ii + '" '+
+      'href="javascript:main_threed_handler.AnnotationLinkClick('+ii+');" '+
+      'onmouseover="main_threed_handler.AnnotationLinkMouseOver('+ii+');" ' +
+      'onmouseout="main_threed_handler.AnnotationLinkMouseOut();" ';
+      }else{
+      // show object name: // else based on type of anno (get from anno list)
+    html_str += '<a class="objectListLink"  id="Link' + ii + '" '+
+  	'href="javascript:main_handler.AnnotationLinkClick('+ii+');" '+
+  	'onmouseover="main_handler.AnnotationLinkMouseOver('+ii+');" ' +
+  	'onmouseout="main_handler.AnnotationLinkMouseOut();" ';
+      }
       if (use_parts) {
 	html_str += 'ondrop="drop(event, '+ii+')" '+
 	  'ondragend="dragend(event, '+ii+')" '+
@@ -145,8 +150,8 @@ function ChangeLinkColorBG(idx) {
     else document.getElementById('Link'+idx).style.color = '#0000FF';
 
     // If we're hiding all polygons, then remove rendered polygon from canvas:
-    if(IsHidingAllPolygons && AllAnnotations[idx].hidden) {
-      AllAnnotations[idx].DeletePolygon();
+    if(IsHidingAllPolygons && main_canvas.annotations[idx].hidden) {
+      main_canvas.annotations[idx].DeletePolygon();
     }
   }
 }
@@ -156,8 +161,8 @@ function ChangeLinkColorFG(idx) {
   document.getElementById('Link'+idx).style.color = '#FF0000';
 
   // If we're hiding all polygons, then render polygon on canvas:
-  if(IsHidingAllPolygons && AllAnnotations[idx].hidden) {
-    AllAnnotations[idx].DrawPolygon(main_media.GetImRatio(), LMgetObjectField(LM_xml,idx,'x'), LMgetObjectField(LM_xml,idx,'y'));
+  if(IsHidingAllPolygons && main_canvas.annotations[idx].hidden) {
+    main_canvas.annotations[idx].DrawPolygon(main_media.GetImRatio(), LMgetObjectField(LM_xml,idx,'x'), LMgetObjectField(LM_xml,idx,'y'));
   }
 }
 
