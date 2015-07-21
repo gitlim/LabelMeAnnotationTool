@@ -1,9 +1,9 @@
-function onDocumentDoubleClick(event){
+/*function onDocumentDoubleClick(event){
     var label_list = [];
     var x = event.clientX;
     var y = event.clientY;
     var element = document.elementFromPoint(x, y).parentNode.parentNode;
-    if (window.select == plane && element.id == "container" && lineOn == false){
+    if (window.select.plane == plane && element.id == "container" && lineOn == false){
         var rect = document.getElementById("container").getBoundingClientRect();
         var id = vp_s.length;
         vp_s[id] = new VP_s();
@@ -33,7 +33,7 @@ function onDocumentDoubleClick(event){
         }
     document.getElementById(element.id).innerHTML = "<b><font size='3'>"+box_label+"</font><b>";
     }
-}
+}*/
 
 
 function onDocumentMouseDown(event) {
@@ -107,7 +107,7 @@ function onDocumentMouseDown(event) {
         }
     }
     var cube_click = [];
-    if (window.select.plane && current_mode != RESIZE_MODE && (current_mode != VERTICAL_PLANE_MOVE_MODE)) {
+    if (window.select.cube && current_mode != RESIZE_MODE && (current_mode != VERTICAL_PLANE_MOVE_MODE)) {
         cube_click = ray.intersectObject(window.select.cube, true);
     }
     if (cube_click.length > 0){
@@ -144,6 +144,9 @@ function onDocumentMouseDown(event) {
 
 function onDocumentMouseMove(event) {
     setupRay(event);
+    if (!window.select){
+        return;
+    }
     if ($('#im').has(event.target)){
         if (nav_toggle == true) {
             rotateEnd.set( event.clientX, event.clientY );
@@ -204,7 +207,7 @@ function onDocumentMouseMove(event) {
         }
         else if ($(event.target).parents('div#main_media').length && !$(event.target).parents('div#icon_wrapper').length && event.target.id != "icon_wrapper") { //event.target.id != "icon_wrapper" && event.target.tagName != "BUTTON" && event.target.tagName != "FONT") && (event.target.id != "icon_container")) { // && (event.target.tagName == "canvas")) {
             var cube_hover = [];
-            if (window.select.plane) {
+            if (window.select.cube) {
                 cube_hover = ray.intersectObject(window.select.cube, true);
             }
             cube_hover_toggle = false;
@@ -347,7 +350,7 @@ function onDocumentKeyDown(evt) {
     var keyCode = evt.keyCode;
     switch (keyCode) {
         case 90:
-            if (window.select == plane){
+            if (window.select.plane == plane){
                 console.log("zoom");
                 toggle_zoom();
             }

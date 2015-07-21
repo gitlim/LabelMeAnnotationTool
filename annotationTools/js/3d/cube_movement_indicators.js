@@ -13,8 +13,8 @@ function toggle_cube_rotate_indicators(toggle){
 }
 function toggle_cube_resize_arrows(toggle){
     for (var i = 0; i < arrowHelper.arrow_list.length; i++){
-            arrowHelper.arrow_list[i].cone.material.visible = toggle;
-            arrowHelper.arrow_list[i].line.material.visible = toggle;
+        arrowHelper.arrow_list[i].cone.material.visible = toggle;
+        arrowHelper.arrow_list[i].line.material.visible = toggle;
     }
 }
 function initialize_cube_indicators(){

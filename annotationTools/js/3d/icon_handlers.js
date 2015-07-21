@@ -229,33 +229,38 @@
 }*/
 
 function ThreeDHoverHighlight(object){// need third options for planes
-    if (!(object)){
-        for (var i=0; i<object_list.length; i++){// making visible all cubes as white, dissappearing all of their support planes
+    for (var i=0; i<object_list.length; i++){// making visible all cubes as white, dissappearing all of their support planes
+        if (object_list[i].cube){
             object_list[i].cube.traverse( function ( object ) { object.visible = true; } );
             changeColor(object_list[i].cube, 0xffffff);
-            if (object_list[i].hparent != "unassigned"){
-                object_list[i].plane.material.visible = false;
-            }
         }
-        for (var i = intersect_box.children.length - 1; i > -1; i--){
-            if (typeof plane_cube != "undefined" && intersect_box.children[i] != plane_cube){
-                intersect_box.remove(intersect_box.children[i]);
-                plane_cube.material.visible = false;
-            }
+        object_list[i].plane.material.visible = false;
+    }
+    for (var i = intersect_box.children.length - 1; i > -1; i--){
+        if (typeof plane_cube != "undefined" && intersect_box.children[i] != plane_cube){
+            intersect_box.remove(intersect_box.children[i]);
+            plane_cube.material.visible = false;
         }
-        if (window.select != plane){// hiding GP tools and making visible resize arrows if groundplane is not the selected object
-            guide_Z_line.material.visible = false;
-            for (var i = 0; i < stage.children.length; i++) {
-                stage.children[i].hide();
-            }
-            gp_plane.material.visible = false;
-            toggle_cube_resize_arrows(true);
-            var oldest_ancestor = check_oldest_ancestor(window.select);
-            if (oldest_ancestor != "unassigned"){
+    }
+    if (!(object)){
+        if (window.select){
+            if (window.select.cube){// hiding GP tools and making visible resize arrows if groundplane is not the selected object
+                guide_Z_line.material.visible = false;
+                for (var i = 0; i < stage.children.length; i++) {
+                    stage.children[i].hide();
+                }
+                gp_plane.material.visible = false;
+                toggle_cube_resize_arrows(true);
+                var oldest_ancestor = check_oldest_ancestor(window.select);
+                if (oldest_ancestor != "unassigned"){
+                    window.select.plane.material.visible = true;
+                    check_plane_box_collision();
+                }
+                changeColor(window.select.cube, 0xffff00);
+            }else{
                 window.select.plane.material.visible = true;
-                check_plane_box_collision();
+                main_threed_handler.LoadDifferentPlane(window.select.ID);
             }
-            changeColor(window.select.cube, 0xffff00);
         }
     }else if (object.cube){//for cube
         gp_plane.material.visible = false;
@@ -264,7 +269,7 @@ function ThreeDHoverHighlight(object){// need third options for planes
             stage.children[i].hide();
         }
         for (var i = 0; i < object_list.length; i++){//turns every cube white and disappears groundplane of current selected object
-            if (object_list[i] != window.select){
+            if (object_list[i] != window.select && (object_list[i].cube)){
                 changeColor(object_list[i].cube, 0xffffff);
             }
             if (object_list[i] != object){
@@ -287,8 +292,11 @@ function ThreeDHoverHighlight(object){// need third options for planes
                 plane_cube.material.visible = false;
             }
         }
+        object.plane.material.visible = true;
         guide_Z_line.material.visible = true;
-        gp_plane.material.visible = true;//if GP is selected, make GP visible
+        main_threed_handler.LoadDifferentPlane(object.ID);
+
+        //gp_plane.material.visible = true;//if GP is selected, make GP visible
     }
     render();
 }

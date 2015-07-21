@@ -239,7 +239,9 @@ function FinishStartup() {
   if (threed_mode){
       Initialize3dButtons(); //create tool buttons and iccon container
   }
-
+  if (threed_mode){
+      main_threed_handler.CreateGroundplane();
+  }
   // Set action when the user presses a key:
   document.onkeyup = main_handler.KeyPress;
 
@@ -264,7 +266,7 @@ function Initialize3dButtons(){
     $('#label_buttons_drawing').append(html_str);
     $( "#add_box" ).on("click", function() { add_box_internal();} );
     $( "#add_plane" ).on("click", function() { add_plane();} );
-    $( "#remove" ).on("click", function() { main_threed_handler.EditBubbleDeleteButton(); main_threed_handler.DeleteButton();});
+    $( "#remove" ).on("click", function() { main_threed_handler.EditBubbleDeleteButton();});
 }
 
 // Initialize the segmentation tool. This function is called when the field

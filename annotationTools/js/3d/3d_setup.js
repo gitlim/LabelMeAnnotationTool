@@ -38,7 +38,8 @@ function init(){
         console.log(e);
     }
 
-    document.addEventListener( 'mousedown', makeDoubleClick(onDocumentDoubleClick, onDocumentMouseDown), false );
+    //document.addEventListener( 'mousedown', makeDoubleClick(onDocumentDoubleClick, onDocumentMouseDown), false );
+    document.addEventListener( 'mousedown', onDocumentMouseDown, false );
     document.addEventListener( 'mouseup', onDocumentMouseUp, false );
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
@@ -72,7 +73,7 @@ function createWorld() {// split into different parts for 3d and gp later
     }
     // This section is for drawing the groundplane, arguments are how plane is divided
     var plane_geometry = new THREE.PlaneGeometry(20, 20, 40, 40);
-    var gp_plane_geometry = new THREE.PlaneGeometry(2, 2, 40, 40);
+    var gp_plane_geometry = new THREE.PlaneGeometry(20, 20, 40, 40);
     var vert_plane_geometry = new THREE.PlaneGeometry(2, 2, 40, 40);
     var plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var vert_plane_material = new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide, wireframe: true});
@@ -93,7 +94,7 @@ function createWorld() {// split into different parts for 3d and gp later
     empty_plane.matrixAutoUpdate = false;
     plane_object = new THREE.Object3D();
     plane_object.add(vert_plane);
-    plane_object.rotation.z = Math.PI/2;
+    //plane_object.rotation.z = Math.PI/2;
 
     // Add Z-direction guide line
     var line_material = new THREE.LineBasicMaterial({color: 0x0000ff});
@@ -120,18 +121,16 @@ function createWorld() {// split into different parts for 3d and gp later
     }
 
     scene.add(plane);
-    scene.add(gp_plane);
+    //scene.add(gp_plane);
     scene.add(empty_plane);
     scene.add(plane_object);
-
 // 3D box related
     window.select = plane; //initializing the first selected object to be the plane
     plane.material.visible = false;
     vert_plane.material.visible = false;
-    window.select.parent = scene;
-  // Initializing arrowhelper
     initialize_cube_indicators();
-    
+    //window.select.parent = scene;
+  // Initializing arrowhelper
 }
 
 function setupRay(event){

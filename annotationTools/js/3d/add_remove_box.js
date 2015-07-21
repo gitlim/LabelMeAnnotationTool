@@ -66,7 +66,7 @@ function remove_box_internal(object) {//change to remove_object_internal to supp
 function add_plane(){
     var numItems = $(LM_xml).children('annotation').children('object').length;
     threed_anno = new annotation(numItems);
-    threed_anno.SetType(3);
+    threed_anno.SetType(2);
     object_list.push(new object_instance);
     mkThreeDPopup(1, 1);
     window.select = object_list[object_list.length-1];//window.select is now the new object
@@ -74,10 +74,11 @@ function add_plane(){
     ID_dict[window.select.ID] = window.select;
     var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var new_plane_geometry = new THREE.PlaneGeometry(20, 20, 40, 40);
-    var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material);
+    var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
     new_plane.matrixWorld = gp_plane.matrixWorld.clone();
     new_plane.material.visible = true;
     window.select.plane = new_plane;
     scene.add(new_plane);
+    render();
 }
 

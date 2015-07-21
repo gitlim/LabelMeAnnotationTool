@@ -7,6 +7,7 @@ var current_mode;
 var pass_val;
 var proportion_array = [];
 
+
 var job_startTime;
 var job_endTime;
 
@@ -102,3 +103,4 @@ var selected_line_id;
 var lineOn = false;
 var original_number_of_lines = 0;
 
+var hover_object;

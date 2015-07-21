@@ -80,7 +80,7 @@ function init_kinetic_stage() {
 
 }
 
-function gp_drag(e) {
+/*function gp_drag(e) {
     var gp_line = e.targetNode;
     var projector = new THREE.Projector();
     var mouse3D = projector.unprojectVector(new THREE.Vector3( ( gp_line.x()/ renderer.domElement.width ) * 2 - 1, - ( gp_line.y() / renderer.domElement.height ) * 2 + 1, 1 ), camera );
@@ -101,8 +101,8 @@ function gp_drag(e) {
         }
     }
     guide_box.lines[gp_line.gp_id].visible=hitAny;
-}
-function add_gp_circle(gp_id) {
+}*/
+/*function add_gp_circle(gp_id) {
     var circle = new Kinetic.Circle({//this is the draggable point
                     x: 350+(gp_id+1-(gp_id%2))*35*Math.pow(-1,gp_id),
                     y: document.getElementById("im").height-10,
@@ -115,7 +115,12 @@ function add_gp_circle(gp_id) {
     pt_layer.add(circle);
 
     return circle;
+}*/
+
+function add_horizon_line(){
+
 }
+
 
 function dist2(a, b) {//distances squared between two vp_s
     return Math.pow(a.x2d-b.x2d,2) + Math.pow(a.y2d-b.y2d,2);
@@ -164,6 +169,7 @@ function point_drag() {
     });
 
     update_plane();
+    main_threed_handler.PlaneAutoSave();
 }
 
 /*function highlight_line(){
@@ -348,6 +354,7 @@ function changeLineType(){
     }
     stage.draw();
     update_plane();
+    main_threed_handler.PlaneAutoSave();
 }
 
 
@@ -484,7 +491,7 @@ function update_plane() {
     K[10] = -axis_z[2];
     K[11] = 0;
     K[12] = -(axis_x[0]+axis_y[0]) + (op_x - init_width/2)/f;
-    K[13] = (axis_x[1]+axis_y[1]) -(op_y - init_height/2)/f;
+    K[13] = (axis_x[1]+axis_y[1]) - (op_y - init_height/2)/f;
     K[14] = (axis_x[2]+axis_y[2]) -1;
     K[15] = 1;
 
@@ -493,7 +500,7 @@ function update_plane() {
     console.log(op_x, op_y);
 
     // now find guide line location and update circles
-    for (var i = 0; i < guide_box.lines.length; i++) {
+    /*for (var i = 0; i < guide_box.lines.length; i++) {
     if (typeof gp[i] === 'undefined') {
         gp[i] = add_gp_circle(i);
         stage.draw();
@@ -501,12 +508,12 @@ function update_plane() {
     var e = new VP();
     e.targetNode = gp[i];
     gp_drag(e);
-    }
+    }*/
 }
 
 function load_vp(vp_out){
-    var scale_factor_x = document.getElementById('im').width / document.getElementById('im').naturalWidth;
-    var scale_factor_y = document.getElementById("im").height / document.getElementById('im').naturalHeight;
+    scale_factor_x = document.getElementById('im').width / document.getElementById('im').naturalWidth;
+    scale_factor_y = document.getElementById("im").height / document.getElementById('im').naturalHeight;
     if ((!vp_out) || vp_out.split("\n").length < 5){
         for (var i = 0; i < 4; i++) {
             vp_s[i] = new VP_s();
@@ -594,6 +601,7 @@ function addVPline(id, layer) {
     if (vp_label[id] != 0){
         addVPCircles(id, layer);
     }
+    if (window.select) main_threed_handler.PlaneAutoSave();
 }
 
 function addVPCircles(id, layer){
@@ -674,8 +682,11 @@ function addVPCircles(id, layer){
 
 
 function rerender_plane(K) {//where K is the new matrix after vanishing point recalculation
-    if (window.select != plane) var selected_plane = window.select.plane
-    else var selected_plane = plane;
+    if (hover_object){//when hovering ofer a link is going on;
+        selected_plane = hover_object.plane;
+    }else{
+        selected_plane = window.select.plane;
+    }
     camera.matrixAutoUpdate=false;
     selected_plane.matrixAutoUpdate=false;
     selected_plane.matrixWorld.elements= K;// setting selected_plane to camera transformation
@@ -749,9 +760,10 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
     var theCanvas = document.getElementById("cnvs"); //setting up the camera so that it is using the canvas parameters
     camera = new THREE.PerspectiveCamera(Math.atan(theCanvas.height/f/2)/Math.PI*180*2, theCanvas.width/theCanvas.height, .01, 20000);
     camera.position.z = 0;
-    selected_plane.material.visible = false;
+    selected_plane.material.visible = true;
 
     renderer.render(scene, camera);
+
 }
 
 /*function checkTwoLines(index){

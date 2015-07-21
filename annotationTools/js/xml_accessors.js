@@ -88,7 +88,6 @@ function LMgetObjectField(xml,ind_object, name, frame) {
 		corners[2] = parseInt(obj[0].getElementsByTagName("segm")[0].getElementsByTagName("scribbles")[0].getElementsByTagName("xmax")[0].firstChild.nodeValue);
 		corners[3] = parseInt(obj[0].getElementsByTagName("segm")[0].getElementsByTagName("scribbles")[0].getElementsByTagName("ymax")[0].firstChild.nodeValue);
 		return corners;
-	
 	}
 	if (name == 'bboxcorners'){
 		var corners = new Array(4);
@@ -97,7 +96,31 @@ function LMgetObjectField(xml,ind_object, name, frame) {
       	corners[2] = parseInt (obj[0].getElementsByTagName("segm")[0].getElementsByTagName("box")[0].getElementsByTagName("xmax")[0].firstChild.nodeValue);
       	corners[3] = parseInt (obj[0].getElementsByTagName("segm")[0].getElementsByTagName("box")[0].getElementsByTagName("ymax")[0].firstChild.nodeValue);
       	return corners;	
-  
+	}
+	if (name == 'plane_matrix'){
+		if (obj.children('plane').children('plane_matrix').length > 0){
+			var K = new Array(16);
+			K = obj.children('plane').children('plane_matrix').text().match(/[\S]+/g);
+			for (var i = 0; i < K.length; i++){
+				K[i] = parseFloat(K[i]);
+			}
+		}
+		return K;
+	}
+	if (name == 'lines'){
+		var lines = new Array();
+		for (var i = 0; i < obj.children('plane').children('lines').find('vp_line').length; i++){
+			for (var j = 0; j < 5; j++){
+				lines.push(parseFloat(obj.children('plane').children('lines').find('vp_line')[i].children[j].firstChild.nodeValue));
+			}
+		}
+		return lines;
+	}
+	if (name == 'focal_length'){
+		if (obj.children('plane').children('focal_length').length > 0){
+			var f = parseFloat(obj.children('plane').children('focal_length').text());
+		}
+		return f;
 	}
 	return null;
 
@@ -135,7 +158,15 @@ function LMsetObjectField(xml, ind_object, name, value){
 			}			   	
 		}
 	}
-
+	if (name == 'plane_matrix' || name == 'focal_length'){
+		if (obj.children("plane").children(name).length > 0){
+			obj.children("plane").children(name).text(value);
+		}
+	}
+	if (name == 'lines'){
+		obj.children("plane").children(name).empty();
+		obj.children("plane").children(name).append(value);
+	}
 }
 
 

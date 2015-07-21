@@ -10,6 +10,7 @@ var IsHidingAllPolygons = false;
 // This function creates and populates the list 
 function RenderObjectList() {
   // If object list has been rendered, then remove it:
+  console.log("Rendering object list");
   if($('#anno_list').length) {
     $('#anno_list').remove();
   }
@@ -17,6 +18,7 @@ function RenderObjectList() {
   var html_str = '<div class="object_list" id="anno_list" style="border:0px solid black;z-index:0;" ondrop="drop(event, -1)" ondragenter="return dragEnter(event)" ondragover="return dragOver(event)">';
   
   var Npolygons = LMnumberOfObjects(LM_xml);
+  console.log(Npolygons);
   var NundeletedPolygons = 0;
 
   // Count undeleted objects:
