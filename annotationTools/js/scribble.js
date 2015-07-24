@@ -621,7 +621,8 @@ function scribble_canvas(tag) {
     html_str+='style="position:absolute;left:0px;top:0px;z-index:1;width:100%;height:100%;background-color:rgba(128,64,0,0);">';
     html_str+='</div>';
     $('#'+this.tagcanvasDiv).append(html_str);
-    $(document).ready(function() {scribble_canvas.prepareDrawingCanvas();});
+    scribble_canvas.prepareDrawingCanvas();
+    // $("canvasDiv").ready(function() {scribble_canvas.prepareDrawingCanvas();});
   };
 
   // Creates the canvas where the scribbles will be drawn.  

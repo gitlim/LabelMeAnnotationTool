@@ -3,9 +3,15 @@ function HighlightSelectedThreeDObject() {//now really only highlighting
         if (object_list[i].cube) changeColor(object_list[i].cube, 0xffffff);
         object_list[i].plane.material.visible = false;
     }
-    if ((window.select) && window.select.ID != 0) {
-        if (window.select.cube) changeColor(window.select.cube, 0xffff00);
-        else window.select.plane.material.visible = true;
+    if (window.select) {
+        console.log("highlight");
+        if (window.select.cube){
+            changeColor(window.select.cube, 0xffff00);
+            window.select.cube.traverse( function ( object ) { object.visible = true; } );
+        }
+        else{
+            window.select.plane.material.visible = true;
+        }
         if (window.select.hparent != "unassigned"){
             window.select.plane.material.visible = true;
         }

@@ -207,11 +207,13 @@ function HTMLobjectBox(obj_name) {
   if (obj_name=='') {
     // If press enter, then submit; if press ESC, then delete:
     if (video_mode) html_str += 'main_media.SubmitObject();if(c==27) main_handler.WhatIsThisObjectDeleteButton();" ';
+    else if (window.select) html_str += 'main_threed_handler.SubmitQuery();if(c==27) main_handler.EditBubbleDeleteButton();" ';
     else html_str += 'main_handler.SubmitQuery();if(c==27)main_handler.WhatIsThisObjectDeleteButton();" ';
   }
   else {
     // If press enter, then submit:
     if (video_mode) html_str += 'main_media.SubmitEditObject();" ';
+    else if (window.select) html_str += 'main_threed_handler.SubmitQuery();if(c==27) main_handler.EditBubbleDeleteButton();" ';
     else html_str += 'main_handler.SubmitEditLabel();" ';
   }
   

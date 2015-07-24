@@ -7,10 +7,10 @@ function add_box_internal() {
     threed_anno = new annotation(numItems);
     threed_anno.SetType(3);
     object_list.push(new object_instance);
-    mkThreeDPopup(1, 1);
     window.select = object_list[object_list.length-1];//window.select is now the new object
     window.select.ID = numItems; // making the 3d objects ID in sync with LabelMe system
     ID_dict[window.select.ID] = window.select;
+    mkThreeDPopup(1, 1);
     var sp_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var sp_plane_geometry = new THREE.PlaneGeometry(20, 20, 40, 40);
     sp_plane = new THREE.Mesh(sp_plane_geometry, sp_plane_material);
@@ -41,7 +41,7 @@ function clone_box(){
     removeOn = true;
 }*/
 
-function remove_box_internal(object) {//change to remove_object_internal to support planes
+function remove_object_internal(object) {//change to remove_object_internal to support planes
     console.log(object.ID);
     if (object.hparent != "unassigned" && object.hparent != gp_plane){
         var index = object.hparent.hchildren.indexOf(window.select);
@@ -50,16 +50,18 @@ function remove_box_internal(object) {//change to remove_object_internal to supp
     if (object.parent == scene) {
         Apprise('You cannot remove the groundplane', okAlert);
         return;
-    } else if (object.plane == plane || object.plane == gp_plane) {
-        plane.remove(object.cube);
     } else {
         scene.remove(object.plane);
+    }
+    for (var i = 0; i < object.hchildren.length; i++){
+        object.hchildren[i].hparent = "unassigned";
     }
     object_list.splice(object_list.indexOf(object),1);
     window.select = null;
     toggle_cube_resize_arrows(false);
     toggle_cube_rotate_indicators(false);
     toggle_cube_move_indicators(false);
+    main_threed_handler.GotoFirstAnnoObject();
     render();
 }
 
@@ -68,10 +70,10 @@ function add_plane(){
     threed_anno = new annotation(numItems);
     threed_anno.SetType(2);
     object_list.push(new object_instance);
-    mkThreeDPopup(1, 1);
     window.select = object_list[object_list.length-1];//window.select is now the new object
     window.select.ID = numItems; // making the 3d objects ID in sync with LabelMe system
     ID_dict[window.select.ID] = window.select;
+    mkThreeDPopup(1, 1);
     var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var new_plane_geometry = new THREE.PlaneGeometry(20, 20, 40, 40);
     var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());

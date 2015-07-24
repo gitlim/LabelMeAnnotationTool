@@ -63,16 +63,20 @@ function canvas(div_attach) {
     }
   };
 
-  /* Render all attached annotations: */
+  /* Render all attached annotations: except for threed ones*/
   this.RenderAnnotations = function () {
     // Loop through all of the annotations and clear them from the canvas.
     for(var i=0;i<this.annotations.length;i++) {
-      this.annotations[i].DeletePolygon();
+      var anno_type = this.annotations[i].GetType();
+      if (anno_type != 2 && anno_type != 3){
+        this.annotations[i].DeletePolygon();
+      }
     }
 
     // Render the annotations:
     for(var pp=0; pp < this.annotations.length; pp++) {
-      if(!this.annotations[pp].hidden) {
+      var anno_type = this.annotations[pp].GetType();
+      if(!this.annotations[pp].hidden && anno_type != 2 && anno_type != 3) {
 	this.annotations[pp].RenderAnnotation('rest');
       }
     }
@@ -82,5 +86,10 @@ function canvas(div_attach) {
     for (var i = 0; i < this.annotations.length; i++) if (this.annotations[i].anno_id == id) anid = i;
     return anid;
   };
-  
+
+  this.GetAnnoByID = function(id){
+    var anno;
+    for (var i = 0; i < this.annotations.length; i++) if (this.annotations[i].anno_id == id) anno = this.annotations[i];
+      return anno;
+  }
 }

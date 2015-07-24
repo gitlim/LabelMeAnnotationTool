@@ -32,7 +32,7 @@ function init_kinetic_stage() {
     init_height = document.getElementById("im").height;
     scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
 
-    document.addEventListener( 'keydown', onDocumentKeyDown, false );
+    //document.addEventListener( 'keydown', onDocumentKeyDown, false );
 
     stage = new Kinetic.Stage({
     container: 'container',
@@ -58,6 +58,7 @@ function init_kinetic_stage() {
     pt_layer = new Kinetic.Layer();
 
     var circle = new Kinetic.Circle({//this is the draggable point
+    name: "op_circle",
     x: 500*scale_factor,
     y: 500*scale_factor,
     radius: 8,
@@ -131,6 +132,7 @@ function op_drag(e) {
     op_x = e.targetNode.x();
     op_y = e.targetNode.y();
     console.log(op_x, op_y);
+    main_threed_handler.PlaneAutoSave();
     update_plane();
 }
 
@@ -429,7 +431,7 @@ function update_plane() {
         vi.y2d = vp1.y2d + u * (vp2.y2d - vp1.y2d);
 
         //f = Math.sqrt(Math.pow(((cx - vp[0].x2d)*(vp[1].x2d - cx)), 2) + Math.pow(((cy - vp[0].y2d)*(vp[1].y2d - cy)), 2));
-        f = Math.sqrt(Math.sqrt(dist2(vi, vp1)) * Math.sqrt(dist2(vi, vp2)));//this is the focal distance / this is actually OcVi
+        if (window.select.ID == groundplane_id) f = Math.sqrt(Math.sqrt(dist2(vi, vp1)) * Math.sqrt(dist2(vi, vp2)));//this is the focal distance / this is actually OcVi
 
         // rotation / translation/extrinsic
         axis_x = vec3.create();
@@ -461,7 +463,7 @@ function update_plane() {
         vi.y2d = vp[0].y2d + u * (vp[1].y2d - vp[0].y2d);
 
         //f = Math.sqrt(Math.pow(((cx - vp[0].x2d)*(vp[1].x2d - cx)), 2) + Math.pow(((cy - vp[0].y2d)*(vp[1].y2d - cy)), 2));
-        f = Math.sqrt(Math.sqrt(dist2(vi, vp[0])) * Math.sqrt(dist2(vi, vp[1])));//this is the focal distance / this is actually OcVi
+        if (window.select.ID == groundplane_id) f = Math.sqrt(Math.sqrt(dist2(vi, vp[0])) * Math.sqrt(dist2(vi, vp[1])));//this is the focal distance / this is actually OcVi
 
         // rotation / translation/extrinsic
         axis_x = vec3.create();
@@ -682,7 +684,7 @@ function addVPCircles(id, layer){
 
 
 function rerender_plane(K) {//where K is the new matrix after vanishing point recalculation
-    if (hover_object){//when hovering ofer a link is going on;
+    if (hover_object && !(hover_object.cube)){//when hovering ofer a link is going on;
         selected_plane = hover_object.plane;
     }else{
         selected_plane = window.select.plane;

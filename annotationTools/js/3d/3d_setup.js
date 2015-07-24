@@ -46,7 +46,7 @@ function init(){
     $("#GP").on("click", function() { buttonClicked(this); } );
 
 
-    document.addEventListener('keydown', onDocumentKeyDown, false);
+    //document.addEventListener('keydown', onDocumentKeyDown, false);
 
     $("#container").css('display', 'none');
     $("#cnvs").css('display', 'none');
@@ -134,8 +134,8 @@ function createWorld() {// split into different parts for 3d and gp later
 }
 
 function setupRay(event){
-    var rect = document.getElementById("im").getBoundingClientRect();
-    var scale_factor = document.getElementById('im').width / rect.width;
+    var rect = document.getElementById("main_media").getBoundingClientRect();
+    var scale_factor = main_media.browser_im_ratio/main_media.im_ratio;
     var projector = new THREE.Projector();
     var mouse3D = projector.unprojectVector(new THREE.Vector3( ( (event.clientX -rect.left)*scale_factor/ renderer.domElement.width ) * 2 - 1, - ( (event.clientY-rect.top)*scale_factor / renderer.domElement.height ) * 2 + 1, 1 ), camera );
     var direction = mouse3D.sub(camera.position).normalize();
@@ -170,6 +170,13 @@ function render() {
             plane_object.position.setY(window.select.cube.position.clone().applyMatrix4(window.select.plane.matrixWorld).y);
             plane_object.position.setZ(window.select.cube.position.clone().applyMatrix4(window.select.plane.matrixWorld).z);
         }
+        toggle_cube_resize_arrows(true);
+        toggle_cube_move_indicators(true);
+        toggle_cube_rotate_indicators(true);
+    }else{
+        toggle_cube_resize_arrows(false);
+        toggle_cube_move_indicators(false);
+        toggle_cube_rotate_indicators(false);
     }
     renderer.render(scene, camera);
 }
@@ -190,28 +197,30 @@ function check_plane_box_collision(object) {
     var eps = 0.0001;
     var raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3());
 
-    if (object_list.length && object.hparent != gp_plane) {
+    if (object_list.length) {
         for (var i = 0; i < object_list.length; i++) {
-            if (object_list[i].plane == object.plane || object_list[i].cube.visible == false){
+            if (object_list[i].plane == object.plane || ((object_list[i].cube) && object_list[i].cube.visible == false)){
                 continue;
             }
-            vert = object_list[i].cube.children[0].geometry.vertices;
-            for (var j = 0; j < pts0.length; j++) {
-                var vert0 = vert[pts0[j]].clone().applyMatrix4(object_list[i].cube.matrixWorld);
-                var vert1 = vert[pts1[j]].clone().applyMatrix4(object_list[i].cube.matrixWorld);
-                var direction = new THREE.Vector3().subVectors(vert1, vert0);
-                var direction_len = direction.length();
-                raycaster.set(vert0.clone(), direction);
-                intersects = raycaster.intersectObject(object.plane, false);
-                if (intersects.length) {
-                    for (var k = 0; k < intersects.length; k++) {
-                        var vec_len = new THREE.Vector3().subVectors(intersects[k].point, vert0).length();
-                        if (vec_len > direction_len + eps){
-                            continue;
+            if (object_list[i].cube){
+                vert = object_list[i].cube.children[0].geometry.vertices;
+                for (var j = 0; j < pts0.length; j++) {
+                    var vert0 = vert[pts0[j]].clone().applyMatrix4(object_list[i].cube.matrixWorld);
+                    var vert1 = vert[pts1[j]].clone().applyMatrix4(object_list[i].cube.matrixWorld);
+                    var direction = new THREE.Vector3().subVectors(vert1, vert0);
+                    var direction_len = direction.length();
+                    raycaster.set(vert0.clone(), direction);
+                    intersects = raycaster.intersectObject(object.plane, false);
+                    if (intersects.length) {
+                        for (var k = 0; k < intersects.length; k++) {
+                            var vec_len = new THREE.Vector3().subVectors(intersects[k].point, vert0).length();
+                            if (vec_len > direction_len + eps){
+                                continue;
+                            }
+                            var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
+                            cube.position.set(intersects[k].point.x,intersects[k].point.y,intersects[k].point.z);
+                            intersect_box.add(cube);
                         }
-                        var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
-                        cube.position.set(intersects[k].point.x,intersects[k].point.y,intersects[k].point.z);
-                        intersect_box.add(cube);
                     }
                 }
             }

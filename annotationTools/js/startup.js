@@ -241,6 +241,7 @@ function FinishStartup() {
   }
   if (threed_mode){
       main_threed_handler.CreateGroundplane();
+      drawing_mode = 2;
   }
   // Set action when the user presses a key:
   document.onkeyup = main_handler.KeyPress;
@@ -261,7 +262,7 @@ function Initialize3dButtons(){
         <button id="add_box" type="button" name="add" value="Add" onclick = "SetDrawingMode(2);">Add Box</button> \
         <button id = "add_plane" type = "submit" name = "height" onclick = "SetDrawingMode(2);" >Add Plane</button> \
         <button id="remove" type="button" name="remove" value="Remove" onclick = "SetDrawingMode(2);">Delete</button> \
-        <button id = "clone" type = "submit" name = "clone" onclick = "clone_box(); SetDrawingMode(2);">Clone</button> \
+        <!--<button id = "clone" type = "submit" name = "clone" onclick = "clone_box(); SetDrawingMode(2);">Clone</button>--> \
     </div>';
     $('#label_buttons_drawing').append(html_str);
     $( "#add_box" ).on("click", function() { add_box_internal();} );
@@ -342,6 +343,8 @@ function SetDrawingMode(mode){
           scribble_canvas.cleanscribbles();
           scribble_canvas.CloseCanvas();
         }
+        window.select = null;
+        if (view_ObjList) RenderObjectList();
     }
     if (mode == 1) {
         $("#container").css('display', 'none');
@@ -353,6 +356,8 @@ function SetDrawingMode(mode){
     document.getElementById("segmDiv").setAttribute('style', 'border-color: #f00');
     document.getElementById("polygonDiv").setAttribute('style', 'border-color: #000');
     scribble_canvas.startSegmentationMode();
+    window.select = null;
+    if (view_ObjList) RenderObjectList();
     }
     if (mode == 2){
       $("#container").css('display', 'block');

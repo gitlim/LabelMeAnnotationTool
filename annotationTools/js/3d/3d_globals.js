@@ -104,3 +104,4 @@ var lineOn = false;
 var original_number_of_lines = 0;
 
 var hover_object;
+var groundplane_id;

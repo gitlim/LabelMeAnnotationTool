@@ -87,7 +87,8 @@ function RenderObjectList() {
 	// if it is a part, use part style
 	html_str += '<li class="children_tree">';
       }
-      if (main_canvas.annotations[ii].GetType() == 2 || main_canvas.annotations[ii].GetType() == 3){
+      console.log(ii);
+      if ($(LM_xml).children("annotation").children("object").eq(ii).children("plane").length > 0 || $(LM_xml).children("annotation").children("object").eq(ii).children("cube").length > 0){
         html_str += '<a class="objectListLink"  id="Link' + ii + '" '+
       'href="javascript:main_threed_handler.AnnotationLinkClick('+ii+');" '+
       'onmouseover="main_threed_handler.AnnotationLinkMouseOver('+ii+');" ' +
@@ -164,7 +165,8 @@ function ChangeLinkColorFG(idx) {
 
   // If we're hiding all polygons, then render polygon on canvas:
   if(IsHidingAllPolygons && main_canvas.annotations[idx].hidden) {
-    main_canvas.annotations[idx].DrawPolygon(main_media.GetImRatio(), LMgetObjectField(LM_xml,idx,'x'), LMgetObjectField(LM_xml,idx,'y'));
+    //main_canvas.annotations[idx].DrawPolygon(main_media.GetImRatio(), LMgetObjectField(LM_xml,idx,'x'), LMgetObjectField(LM_xml,idx,'y'));
+    main_canvas.annotations[idx].RenderAnnotation('rest');
   }
 }
 
@@ -234,7 +236,9 @@ function drop(event, object_id) {
   // modify part structure
   if(object_id!=part_id) {
     addPart(object_id, part_id);
-    
+  if (threed_mode){
+    main_threed_handler.AssignSupportPlane(part_id, object_id);
+  }
     // redraw object list
     RenderObjectList();
   }

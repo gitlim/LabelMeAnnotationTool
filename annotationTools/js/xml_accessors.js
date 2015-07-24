@@ -9,6 +9,7 @@
 */
 function LMgetObjectField(xml,ind_object, name, frame) {
 	var obj = $(xml).children("annotation").children("object").eq(ind_object);
+	console.log(ind_object);
 	if (obj.length == 0) return "";
 	if (name == 'name' ||  name == 'attributes' || name == 'occluded'){
 		if (!obj.children(name).length > 0) return "";
@@ -91,10 +92,10 @@ function LMgetObjectField(xml,ind_object, name, frame) {
 	}
 	if (name == 'bboxcorners'){
 		var corners = new Array(4);
-		corners[0] = parseInt (obj[0].getElementsByTagName("segm")[0].getElementsByTagName("box")[0].getElementsByTagName("xmin")[0].firstChild.nodeValue);
-      	corners[1] = parseInt (obj[0].getElementsByTagName("segm")[0].getElementsByTagName("box")[0].getElementsByTagName("ymin")[0].firstChild.nodeValue);
-      	corners[2] = parseInt (obj[0].getElementsByTagName("segm")[0].getElementsByTagName("box")[0].getElementsByTagName("xmax")[0].firstChild.nodeValue);
-      	corners[3] = parseInt (obj[0].getElementsByTagName("segm")[0].getElementsByTagName("box")[0].getElementsByTagName("ymax")[0].firstChild.nodeValue);
+		corners[0] = parseInt(obj.find("segm").find("box").find("xmin")[0].firstChild.nodeValue);
+      	corners[1] = parseInt(obj.find("segm").find("box").find("ymin")[0].firstChild.nodeValue);
+      	corners[2] = parseInt(obj.find("segm").find("box").find("xmax")[0].firstChild.nodeValue);
+      	corners[3] = parseInt(obj.find("segm").find("box").find("ymax")[0].firstChild.nodeValue);
       	return corners;	
 	}
 	if (name == 'plane_matrix'){
@@ -121,6 +122,16 @@ function LMgetObjectField(xml,ind_object, name, frame) {
 			var f = parseFloat(obj.children('plane').children('focal_length').text());
 		}
 		return f;
+	}
+	if (name == 'op_points'){
+		if (obj.children('plane').children('op_points').length > 0){
+			var op_points = new Array(2);
+			op_points = obj.children('plane').children('op_points').text().match(/[\S]+/g);
+			for (var i = 0; i < op_points.length; i++){
+				op_points[i] = parseFloat(op_points[i]);
+			}
+		}
+		return op_points;
 	}
 	return null;
 
@@ -158,7 +169,7 @@ function LMsetObjectField(xml, ind_object, name, value){
 			}			   	
 		}
 	}
-	if (name == 'plane_matrix' || name == 'focal_length'){
+	if (name == 'plane_matrix' || name == 'focal_length' || 'op_points'){
 		if (obj.children("plane").children(name).length > 0){
 			obj.children("plane").children(name).text(value);
 		}
@@ -166,6 +177,11 @@ function LMsetObjectField(xml, ind_object, name, value){
 	if (name == 'lines'){
 		obj.children("plane").children(name).empty();
 		obj.children("plane").children(name).append(value);
+	}
+	if (name == 'cube_matrix' || name == 'cube_position' || name == 'cube_rotation' || name == 'cube_scale'){
+		if (obj.children("cube").children(name).length > 0){
+			obj.children("cube").children(name).text(value);
+		}
 	}
 }
 

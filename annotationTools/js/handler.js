@@ -159,7 +159,7 @@ function handler() {
 					selected_poly = a;
 				} 
 				else if(active_canvas!=SELECTED_CANVAS) selectObject(a);
-				oVP.HighLightFrames(LMgetObjectField(LM_xml, a, 't'), LMgetObjectField(LM_xml, a, 'userlabeled'));
+				if (video_mode) oVP.HighLightFrames(LMgetObjectField(LM_xml, a, 't'), LMgetObjectField(LM_xml, a, 'userlabeled'));
 		};
 		
 		// Handles when the user moves the mouse away from an annotation link.

@@ -183,8 +183,8 @@ function onDocumentMouseMove(event) {
             var resize_dot = ((resize_x1 - resize_x0)*resize_vx + (resize_y1 - resize_y0)*resize_vy)*0.3;
             resize_x0 = resize_x1;
             resize_y0 = resize_y1;
-            window.select.cube.scale.set(resize_scale0.x+resize_dot*small_w*Math.abs(resize_dir.x), resize_scale0.y+resize_dot*small_h*Math.abs(resize_dir.y), resize_scale0.z-resize_dot*small_d*resize_dir.z);
-            if (resize_dir.x < 0){
+            window.select.cube.scale.set(resize_scale0.x-resize_dot*small_w*Math.abs(resize_dir.x), resize_scale0.y-resize_dot*small_h*Math.abs(resize_dir.y), resize_scale0.z-resize_dot*small_d*resize_dir.z);
+            /*if (resize_dir.x < 0){
                 window.select.cube.position.x = resize_pos0.x - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.cos(window.select.cube.rotation.z) + small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.sin(window.select.cube.rotation.z);
                 window.select.cube.position.y = resize_pos0.y - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.sin(window.select.cube.rotation.z) - small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.cos(window.select.cube.rotation.z);
             }
@@ -197,6 +197,14 @@ function onDocumentMouseMove(event) {
                 window.select.cube.position.y = resize_pos0.y - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.sin(window.select.cube.rotation.z) - small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.cos(window.select.cube.rotation.z);
             }
             else if (resize_dir.y > 0 ){
+                window.select.cube.position.x = resize_pos0.x + small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.cos(window.select.cube.rotation.z) - small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.sin(window.select.cube.rotation.z);
+                window.select.cube.position.y = resize_pos0.y + small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.sin(window.select.cube.rotation.z) + small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.cos(window.select.cube.rotation.z);
+            }*/
+            if (resize_dir.x > 0 || resize_dir.y > 0){
+                window.select.cube.position.x = resize_pos0.x - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.cos(window.select.cube.rotation.z) + small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.sin(window.select.cube.rotation.z);
+                window.select.cube.position.y = resize_pos0.y - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.sin(window.select.cube.rotation.z) - small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.cos(window.select.cube.rotation.z);
+            }
+            else if (resize_dir.x < 0 || resize_dir.y < 0){
                 window.select.cube.position.x = resize_pos0.x + small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.cos(window.select.cube.rotation.z) - small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.sin(window.select.cube.rotation.z);
                 window.select.cube.position.y = resize_pos0.y + small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.sin(window.select.cube.rotation.z) + small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.cos(window.select.cube.rotation.z);
             }
@@ -277,7 +285,7 @@ function onDocumentMouseMove(event) {
                     //var z_holder = window.select.cube.position.z;
                     window.select.cube.position.copy(cube_original.clone().add(a[i].point.sub(click_original)))
                 }
-                if (window.select.hparent != "unassigned"){
+                /*if (window.select.hparent != "unassigned"){
                     diagonal = Math.sqrt(Math.pow(window.select.cube.scale.x*small_w/2, 2) + Math.pow(window.select.cube.scale.y*small_d/2, 2));
                     if (Math.tan(window.select.cube.rotation.z) >= 0 && Math.cos(window.select.cube.rotation.z) >= 0){//only working from -pi/2 to +pi/2
                         if (window.select.cube.position.x + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 1){
@@ -311,7 +319,7 @@ function onDocumentMouseMove(event) {
                             window.select.cube.position.setY(1 + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
                         }
                     }
-                }
+                }*/
                 render();
             }
         }
@@ -322,6 +330,9 @@ function onDocumentMouseUp(event) {
     plane_indicator_on = false;
     rotate_indicator_on = false;
     var anyRerendering = false;
+    if (current_mode == BOX_MOVE_MODE || current_mode == RESIZE_MODE){
+        main_threed_handler.BoxAutoSave();
+    }
     current_mode = 0;
     if (typeof plane_cube != "undefined"){
         plane_cube.material.color.setHex(0xff0000);

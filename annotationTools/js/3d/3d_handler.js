@@ -69,6 +69,7 @@ function threed_handler(){
 				html_str += '</vp_line>';
 			}
 			html_str += '</lines>';
+			html_str += '<op_points>' + op_x + ' ' + op_y + ' ' + '</op_points>';
 			html_str += '<plane_matrix>';
 			for (var i = 0; i < K.length; i++){
 				html_str += K[i] + ' ';
@@ -80,12 +81,25 @@ function threed_handler(){
 			$(LM_xml).children("annotation").append($(html_str));
 
 		}else {//for cubes
-			html_str += '<type>'
+			var scale = '';
+			var position = '';
+			html_str += '<type>';
 			html_str += 'box';
-			html_str += '</type>'
-			html_str += '<polygon>';
-			html_str += '<username>' + username + '</username>';
-			html_str += '</polygon>';
+			html_str += '</type>';
+			html_str += '<cube>';
+			html_str += '<cube_matrix>';
+			for (var i = 0; i < window.select.cube.matrixWorld.elements.length; i++){
+				html_str += window.select.cube.matrixWorld.elements[i] + ' ';
+			}
+			html_str += '</cube_matrix>';
+			html_str += '<cube_position>';
+			var position_vector = new THREE.Vector3(0, 0, 0).applyMatrix4(window.select.cube.matrixWorld.clone());
+			var position = position_vector.x + ' ' + position_vector.y + ' ' + position_vector.z;
+			html_str += position + '</cube_position>';
+			html_str += '<cube_rotation>' + window.select.cube.rotation.z + '</cube_rotation>';
+			var scale = window.select.cube.scale.x*small_w + ' ' + window.select.cube.scale.y*small_w + ' ' + window.select.cube.scale.z*small_w;
+			html_str += '<cube_scale>' + scale + '</cube_scale>';
+			html_str += '</cube>';
 			html_str += '</object>';
 			$(LM_xml).children("annotation").append($(html_str));
 		}
@@ -122,13 +136,20 @@ function threed_handler(){
 
 	};
 
-	this.ThreeDToBack = function(){
-
+	this.GotoFirstAnnoObject = function(){
+		var anno_type = main_canvas.annotations[0].GetType();
+		if (anno_type == 2 || anno_type == 3){
+			this.SelectObject(0);
+		}else{
+			SetPolygonDrawingMode(false);
+		}
 	};
 
 	this.DeleteButton = function(){
-		remove_box_internal(ID_dict[threed_anno.GetAnnoID()]);
+		remove_object_internal(ID_dict[threed_anno.GetAnnoID()]);
 		var idx = threed_anno.GetAnnoID();
+
+		main_canvas.DetachAnnotation(idx)
 
 		if((IsUserAnonymous() || (!IsCreator(LMgetObjectField(LM_xml, idx, 'username')))) && (!IsUserAdmin()) && (idx<num_orig_anno) && !action_DeleteExistingObjects) {
 				alert('You do not have permission to delete this polygon');
@@ -163,10 +184,12 @@ function threed_handler(){
 
 	this.AnnotationLinkClick = function(idx){
 		if ((window.select) && idx == window.select.ID){
+			select_anno = main_canvas.annotations[idx];
 			this.ThreeDAnnotationEdit(idx);
 		}else{
 			RenderObjectList();
 			this.SelectObject(idx);
+			SetDrawingMode(2);
 		}
 	};
 
@@ -181,8 +204,14 @@ function threed_handler(){
 	this.AnnotationLinkMouseOut = function(){
 		if (hover_object != window.select){
 			document.getElementById('Link'+hover_object.ID).style.color = '#0000FF';
-			ThreeDHoverHighlight();
-			hover_object = null;
+		}
+		ThreeDHoverHighlight();
+		hover_object = null;
+		if (drawing_mode == 0 || drawing_mode == 1){
+			$("#container").css('display', 'none');
+	        $("#cnvs").css('display', 'none');
+	        $("#container").css('z-index', '-3');
+	        ShowAllPolygons();
 		}
 	};
 
@@ -308,11 +337,15 @@ function threed_handler(){
 		// Refresh object list:
 		if(view_ObjList) {
 		RenderObjectList();
+		document.getElementById('Link'+ anno.anno_id).style.color = '#FF0000';
 		}
+
 	};
 	this.EditBubbleDeleteButton = function(){
 		var idx = window.select.ID;
 		select_anno = main_canvas.annotations[idx];
+
+		main_canvas.DetachAnnotation(idx)
 
 		if((IsUserAnonymous() || (!IsCreator(LMgetObjectField(LM_xml, idx, 'username')))) && (!IsUserAdmin()) && (idx<num_orig_anno) && !action_DeleteExistingObjects) {
 				alert('You do not have permission to delete this polygon');
@@ -334,7 +367,7 @@ function threed_handler(){
 		// Set <deleted> in LM_xml:
 		LMsetObjectField(LM_xml, idx, "deleted", "1");
 
-		remove_box_internal(window.select);
+		remove_object_internal(window.select);
 		
 		// Remove all the part dependencies for the deleted object
 		removeAllParts(idx);
@@ -353,10 +386,11 @@ function threed_handler(){
 		var numItems = $(LM_xml).children('annotation').children('object').length;
 		console.log($(LM_xml));
 	    threed_anno = new annotation(numItems);
-	    threed_anno.SetType(3);
+	    threed_anno.SetType(2);
 	    object_list.push(new object_instance);
 	    window.select = object_list[object_list.length-1];//window.select is now the new object
 	    window.select.ID = numItems; // making the 3d objects ID in sync with LabelMe system
+	    groundplane_id = window.select.ID;
 	    ID_dict[window.select.ID] = window.select;
 	    window.select.plane = plane; // setting up the groundplane
 
@@ -397,6 +431,7 @@ function threed_handler(){
 			html_str += '</vp_line>';
 		}
 		html_str += '</lines>';
+		html_str += '<op_points>' + op_x + ' ' + op_y + '</op_points>';
 		html_str += '<plane_matrix>';
 		for (var i = 0; i < K.length; i++){
 			html_str += K[i] + ' ';
@@ -422,6 +457,7 @@ function threed_handler(){
 			document.getElementById('LMurl').value = LMbaseurl + '?collection=LabelMe&mode=i&folder=' + main_media.GetFileInfo().GetDirName() + '&image=' + main_media.GetFileInfo().GetImName();
 		if(global_count >= mt_N) document.getElementById('mt_submit').disabled=false;
 		}
+		render();
 	};
 
 	this.PlaneAutoSave = function(){
@@ -441,12 +477,21 @@ function threed_handler(){
 				lines += '</vp_line>';
 		}
 		LMsetObjectField(LM_xml, index, 'lines', lines);
+		var op_points = '';
+		op_points = op_x + ' ' + op_y;
+		LMsetObjectField(LM_xml, index, 'op_points', op_points);
 		var matrix = "";
 		for (var i = 0; i < K.length; i++){
 				matrix += K[i] + ' ';
 			}
 		LMsetObjectField(LM_xml, index, 'plane_matrix', matrix);
 		LMsetObjectField(LM_xml, index, 'focal_length', f);
+
+		for (var i = 0; i < window.select.hchildren.length; i++){
+	        if (window.select.hchildren[i].cube){
+	            calculate_box_location(window.select.hchildren[i], window.select);
+	        }
+	    }
 	};
 
 	this.LoadDifferentPlane = function(idx){
@@ -454,6 +499,9 @@ function threed_handler(){
 		K = LMgetObjectField(LM_xml, idx, 'plane_matrix');
 		rerender_plane(K);
 		lines_array = LMgetObjectField(LM_xml, idx, 'lines');
+		var op_points = LMgetObjectField(LM_xml, idx, 'op_points');
+		op_x = op_points[0];
+		op_y = op_points[1];
 		vp_label = [];
 		vp_s = [];
 		for (var i = 0; i < lines_array.length; i+=5){
@@ -466,8 +514,71 @@ function threed_handler(){
 	        vp_s.push(new_line);
 	        addVPline(vp_label.length-1, vp_layer);
 		}
-		f = LMgetObjectField(LM_xml, idx, 'focal_length');
+		if (window.select.ID == groundplane_id) f = LMgetObjectField(LM_xml, idx, 'focal_length');
+		var op_circle = stage.find('.op_circle')[0];
+		op_circle.setX(op_x);
+		op_circle.setY(op_y);
 		stage.draw();
 		render();
+	};
+
+	this.BoxAutoSave = function(idx){
+		if (idx){
+			var index = idx;
+		}else{
+			var index = window.select.ID;
+		}
+		var cube_matrix = '';
+		var position = '';
+		var scale = '';
+		for (var i = 0; i < ID_dict[index].cube.matrixWorld.elements.length; i++){
+			cube_matrix += ID_dict[index].cube.matrixWorld.elements[i] + ' ';
+		}
+		LMsetObjectField(LM_xml, index, "cube_matrix", cube_matrix);
+		var position_vector = new THREE.Vector3(0, 0, 0).applyMatrix4(ID_dict[index].cube.matrixWorld.clone());
+		var position = position_vector.x + ' ' + position_vector.y + ' ' + position_vector.z;
+		LMsetObjectField(LM_xml, index, 'cube_position', position);
+		var rotation = ID_dict[index].cube.rotation.z;
+		LMsetObjectField(LM_xml, index, 'cube_rotation', rotation);
+		var scale = ID_dict[index].cube.scale.x*small_w + ' ' + ID_dict[index].cube.scale.y*small_w + ' ' + ID_dict[index].cube.scale.z*small_w;
+		LMsetObjectField(LM_xml, index, 'cube_scale', scale);
+	};
+
+	this.AssignSupportPlane = function(part_id, object_id){
+		if (main_canvas.GetAnnoByID(part_id).GetType() == 3 && main_canvas.GetAnnoByID(object_id).GetType() == 2){
+			var cube_object = ID_dict[part_id];
+			var support_object = ID_dict[object_id];
+			if (cube_object.hparent != "unassigned"){
+	            var index = cube_object.hparent.hchildren.indexOf(cube_object);
+	            cube_object.hparent.hchildren.splice(index, 1);
+	        }
+            cube_object.hparent = support_object;
+            support_object.hchildren.push(cube_object);
+            for (var i = 0; cube_object.hchildren.length; i++){
+                if (cube_object.hchildren[i] == support_object){
+                    var index = cube_object.hchildren.indexOf(support_object);
+                    cube_object.hchildren.splice(index, 1);
+                }
+            }
+            var i_mat = new THREE.Matrix4().getInverse(cube_object.plane.matrixWorld.clone());
+            cube_position_0 = cube_object.cube.position.clone();
+            cube_position_0.setZ(cube_object.cube.position.z - cube_object.cube.scale.z*small_h/2);
+            cube_position_0_static = cube_object.cube.position.clone();
+            cube_position_0_static.setZ(cube_object.cube.position.z - cube_object.cube.scale.z*small_h/2);
+            cube_position_0.applyMatrix4(cube_object.plane.matrixWorld.clone());
+            cube_position_0_static.applyMatrix4(cube_object.plane.matrixWorld.clone());
+            cube_object.plane.material.visible = true;
+            old_x = cube_object.cube.scale.x;
+            old_y = cube_object.cube.scale.y;
+            old_z = cube_object.cube.scale.z;
+            old_arrow_x = arrowHelper.arrow_box.scale.x;
+            old_arrow_y = arrowHelper.arrow_box.scale.y;
+            old_arrow_z = arrowHelper.arrow_box.scale.z;
+           	calculate_box_location(cube_object, support_object);
+	        render();
+	        this.BoxAutoSave(part_id);
+		}else{
+			return;
+		}
 	};
 }
