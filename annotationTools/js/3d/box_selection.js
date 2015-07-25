@@ -11,6 +11,7 @@ function HighlightSelectedThreeDObject() {//now really only highlighting
         }
         else{
             window.select.plane.material.visible = true;
+            DisplayVPTools();
         }
         if (window.select.hparent != "unassigned"){
             window.select.plane.material.visible = true;

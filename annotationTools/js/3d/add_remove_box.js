@@ -30,6 +30,7 @@ function add_box_internal() {
     for (var i = 0; i < stage.children.length; i++) {
         stage.children[i].hide();
     }
+    setup_arrowheads_rescaling();
     HighlightSelectedThreeDObject();
     render();
 }
@@ -77,10 +78,15 @@ function add_plane(){
     var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var new_plane_geometry = new THREE.PlaneGeometry(20, 20, 40, 40);
     var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
-    new_plane.matrixWorld = gp_plane.matrixWorld.clone();
+    new_plane.matrixWorld = plane.matrixWorld.clone();
     new_plane.material.visible = true;
+    new_plane.matrixAutoUpdate = false;
     window.select.plane = new_plane;
     scene.add(new_plane);
+    HighlightSelectedThreeDObject();
+    main_threed_handler.LoadDifferentPlane(groundplane_id);
+    main_threed_handler.PlaneAutoSave();
+    update_plane();
     render();
 }
 

@@ -362,6 +362,10 @@ function changeLineType(){
 
 function update_plane() {
     console.log("selected_plane updated");
+    var r = $.Deferred();
+    setTimeout(function(){
+        r.resolve();
+    }, 250);
     var d = new Date();
     current_time = d.getTime();
     if (current_time - last_update > 100) {
@@ -431,7 +435,7 @@ function update_plane() {
         vi.y2d = vp1.y2d + u * (vp2.y2d - vp1.y2d);
 
         //f = Math.sqrt(Math.pow(((cx - vp[0].x2d)*(vp[1].x2d - cx)), 2) + Math.pow(((cy - vp[0].y2d)*(vp[1].y2d - cy)), 2));
-        if (window.select.ID == groundplane_id) f = Math.sqrt(Math.sqrt(dist2(vi, vp1)) * Math.sqrt(dist2(vi, vp2)));//this is the focal distance / this is actually OcVi
+        f = Math.sqrt(Math.sqrt(dist2(vi, vp1)) * Math.sqrt(dist2(vi, vp2)));//this is the focal distance / this is actually OcVi
 
         // rotation / translation/extrinsic
         axis_x = vec3.create();
@@ -463,7 +467,7 @@ function update_plane() {
         vi.y2d = vp[0].y2d + u * (vp[1].y2d - vp[0].y2d);
 
         //f = Math.sqrt(Math.pow(((cx - vp[0].x2d)*(vp[1].x2d - cx)), 2) + Math.pow(((cy - vp[0].y2d)*(vp[1].y2d - cy)), 2));
-        if (window.select.ID == groundplane_id) f = Math.sqrt(Math.sqrt(dist2(vi, vp[0])) * Math.sqrt(dist2(vi, vp[1])));//this is the focal distance / this is actually OcVi
+        f = Math.sqrt(Math.sqrt(dist2(vi, vp[0])) * Math.sqrt(dist2(vi, vp[1])));//this is the focal distance / this is actually OcVi
 
         // rotation / translation/extrinsic
         axis_x = vec3.create();
@@ -479,6 +483,7 @@ function update_plane() {
         //vec3.cross(axis_z, axis_x, axis_y);
         vec3.normalize(axis_z, axis_z);
     }
+    if ((window.select) && window.select.plane == plane) gp_f = f;
     K = mat4.create();//transformation matrix
     K[0] = axis_x[0];
     K[1] = -axis_x[1];
@@ -492,8 +497,8 @@ function update_plane() {
     K[9] = -axis_z[1];
     K[10] = -axis_z[2];
     K[11] = 0;
-    K[12] = -(axis_x[0]+axis_y[0]) + (op_x - init_width/2)/f;
-    K[13] = (axis_x[1]+axis_y[1]) - (op_y - init_height/2)/f;
+    K[12] = -(axis_x[0]+axis_y[0]) + (op_x - init_width/2)/gp_f;
+    K[13] = (axis_x[1]+axis_y[1]) - (op_y - init_height/2)/gp_f;
     K[14] = (axis_x[2]+axis_y[2]) -1;
     K[15] = 1;
 
@@ -511,6 +516,7 @@ function update_plane() {
     e.targetNode = gp[i];
     gp_drag(e);
     }*/
+    return r;
 }
 
 function load_vp(vp_out){
@@ -686,7 +692,7 @@ function addVPCircles(id, layer){
 function rerender_plane(K) {//where K is the new matrix after vanishing point recalculation
     if (hover_object && !(hover_object.cube)){//when hovering ofer a link is going on;
         selected_plane = hover_object.plane;
-    }else{
+    }else if (window.select && !(window.select.cube)){
         selected_plane = window.select.plane;
     }
     camera.matrixAutoUpdate=false;
@@ -760,7 +766,7 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
     }
 
     var theCanvas = document.getElementById("cnvs"); //setting up the camera so that it is using the canvas parameters
-    camera = new THREE.PerspectiveCamera(Math.atan(theCanvas.height/f/2)/Math.PI*180*2, theCanvas.width/theCanvas.height, .01, 20000);
+    camera = new THREE.PerspectiveCamera(Math.atan(theCanvas.height/gp_f/2)/Math.PI*180*2, theCanvas.width/theCanvas.height, .01, 20000);
     camera.position.z = 0;
     selected_plane.material.visible = true;
 

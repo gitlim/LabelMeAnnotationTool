@@ -151,14 +151,15 @@ function render() {
         arrowHelper.matrixWorld = window.select.plane.matrixWorld.clone();
         arrowHelper.arrow_box.rotation.z = window.select.cube.rotation.z;
         arrowHelper.arrow_box.position.set(window.select.cube.position.x,window.select.cube.position.y,window.select.cube.position.z + small_h*0.5*window.select.cube.scale.z);
-        arrowHelper.arrow_list[1].setLength(window.select.cube.scale.y*small_d/2/proportion_array[window.select.ID], 0.01, 0.01);
-        arrowHelper.arrow_list[2].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], 0.01, 0.01);
-        arrowHelper.arrow_list[3].setLength(window.select.cube.scale.y*small_d/2/proportion_array[window.select.ID], 0.01, 0.01);
-        arrowHelper.arrow_list[4].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], 0.01, 0.01);
+        arrowHelper.arrow_list[1].setLength(window.select.cube.scale.y*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
+        arrowHelper.arrow_list[2].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
+        arrowHelper.arrow_list[3].setLength(window.select.cube.scale.y*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
+        arrowHelper.arrow_list[4].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
+        arrowHelper.arrow_list[0].setLength(small_w, arrowhead_size, arrowhead_size);
         indicator_box.position.set(window.select.cube.position.x,window.select.cube.position.y,window.select.cube.position.z + small_h*0.5*window.select.cube.scale.z);
-        arrowHelper.arrow_box.scale.x = proportion_array[window.select.ID];
+        /*arrowHelper.arrow_box.scale.x = proportion_array[window.select.ID];
         arrowHelper.arrow_box.scale.y = proportion_array[window.select.ID];
-        arrowHelper.arrow_box.scale.z = proportion_array[window.select.ID];
+        arrowHelper.arrow_box.scale.z = proportion_array[window.select.ID];*/
         indicator_box.scale.x = proportion_array[window.select.ID];
         indicator_box.scale.y = proportion_array[window.select.ID];
         indicator_box.scale.z = proportion_array[window.select.ID];

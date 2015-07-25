@@ -121,6 +121,8 @@ function threed_handler(){
 			document.getElementById('LMurl').value = LMbaseurl + '?collection=LabelMe&mode=i&folder=' + main_media.GetFileInfo().GetDirName() + '&image=' + main_media.GetFileInfo().GetImName();
 		if(global_count >= mt_N) document.getElementById('mt_submit').disabled=false;
 		}
+		if (!(window.select.cube)) update_plane();
+		render();
 	};
 
 	this.ThreeDToFore = function(){
@@ -184,7 +186,7 @@ function threed_handler(){
 
 	this.AnnotationLinkClick = function(idx){
 		if ((window.select) && idx == window.select.ID){
-			select_anno = main_canvas.annotations[idx];
+			select_anno = main_canvas.GetAnnoByID(idx);
 			this.ThreeDAnnotationEdit(idx);
 		}else{
 			RenderObjectList();
@@ -227,6 +229,8 @@ function threed_handler(){
 	        toggle_cube_move_indicators(true);
 	        toggle_cube_rotate_indicators(true);
 	        toggle_cube_resize_arrows(true);
+	    }else{
+	    	this.LoadDifferentPlane(idx);
 	    }
        	HighlightSelectedThreeDObject();
 	  	document.getElementById('Link'+idx).style.color = '#FF0000';
@@ -457,6 +461,7 @@ function threed_handler(){
 			document.getElementById('LMurl').value = LMbaseurl + '?collection=LabelMe&mode=i&folder=' + main_media.GetFileInfo().GetDirName() + '&image=' + main_media.GetFileInfo().GetImName();
 		if(global_count >= mt_N) document.getElementById('mt_submit').disabled=false;
 		}
+		update_plane();
 		render();
 	};
 
@@ -497,7 +502,6 @@ function threed_handler(){
 	this.LoadDifferentPlane = function(idx){
 		vp_layer.removeChildren(); // purges all previous lines
 		K = LMgetObjectField(LM_xml, idx, 'plane_matrix');
-		rerender_plane(K);
 		lines_array = LMgetObjectField(LM_xml, idx, 'lines');
 		var op_points = LMgetObjectField(LM_xml, idx, 'op_points');
 		op_x = op_points[0];
@@ -514,10 +518,11 @@ function threed_handler(){
 	        vp_s.push(new_line);
 	        addVPline(vp_label.length-1, vp_layer);
 		}
-		if (window.select.ID == groundplane_id) f = LMgetObjectField(LM_xml, idx, 'focal_length');
+		f = LMgetObjectField(LM_xml, idx, 'focal_length');
 		var op_circle = stage.find('.op_circle')[0];
 		op_circle.setX(op_x);
 		op_circle.setY(op_y);
+		rerender_plane(K);
 		stage.draw();
 		render();
 	};
@@ -577,6 +582,9 @@ function threed_handler(){
            	calculate_box_location(cube_object, support_object);
 	        render();
 	        this.BoxAutoSave(part_id);
+	    }else if (main_canvas.GetAnnoByID(part_id).GetType() == 2 && (main_canvas.GetAnnoByID(object_id).GetType() == 1 || main_canvas.GetAnnoByID(object_id).GetType() == 0)){
+	    	CreatePolygonClip(object_id);
+	    	render();
 		}else{
 			return;
 		}

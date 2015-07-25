@@ -21,6 +21,7 @@ var sidemode = 1;
 var plane;
 var empty_plane;
 var arrowHelper;
+var arrowhead_size;
 var intersect_box = new THREE.Object3D();
 var guide_box;
 
@@ -37,6 +38,7 @@ var small_h = 0.1;
 var small_w = 0.1;
 var small_d = -0.1;
 var f;
+var gp_f;
 
 var model3d_loader;
 

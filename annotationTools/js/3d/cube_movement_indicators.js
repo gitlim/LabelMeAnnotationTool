@@ -15,7 +15,15 @@ function toggle_cube_resize_arrows(toggle){
         arrowHelper.arrow_list[i].line.material.visible = toggle;
     }
 }
+
+function setup_arrowheads_rescaling(){
+    var distance_from_origin = window.select.cube.position.clone().applyMatrix4(window.select.plane.matrixWorld.clone()).distanceTo(camera.position);
+    var arrowhead_scale = distance_from_origin;
+    arrowhead_size = 0.01*arrowhead_scale;
+}
+
 function initialize_cube_indicators(){
+    arrowhead_size = 0.01;
     var sphereGeom = new THREE.SphereGeometry(2);
     arrowHelper = new THREE.Object3D();
     arrowHelper.matrixAutoUpdate = false;

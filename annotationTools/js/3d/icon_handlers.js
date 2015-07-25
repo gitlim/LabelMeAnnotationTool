@@ -258,6 +258,7 @@ function ThreeDHoverHighlight(object){// need third options for planes
                 changeColor(window.select.cube, 0xffff00);
             }else{
                 window.select.plane.material.visible = true;
+                DisplayVPTools();
                 main_threed_handler.LoadDifferentPlane(window.select.ID);
             }
         }

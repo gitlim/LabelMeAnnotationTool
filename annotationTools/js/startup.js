@@ -266,7 +266,7 @@ function Initialize3dButtons(){
     </div>';
     $('#label_buttons_drawing').append(html_str);
     $( "#add_box" ).on("click", function() { add_box_internal();} );
-    $( "#add_plane" ).on("click", function() { add_plane();} );
+    $( "#add_plane" ).on("click", function() { update_plane().done(add_plane);} );
     $( "#remove" ).on("click", function() { main_threed_handler.EditBubbleDeleteButton();});
 }
 
