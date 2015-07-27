@@ -37,22 +37,38 @@
 
 
 function onDocumentMouseDown(event) {
+    if (event.target.tagName != "canvas" && event.target.tagName != "div"){
+        return;
+    }
     setupRay(event);
     for (var i = 0; i < arrowHelper.arrow_list.length; i++) {
         resize_arrowhead_intersect = ray.intersectObject(arrowHelper.arrow_list[i].cone, false);
-        if (resize_arrowhead_intersect.length){
+        if (resize_arrowhead_intersect[0]){
+            //console.log("intersect");
+            ray_vector_orig = resize_arrowhead_intersect[0].point.sub(camera.position);
+            original_arrowhead_point = ray_vector_orig;
+            arrowhead_object = resize_arrowhead_intersect[0].object;
             selected_arrow = arrowHelper.arrow_list[i];
             current_mode = RESIZE_MODE;
             arrowHelper.arrow_list[i].cone.material.color.setHex(0x0000ff);
             resize_x0 = event.clientX;
             resize_y0 = event.clientY;
-            var vector1 = new THREE.Vector3(0, 0, 0).applyMatrix4(arrowHelper.arrow_list[i].matrixWorld);
+            /*var vector1 = new THREE.Vector3(0, 0, 0).applyMatrix4(arrowHelper.arrow_list[i].matrixWorld);
             var vector2 = new THREE.Vector3(0, 1, 0).applyMatrix4(arrowHelper.arrow_list[i].matrixWorld);
             var proj2 = new THREE.Projector();
             var vector3 = new THREE.Vector3();
             vector3.subVectors(vector2, vector1);
             resize_vx = (vector3.x)*renderer.domElement.width/2;
-            resize_vy = (-1*vector3.y)*renderer.domElement.height/2;
+            resize_vy = (-1*vector3.y)*renderer.domElement.height/2;*/
+            var vector1 = new THREE.Vector3(0, 0, 0).applyMatrix4(resize_arrowhead_intersect[0].object.matrixWorld);
+            var vector2 = new THREE.Vector3(0, 1, 0).applyMatrix4(resize_arrowhead_intersect[0].object.matrixWorld);
+            var proj2 = new THREE.Projector();
+            var M = arrowHelper.arrow_list[i].matrixWorld.clone();
+            proj2.projectVector(vector1, camera);
+            proj2.projectVector(vector2, camera);
+            resize_vx = (vector2.x-vector1.x)* renderer.domElement.width/2;
+            resize_vy = (-vector2.y+vector1.y)*renderer.domElement.height/2;
+            //console.log(vector1, vector2);
             var resize_norm = Math.sqrt(resize_vx*resize_vx+resize_vy*resize_vy);
             resize_vx = resize_vx / resize_norm;
             resize_vy = resize_vy / resize_norm;
@@ -60,12 +76,12 @@ function onDocumentMouseDown(event) {
             resize_scale0_orig = window.select.cube.scale.clone();
             resize_pos0 = window.select.cube.position.clone();
             resize_dir = arrowHelper.arrow_list[i].direction;
-            console.log(resize_dir);
+            //console.log(resize_dir);
         }else{
             arrowHelper.arrow_list[i].cone.material.color.setHex(0xff0000);
         }
     }
-    if (typeof plane_cube != "undefined"){
+    /*if (typeof plane_cube != "undefined"){
         a = ray.intersectObject(plane_cube, true);
         if (a.length) {
             plane_cube.material.color.setRGB(0, 0, 1);
@@ -105,7 +121,7 @@ function onDocumentMouseDown(event) {
             old_arrow_y = arrowHelper.arrow_box.scale.y;
             old_arrow_z = arrowHelper.arrow_box.scale.z;
         }
-    }
+    }*/
     var cube_click = [];
     if (window.select.cube && current_mode != RESIZE_MODE && (current_mode != VERTICAL_PLANE_MOVE_MODE)) {
         cube_click = ray.intersectObject(window.select.cube, true);
@@ -180,10 +196,15 @@ function onDocumentMouseMove(event) {
         else if (current_mode == RESIZE_MODE) {
             var resize_x1 = event.clientX;
             var resize_y1 = event.clientY;
+            console.log(resize_vx, resize_vy);
+            console.log((resize_x1 - resize_x0), (resize_y1 - resize_y0));
             var resize_dot = ((resize_x1 - resize_x0)*resize_vx + (resize_y1 - resize_y0)*resize_vy)*0.3;
+            var resize_mag = Math.sqrt(Math.pow((resize_x1 - resize_x0), 2) + Math.pow((resize_y1 - resize_y0), 2));
             resize_x0 = resize_x1;
             resize_y0 = resize_y1;
-            window.select.cube.scale.set(resize_scale0.x-resize_dot*small_w*Math.abs(resize_dir.x), resize_scale0.y-resize_dot*small_h*Math.abs(resize_dir.y), resize_scale0.z-resize_dot*small_d*resize_dir.z);
+            //resize_dot = resize_dot/resize_mag;
+            window.select.cube.scale.set(window.select.cube.scale.x-resize_dot*small_w*Math.abs(resize_dir.x), window.select.cube.scale.y-resize_dot*small_h*Math.abs(resize_dir.y), window.select.cube.scale.z-resize_dot*small_d*resize_dir.z);
+            console.log(resize_dot);
             /*if (resize_dir.x < 0){
                 window.select.cube.position.x = resize_pos0.x - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.cos(window.select.cube.rotation.z) + small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.sin(window.select.cube.rotation.z);
                 window.select.cube.position.y = resize_pos0.y - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.sin(window.select.cube.rotation.z) - small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.cos(window.select.cube.rotation.z);
@@ -243,14 +264,6 @@ function onDocumentMouseMove(event) {
                 }
                 else {
                     arrowHelper.arrow_list[i].cone.material.color.setHex(0xff0000);
-                }
-            }
-            if (typeof plane_cube != "undefined"){
-                b = ray.intersectObject(plane_cube, true);
-                if (b.length){
-                    plane_cube.material.color.setRGB(0, 0, 1);
-                }else{
-                    plane_cube.material.color.setRGB(1, 0, 0);
                 }
             }
             render();
@@ -334,10 +347,6 @@ function onDocumentMouseUp(event) {
         main_threed_handler.BoxAutoSave();
     }
     current_mode = 0;
-    if (typeof plane_cube != "undefined"){
-        plane_cube.material.color.setHex(0xff0000);
-    }
-
     if ((document.getElementById("navigation")) && (document.getElementById("navigation").checked === false))
     {
         if (DEBUG_MODE) {
@@ -437,4 +446,31 @@ function makeDoubleClick (doubleClickCallback, singleClickCallback) {
             }
         };
     }());
+}
+
+function calculateResizeMagnitude(resize_x0, resize_y0){
+ // 3d coordinates of arrowhead
+    var rect = document.getElementById("main_media").getBoundingClientRect();
+    var scale_factor = main_media.browser_im_ratio/main_media.im_ratio;
+    var projector = new THREE.Projector();
+    console.log(resize_x0, resize_y0);
+    var original_mouse3D = projector.unprojectVector(new THREE.Vector3( ( (resize_x0 -rect.left)*scale_factor/ renderer.domElement.width ) * 2 - 1, - ( (resize_y0-rect.top)*scale_factor / renderer.domElement.height ) * 2 + 1, 1 ), camera ); // 3d coordinates of original screen point
+    var x_scale = (original_mouse3D.x - camera.position.x)/original_arrowhead_point.x;
+    console.log(original_mouse3D.x);
+    console.log(camera.position.x);
+    console.log(original_arrowhead_point.x);
+    console.log(x_scale);
+    var new_mouse3D = projector.unprojectVector(new THREE.Vector3( ( (event.clientX -rect.left)*scale_factor/ renderer.domElement.width ) * 2 - 1, - ( (event.clientY-rect.top)*scale_factor / renderer.domElement.height ) * 2 + 1, 1 ), camera ); // 3d coordinates of original screen point
+    var resize_x0 = event.clientX;
+    var resize_y0 = event.clientY;
+    var new_x = (new_mouse3D.x - camera.position.x)/x_scale; // calculate x coordinate of new point based on scale
+    console.log(new_x);
+    var vector2 = new THREE.Vector3(0, 1, 0).applyMatrix4(arrowhead_object.matrixWorld).normalize();
+    var new_scale = (new_x - original_arrowhead_point.x)/vector2.x;
+    console.log(new_scale);
+    var new_point = original_arrowhead_point.add(vector2.multiplyScalar(new_scale));
+    var magnitude = original_arrowhead_point.distanceTo(new_point);
+    original_arrowhead_point = new_point;
+    console.log(magnitude);
+    return magnitude;
 }

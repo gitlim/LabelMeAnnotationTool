@@ -19,7 +19,7 @@ function toggle_cube_resize_arrows(toggle){
 function setup_arrowheads_rescaling(){
     var distance_from_origin = window.select.cube.position.clone().applyMatrix4(window.select.plane.matrixWorld.clone()).distanceTo(camera.position);
     var arrowhead_scale = distance_from_origin;
-    arrowhead_size = 0.01*arrowhead_scale;
+    arrowhead_size = 0.007*arrowhead_scale;
 }
 
 function initialize_cube_indicators(){

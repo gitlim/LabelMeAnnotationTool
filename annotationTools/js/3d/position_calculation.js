@@ -1,8 +1,3 @@
-function assign_height(){
-    //Apprise("Select the box that is the support object.", okAlert);
-    heightOn = true;
-}
-
 function calculate_box_location(cube_object, support_object){
     //var cube_position_holder = cube_position_0.clone();
     var direction = new THREE.Vector3(cube_position_0.x - camera.position.x, cube_position_0.y - camera.position.y, cube_position_0.z - camera.position.z).normalize();
@@ -76,4 +71,8 @@ function calculate_children_box_locations(object){
         }
     }
     render();
+}
+
+function CalculateBoxInitialPosition(){
+
 }

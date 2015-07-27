@@ -265,7 +265,7 @@ function annotation(anno_id) {
         if (this.anno_type == 0) {  // In case it is a polygon
             FillPolygon(this.polygon_id);
         }
-        else { // It is a segmentation
+        else if (this.anno_type != 2 && this.anno_type != 3) { // It is a segmentation
             DrawSegmentation('myCanvas_bg',this.scribble.GetMaskURL(), main_media.width_curr, main_media.height_curr, this.scribble.cache_random_number);
         }
         /*************************************************************/

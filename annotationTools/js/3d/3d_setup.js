@@ -72,8 +72,8 @@ function createWorld() {// split into different parts for 3d and gp later
         }
     }
     // This section is for drawing the groundplane, arguments are how plane is divided
-    var plane_geometry = new THREE.PlaneGeometry(20, 20, 40, 40);
-    var gp_plane_geometry = new THREE.PlaneGeometry(20, 20, 40, 40);
+    var plane_geometry = new THREE.PlaneGeometry(20, 20, 100, 100);
+    var gp_plane_geometry = new THREE.PlaneGeometry(20, 20, 100, 100);
     var vert_plane_geometry = new THREE.PlaneGeometry(2, 2, 40, 40);
     var plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var vert_plane_material = new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide, wireframe: true});
@@ -122,7 +122,7 @@ function createWorld() {// split into different parts for 3d and gp later
 
     scene.add(plane);
     //scene.add(gp_plane);
-    scene.add(empty_plane);
+    //scene.add(empty_plane);
     scene.add(plane_object);
 // 3D box related
     window.select = plane; //initializing the first selected object to be the plane
@@ -157,9 +157,9 @@ function render() {
         arrowHelper.arrow_list[4].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
         arrowHelper.arrow_list[0].setLength(small_w, arrowhead_size, arrowhead_size);
         indicator_box.position.set(window.select.cube.position.x,window.select.cube.position.y,window.select.cube.position.z + small_h*0.5*window.select.cube.scale.z);
-        /*arrowHelper.arrow_box.scale.x = proportion_array[window.select.ID];
+        arrowHelper.arrow_box.scale.x = proportion_array[window.select.ID];
         arrowHelper.arrow_box.scale.y = proportion_array[window.select.ID];
-        arrowHelper.arrow_box.scale.z = proportion_array[window.select.ID];*/
+        arrowHelper.arrow_box.scale.z = proportion_array[window.select.ID];
         indicator_box.scale.x = proportion_array[window.select.ID];
         indicator_box.scale.y = proportion_array[window.select.ID];
         indicator_box.scale.z = proportion_array[window.select.ID];
@@ -189,9 +189,7 @@ function check_plane_box_collision(object) {
     var pts1 = [1, 2, 5, 3, 4, 3, 7, 6, 5, 6, 7, 7];
     var length = intersect_box.children.length;
     for (var i = length - 1; i > -1; i--){
-        if (typeof plane_cube == "undefined" || intersect_box.children[i] != plane_cube){
-            intersect_box.remove(intersect_box.children[i]);
-        }
+        intersect_box.remove(intersect_box.children[i]);
     }
     var cubeGeometry = new THREE.CubeGeometry(.005, .005, .005);
     var cubeMaterial = new THREE.MeshBasicMaterial({color: 0x0000ff});
@@ -239,17 +237,8 @@ function check_plane_box_collision(object) {
         line_intersect = line_raycaster.intersectObject(object.plane, false);
         var cubeGeometry2 = new THREE.CubeGeometry(.02, .02, .02);
         var cubeMaterial2 = new THREE.MeshBasicMaterial({color: 0xff0000});
-        if ((line_intersect.length > 0) && (typeof plane_cube == "undefined")){
-            plane_cube = new THREE.Mesh( cubeGeometry2, cubeMaterial2 );
-            intersect_box.add(plane_cube);
-            scene.add(intersect_box);
-            plane_cube.material.visible = true;
-            var position = new THREE.Vector3(1, 1, 0).applyMatrix4(object.plane.matrixWorld.clone());
-            plane_cube.position.set(position.x, position.y, position.z);
+        if ((line_intersect.length > 0)){
         }else if (line_intersect.length){
-            plane_cube.material.visible = true;
-            var position = new THREE.Vector3(1, 1, 0).applyMatrix4(object.plane.matrixWorld.clone());
-            plane_cube.position.set(position.x, position.y, position.z);
         }
     }else{
         for (var i = 0; i < intersect_box.children.length; i++){

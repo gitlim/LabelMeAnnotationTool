@@ -133,7 +133,7 @@ function op_drag(e) {
     op_y = e.targetNode.y();
     console.log(op_x, op_y);
     main_threed_handler.PlaneAutoSave();
-    update_plane();
+    update_plane().done(main_threed_handler.PlaneAutoSave);
 }
 
 function point_drag() {
@@ -170,8 +170,7 @@ function point_drag() {
         line.points([vp_s[line_id].x2d[0], vp_s[line_id].y2d[0], vp_s[line_id].x2d[1], vp_s[line_id].y2d[1]]);
     });
 
-    update_plane();
-    main_threed_handler.PlaneAutoSave();
+    update_plane().done(main_threed_handler.PlaneAutoSave);
 }
 
 /*function highlight_line(){
@@ -355,23 +354,20 @@ function changeLineType(){
         addVPCircles(line_id, vp_layer);
     }
     stage.draw();
-    update_plane();
-    main_threed_handler.PlaneAutoSave();
+    update_plane().done(main_threed_handler.PlaneAutoSave);
+
 }
 
 
 function update_plane() {
     console.log("selected_plane updated");
     var r = $.Deferred();
-    setTimeout(function(){
-        r.resolve();
-    }, 250);
     var d = new Date();
     current_time = d.getTime();
     if (current_time - last_update > 100) {
     last_update = current_time;
     } else {
-    return ;
+    return r;
     }
 
     if ((typeof GLOBAL_DEBUG != 'undefined') &&(GLOBAL_DEBUG)) {
@@ -505,6 +501,10 @@ function update_plane() {
     rerender_plane(K);
 
     console.log(op_x, op_y);
+
+    setTimeout(function(){
+        r.resolve();
+    }, 250);
 
     // now find guide line location and update circles
     /*for (var i = 0; i < guide_box.lines.length; i++) {
@@ -695,12 +695,10 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
     }else if (window.select && !(window.select.cube)){
         selected_plane = window.select.plane;
     }
+    console.log(K);
     camera.matrixAutoUpdate=false;
     selected_plane.matrixAutoUpdate=false;
     selected_plane.matrixWorld.elements= K;// setting selected_plane to camera transformation
-
-    gp_plane.matrixAutoUpdate = false;  
-    gp_plane.matrixWorld.elements = K;
 
     var z_vector1 = new THREE.Vector4(0,0,0,1).applyMatrix4(selected_plane.matrixWorld);
     var z_vector2 = new THREE.Vector4(0,0,1,1).applyMatrix4(selected_plane.matrixWorld);

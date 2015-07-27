@@ -334,6 +334,7 @@ function SetDrawingMode(mode){
         }  
         $("#container").css('display', 'none');
         $("#cnvs").css('display', 'none');
+        $("#clipCanvas").css('display', 'none');
         $("#container").css('z-index', '-3');
         ShowAllPolygons();
         document.getElementById("segmDiv").setAttribute('style', 'border-color: #000');
@@ -349,6 +350,7 @@ function SetDrawingMode(mode){
     if (mode == 1) {
         $("#container").css('display', 'none');
         $("#cnvs").css('display', 'none');
+        $("#clipCanvas").css('display', 'none');
         if(draw_anno) {
         alert("Need to close current polygon first.");
         return;

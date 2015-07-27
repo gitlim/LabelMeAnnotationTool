@@ -189,9 +189,13 @@ function threed_handler(){
 			select_anno = main_canvas.GetAnnoByID(idx);
 			this.ThreeDAnnotationEdit(idx);
 		}else{
+			if (!(wait_for_input) && !(edit_popup_open)){
 			RenderObjectList();
 			this.SelectObject(idx);
 			SetDrawingMode(2);
+			}else{
+				alert("You must close the edit popup first.");
+			}
 		}
 	};
 
@@ -207,8 +211,8 @@ function threed_handler(){
 		if (hover_object != window.select){
 			document.getElementById('Link'+hover_object.ID).style.color = '#0000FF';
 		}
-		ThreeDHoverHighlight();
 		hover_object = null;
+		ThreeDHoverHighlight();
 		if (drawing_mode == 0 || drawing_mode == 1){
 			$("#container").css('display', 'none');
 	        $("#cnvs").css('display', 'none');

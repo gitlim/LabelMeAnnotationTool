@@ -84,6 +84,8 @@ function image(id) {
         $("#select_canvas").width(this.width_curr).height(this.height_curr);
         $("#draw_canvas").width(this.width_curr).height(this.height_curr);
         $("#query_canvas").width(this.width_curr).height(this.height_curr);
+        $("#clipCanvas").width(this.width_curr).height(this.height_curr);
+
 
 
         this.curr_frame_width = this.width_curr;
@@ -194,6 +196,7 @@ function image(id) {
         }
     if (threed_mode){
         $("#cnvs").width(this.width_curr).height(this.height_curr);
+        $("#clipCanvas").width(this.width_curr).height(this.height_curr);
         $("#container").width(this.width_curr).height(this.height_curr);
         $(".kineticjs-content").width(this.width_curr).height(this.height_curr);
         stage.setWidth(this.width_curr);

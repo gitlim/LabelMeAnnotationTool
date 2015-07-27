@@ -236,10 +236,16 @@ function drop(event, object_id) {
   // modify part structure
   if(object_id!=part_id) {
     addPart(object_id, part_id);
-  if (threed_mode){
-    main_threed_handler.AssignSupportPlane(part_id, object_id);
-  }
     // redraw object list
     RenderObjectList();
+    if (threed_mode){
+      main_threed_handler.AssignSupportPlane(part_id, object_id);
+      if (ID_dict[part_id]){
+        console.log(part_id);
+        window.select = ID_dict[part_id];
+        HighlightSelectedThreeDObject();
+        document.getElementById('Link'+ part_id).style.color = '#FF0000';
+      }
+    }
   }
 }

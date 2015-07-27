@@ -3,6 +3,10 @@
 }*/
 
 function add_box_internal() {
+    if (wait_for_input){
+        alert("You must finish adding this box first.");
+        return;
+    }
     var numItems = $(LM_xml).children('annotation').children('object').length;
     threed_anno = new annotation(numItems);
     threed_anno.SetType(3);
@@ -11,17 +15,17 @@ function add_box_internal() {
     window.select.ID = numItems; // making the 3d objects ID in sync with LabelMe system
     ID_dict[window.select.ID] = window.select;
     mkThreeDPopup(1, 1);
-    var sp_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
+    /*var sp_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var sp_plane_geometry = new THREE.PlaneGeometry(20, 20, 40, 40);
     sp_plane = new THREE.Mesh(sp_plane_geometry, sp_plane_material);
-    sp_plane.matrixWorld = plane.matrixWorld;
-    sp_plane.material.visible = false;
+    sp_plane.matrixWorld = plane.matrixWorld.clone();
+    sp_plane.material.visible = false;*/
     var cubeGeometry = new THREE.CubeGeometry(small_w, small_h, small_d);
     var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true});
     var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
     window.select.cube = new THREE.Object3D();
     window.select.cube.add(cube);
-    window.select.plane.matrixWorld = gp_plane.matrixWorld.clone();
+    window.select.plane.matrixWorld = plane.matrixWorld.clone();
     scene.add(window.select.plane);
     window.select.plane.add(object_list[object_list.length-1].cube);
     object_list[object_list.length-1].cube.position.setX(0.95);
@@ -67,6 +71,10 @@ function remove_object_internal(object) {//change to remove_object_internal to s
 }
 
 function add_plane(){
+    if (wait_for_input){
+        alert("You must finish adding this plane first.");
+        return;
+    }
     var numItems = $(LM_xml).children('annotation').children('object').length;
     threed_anno = new annotation(numItems);
     threed_anno.SetType(2);

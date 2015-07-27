@@ -17,7 +17,6 @@ function HighlightSelectedThreeDObject() {//now really only highlighting
             window.select.plane.material.visible = true;
         }
         toggle_cube_resize_arrows(true);
-        gp_plane.material.visible = false;
         guide_Z_line.material.visible = false;
     } else if ((window.select) && !(window.select.cube)){//for planes
         main_threed_handler.LoadDifferentPlane(window.select.ID);
@@ -33,10 +32,7 @@ function DisplayVPTools(){
             stage.children[i].show();
         }
     for (var i = intersect_box.children.length - 1; i > -1; i--){
-        if ((typeof plane_cube != "undefined") && (intersect_box.children[i] != plane_cube)){
             intersect_box.remove(intersect_box.children[i]);
-            plane_cube.material.visible = false;
-        }
     }
 }
 

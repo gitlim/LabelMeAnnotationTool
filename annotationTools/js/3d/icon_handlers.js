@@ -263,7 +263,6 @@ function ThreeDHoverHighlight(object){// need third options for planes
             }
         }
     }else if (object.cube){//for cube
-        gp_plane.material.visible = false;
         guide_Z_line.material.visible = false;
         for (var i = 0; i < stage.children.length; i++) {// shows GP tools
             stage.children[i].hide();
@@ -296,8 +295,6 @@ function ThreeDHoverHighlight(object){// need third options for planes
         object.plane.material.visible = true;
         guide_Z_line.material.visible = true;
         main_threed_handler.LoadDifferentPlane(object.ID);
-
-        //gp_plane.material.visible = true;//if GP is selected, make GP visible
     }
     render();
 }
