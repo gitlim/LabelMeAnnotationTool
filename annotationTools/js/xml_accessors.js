@@ -133,9 +133,14 @@ function LMgetObjectField(xml,ind_object, name, frame) {
 		}
 		return op_points;
 	}
+	if (name == 'ispartof'){
+		if (obj.children("parts").children("ispartof").length > 0){
+			tmp = obj.children("parts").children("ispartof").text();
+			tmp = parseInt(tmp);
+		}
+		return tmp;
+	}
 	return null;
-
-
 }
 
 /** Returns number of LabelMe objects. */

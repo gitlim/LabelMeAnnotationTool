@@ -149,7 +149,7 @@ function handler() {
 					ChangeLinkColorFG(idx);
 					StartEditEvent(idx,null);
 				} 
-			}
+			}if (threed_mode) window.select = null;
 		};
 		
 		// Handles when the user moves the mouse over an annotation link.
@@ -160,6 +160,13 @@ function handler() {
 				} 
 				else if(active_canvas!=SELECTED_CANVAS) selectObject(a);
 				if (video_mode) oVP.HighLightFrames(LMgetObjectField(LM_xml, a, 't'), LMgetObjectField(LM_xml, a, 'userlabeled'));
+				if (threed_mode){
+					ClearCanvas();
+					$("#container").css('display', 'none');
+			        $("#cnvs").css('display', 'none');
+			        $("#clipCanvas").css('display', 'none');
+			        $("#container").css('z-index', '-3');
+				}
 		};
 		
 		// Handles when the user moves the mouse away from an annotation link.
@@ -168,6 +175,15 @@ function handler() {
 			if(active_canvas!=SELECTED_CANVAS) unselectObjects();
 			if (video_mode){
 				oVP.UnHighLightFrames();
+			}
+			if (threed_mode){
+				if (window.select){
+					$("#container").css('display', 'block');
+			      $("#cnvs").css('display', 'block');
+			      $("#container").css('z-index', '1');
+			      HideAllPolygons();
+				}
+				ThreeDHoverHighlight();
 			}
 		};
 		

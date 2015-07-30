@@ -232,20 +232,30 @@ function drop(event, object_id) {
   event.preventDefault();
   var part_id=event.dataTransfer.getData("Text");
   event.stopPropagation();
+  var threed_is_position_possible = true;
   
   // modify part structure
-  if(object_id!=part_id) {
-    addPart(object_id, part_id);
-    // redraw object list
-    RenderObjectList();
+  if(object_id!=part_id) { // messy but will be cleaned up
     if (threed_mode){
-      main_threed_handler.AssignSupportPlane(part_id, object_id);
-      if (ID_dict[part_id]){
+      if (main_canvas.GetAnnoByID(part_id).GetType() == 3 && main_canvas.GetAnnoByID(object_id).GetType() == 2){
+        threed_is_position_possible = CalculateBoxCanBeAdded(ID_dict[part_id], ID_dict[object_id]);
+      }
+      if (ID_dict[part_id] && threed_is_position_possible){
+        addPart(object_id, part_id);
+        SetDrawingMode(2);
+        main_threed_handler.AssignSupportPlane(part_id, object_id);
         console.log(part_id);
         window.select = ID_dict[part_id];
         HighlightSelectedThreeDObject();
-        document.getElementById('Link'+ part_id).style.color = '#FF0000';
       }
     }
+    if (threed_is_position_possible){
+    addPart(object_id, part_id);
+    RenderObjectList();
+      if (threed_mode) document.getElementById('Link'+ part_id).style.color = '#FF0000';
+    }else{
+      alert("You cannot assign the box to that plane because it is impossible.")
+    }
+    // redraw object list
   }
 }

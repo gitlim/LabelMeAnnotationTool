@@ -20,17 +20,33 @@ function add_box_internal() {
     sp_plane = new THREE.Mesh(sp_plane_geometry, sp_plane_material);
     sp_plane.matrixWorld = plane.matrixWorld.clone();
     sp_plane.material.visible = false;*/
+    var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
+    var new_plane_geometry = new THREE.PlaneGeometry(20, 20, 40, 40);
+    var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
+    new_plane.matrixAutoUpdate = false;
+    console.log(new_plane.matrixWorld);
+    new_plane.matrixWorld = plane.matrixWorld.clone();
+    console.log(new_plane.matrixWorld);
+    console.log(new_plane.matrixWorld.clone());
+    new_plane.material.visible = false;
+    window.select.plane = new_plane;
     var cubeGeometry = new THREE.CubeGeometry(small_w, small_h, small_d);
     var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true});
     var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
     window.select.cube = new THREE.Object3D();
     window.select.cube.add(cube);
-    window.select.plane.matrixWorld = plane.matrixWorld.clone();
+    console.log(plane.matrixWorld);
+    //window.select.plane.matrixWorld.copy(plane.matrixWorld);
+    console.log(window.select.plane.matrixWorld);
     scene.add(window.select.plane);
-    window.select.plane.add(object_list[object_list.length-1].cube);
-    object_list[object_list.length-1].cube.position.setX(0.95);
-    object_list[object_list.length-1].cube.position.setY(0.95);
-    object_list[object_list.length-1].cube.position.setZ(small_h/2);
+    window.select.plane.add(window.select.cube);
+    var position = new THREE.Vector3(1.5, 1.5, small_h/2).applyMatrix4(plane.matrixWorld);
+    var i_mat = new THREE.Matrix4().getInverse(window.select.plane.matrixWorld.clone());
+    position.applyMatrix4(i_mat);
+    window.select.cube.position.setX(position.x);
+    window.select.cube.position.setY(position.y);
+    window.select.cube.position.setZ(position.z);
+    window.select.plane.matrixWorldNeedsUpdate = false;
     for (var i = 0; i < stage.children.length; i++) {
         stage.children[i].hide();
     }
@@ -38,6 +54,7 @@ function add_box_internal() {
     HighlightSelectedThreeDObject();
     render();
 }
+
 function clone_box(){
     cloneOn = true;
 }
@@ -92,9 +109,9 @@ function add_plane(){
     window.select.plane = new_plane;
     scene.add(new_plane);
     HighlightSelectedThreeDObject();
-    main_threed_handler.LoadDifferentPlane(groundplane_id);
-    main_threed_handler.PlaneAutoSave();
-    update_plane();
+    main_threed_handler.LoadDifferentPlane(groundplane_id);//loads the info of the groundplane
+    main_threed_handler.PlaneAutoSave(); //saves the info to the new plane so that the info is initially the same as groundplane
+    update_plane(); // renders new plane with info
     render();
 }
 

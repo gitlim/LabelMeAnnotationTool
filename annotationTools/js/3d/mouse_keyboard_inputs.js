@@ -37,13 +37,15 @@
 
 
 function onDocumentMouseDown(event) {
-    if (event.target.tagName != "canvas" && event.target.tagName != "div"){
+    if ((event.target.tagName != "canvas" && event.target.tagName != "div") || !(window.select)){
         return;
     }
     setupRay(event);
+    setupBoxRay(event);
     for (var i = 0; i < arrowHelper.arrow_list.length; i++) {
         resize_arrowhead_intersect = ray.intersectObject(arrowHelper.arrow_list[i].cone, false);
         if (resize_arrowhead_intersect[0]){
+            window.select.cube.matrixAutoUpdate = true;
             //console.log("intersect");
             ray_vector_orig = resize_arrowhead_intersect[0].point.sub(camera.position);
             original_arrowhead_point = ray_vector_orig;
@@ -74,78 +76,92 @@ function onDocumentMouseDown(event) {
             resize_vy = resize_vy / resize_norm;
             resize_scale0 = window.select.cube.scale.clone();
             resize_scale0_orig = window.select.cube.scale.clone();
-            resize_pos0 = window.select.cube.position.clone();
+            resize_pos0 = window.select.cube.position.clone();//world coordinates
             resize_dir = arrowHelper.arrow_list[i].direction;
             //console.log(resize_dir);
         }else{
             arrowHelper.arrow_list[i].cone.material.color.setHex(0xff0000);
         }
     }
-    /*if (typeof plane_cube != "undefined"){
-        a = ray.intersectObject(plane_cube, true);
+    var cube_click = [];
+    if (window.select && window.select.cube && current_mode != RESIZE_MODE && (current_mode != VERTICAL_PLANE_MOVE_MODE)) {
+        if (window.select.cube.parent == box_scene){
+            cube_click = box_ray.intersectObject(window.select.cube, true);
+        }else{        
+            cube_click = ray.intersectObject(window.select.cube, true);
+        }
+        if (cube_click.length > 0){
+            for (var i = 0; i < cube_click.length; i++){
+                console.log("box move");
+                window.select.cube.matrixAutoUpdate = true;
+                current_mode = BOX_MOVE_MODE;
+                if (window.select.hparent == "unassigned"){
+                    plane_click = ray.intersectObject(vert_plane, false);
+                }else{
+                    plane_click = ray.intersectObject(window.select.plane, false);
+                }
+                    if (plane_click.length > 0){
+                            click_original = plane_click[0].point; // everything in world coordinates
+                            //click_original = plane_click[0].point;
+                            console.log(click_original);
+                    }
+                //click_offset.copy(cube_click[i].point.sub( window.select.cube.position.clone()));
+                cube_original.copy(window.select.cube.position.clone().applyMatrix4(window.select.cube.parent.matrixWorld.clone()));
+            }
+        }
+    }
+    if ((!(window.select.cube) || (window.select.hparent != "unassigned")) && (current_mode != RESIZE_MODE) && (current_mode != VERTICAL_PLANE_MOVE_MODE) && (current_mode != BOX_MOVE_MODE)){
+        a = ray.intersectObject(window.select.plane, false);
         if (a.length) {
-            plane_cube.material.color.setRGB(0, 0, 1);
+            var i_mat = new THREE.Matrix4().getInverse(window.select.plane.matrixWorld.clone());
+            console.log("blah");
+            console.log(a[0].point);
+            console.log(a[0].point.applyMatrix4(i_mat));
             resize_x0 = event.clientX;
             resize_y0 = event.clientY;
             var vector1 = new THREE.Vector3();
             var vector2 = new THREE.Vector3();
             var proj2 = new THREE.Projector();
-            var M = window.select.plane.matrixWorld.clone().multiply(plane_cube.matrixWorld);
+            var M = window.select.plane.matrixWorld.clone().multiply(camera.matrixWorld.clone());
             proj2.projectVector(vector1.getPositionFromMatrix(M),camera);
-            proj2.projectVector(vector2.getPositionFromMatrix(M.clone().multiply(new THREE.Matrix4().makeTranslation(0,1,0))),camera);
+            proj2.projectVector(vector2.getPositionFromMatrix(M.clone().multiply(new THREE.Matrix4().makeTranslation(0, 1, 0))),camera);
             resize_vx = (vector2.x-vector1.x)* renderer.domElement.width/2;
             resize_vy = (-vector2.y+vector1.y)*renderer.domElement.height/2;
             var resize_norm = Math.sqrt(resize_vx*resize_vx+resize_vy*resize_vy);
+            var sign = Math.sign(resize_vy);
             resize_vx = resize_vx / resize_norm;
             resize_vy = resize_vy / resize_norm;
-            resize_scale0 = window.select.cube.scale.clone();
-            resize_pos0 = window.select.cube.position.clone();
-            resize_dir = new THREE.Vector3(0, 0, 1);
-            if (window.select.hparent != "unassigned" && window.select.hparent != gp_plane){//make this also not gp later
-                current_mode = VERTICAL_PLANE_MOVE_MODE;
-                console.log(current_mode);
+            resize_vy = sign/Math.pow(Math.abs(resize_vy), 1.005);
+            /*if (Math.abs(resize_vy > 4)){
+                resize_vy = sign*2;
             }
-            var i_mat = new THREE.Matrix4().getInverse(window.select.plane.matrixWorld.clone());
-            cube_position_0 = window.select.cube.position.clone();
-            cube_position_0.setZ(window.select.cube.position.z - window.select.cube.scale.z*small_h/2);
-            cube_position_0_static = window.select.cube.position.clone();
-            cube_position_0_static.setZ(window.select.cube.position.z - window.select.cube.scale.z*small_h/2);
-            cube_position_0.applyMatrix4(window.select.plane.matrixWorld.clone());
-            cube_position_0_static.applyMatrix4(window.select.plane.matrixWorld.clone());
-            //window.select.plane.matrixWorld.multiplyMatrices(window.select.hparent.plane.matrixWorld, (new THREE.Matrix4()).makeTranslation(0, 0, window.select.hparent.cube.scale.z*small_h));
-            window.select.plane.material.visible = true;
-            old_x = window.select.cube.scale.x;
-            old_y = window.select.cube.scale.y;
-            old_z = window.select.cube.scale.z;
-            old_arrow_x = arrowHelper.arrow_box.scale.x;
-            old_arrow_y = arrowHelper.arrow_box.scale.y;
-            old_arrow_z = arrowHelper.arrow_box.scale.z;
-        }
-    }*/
-    var cube_click = [];
-    if (window.select.cube && current_mode != RESIZE_MODE && (current_mode != VERTICAL_PLANE_MOVE_MODE)) {
-        cube_click = ray.intersectObject(window.select.cube, true);
-    }
-    if (cube_click.length > 0){
-        for (var i = 0; i < cube_click.length; i++){
-            console.log("box move");
-            current_mode = BOX_MOVE_MODE;
-            i_mat = new THREE.Matrix4().getInverse(window.select.plane.matrixWorld);
-            if (window.select.hparent == "unassigned"){
-                plane_click = ray.intersectObject(vert_plane, false);
-            }else{
-                plane_click = ray.intersectObject(window.select.plane, false);
+            if (Math.abs(resize_vy) < 2){
+                resize_vy = sign*2.5;
+            }*/
+            if (window.select.hparent != "unassigned"){
+                resize_scale0 = window.select.cube.scale.clone();
+                resize_pos0 = window.select.cube.position.clone();
+                resize_dir = new THREE.Vector3(0, 0, 1);
+                var i_mat = new THREE.Matrix4().getInverse(window.select.cube.parent.matrixWorld.clone()); // in world coordinates
+                cube_position_0 = window.select.cube.position.clone();
+                cube_position_0.setZ(window.select.cube.position.z - window.select.cube.scale.z*small_h/2);
+                cube_position_0_static = window.select.cube.position.clone();
+                cube_position_0_static.setZ(window.select.cube.position.z - window.select.cube.scale.z*small_h/2);
+                cube_position_0.applyMatrix4(window.select.cube.parent.matrixWorld.clone());
+                cube_position_0_static.applyMatrix4(window.select.cube.parent.matrixWorld.clone());
+                //window.select.plane.matrixWorld.multiplyMatrices(window.select.hparent.plane.matrixWorld, (new THREE.Matrix4()).makeTranslation(0, 0, window.select.hparent.cube.scale.z*small_h));
+                window.select.plane.material.visible = true;
+                old_x = window.select.cube.scale.x;
+                old_y = window.select.cube.scale.y;
+                old_z = window.select.cube.scale.z;
+                old_arrow_x = arrowHelper.arrow_box.scale.x;
+                old_arrow_y = arrowHelper.arrow_box.scale.y;
+                old_arrow_z = arrowHelper.arrow_box.scale.z;
             }
-                if (plane_click.length > 0){
-                        click_original = plane_click[0].point.applyMatrix4(i_mat); // everything in support plane coordinates
-                        //click_original = plane_click[0].point;
-                        console.log(click_original);
-                }
-            //click_offset.copy(cube_click[i].point.sub( window.select.cube.position.clone()));
-            cube_original.copy(window.select.cube.position.clone());
+            current_mode = VERTICAL_PLANE_MOVE_MODE;
         }
     }
-    else if ((window.select.cube) && (current_mode != RESIZE_MODE) && (current_mode != BOX_MOVE_MODE) && (event.target.id == "") && (current_mode != VERTICAL_PLANE_MOVE_MODE)) {
+    if ((window.select) && (window.select.cube) && (current_mode != RESIZE_MODE) && (current_mode != BOX_MOVE_MODE) && (event.target.id == "") && (current_mode != VERTICAL_PLANE_MOVE_MODE)) {
         console.log("rotate");
         prevX = event.clientX;
         targetRotationOnMouseDown = window.select.cube.rotation.z;
@@ -160,6 +176,7 @@ function onDocumentMouseDown(event) {
 
 function onDocumentMouseMove(event) {
     setupRay(event);
+    setupBoxRay(event);
     if (!window.select){
         return;
     }
@@ -185,12 +202,16 @@ function onDocumentMouseMove(event) {
             toggle_cube_move_indicators(false);
             var resize_x1 = event.clientX;
             var resize_y1 = event.clientY;
-            var resize_dot = (resize_x1 - resize_x0)*resize_vx + (resize_y1 - resize_y0)*resize_vy;
+            var resize_dot = (-1*resize_y1 + resize_y0)*Math.abs(resize_vy);
+            console.log(resize_vy);
+            console.log(resize_y1 - resize_y0);
             resize_x0 = resize_x1;
             resize_y0 = resize_y1;
-            resize_dir = new THREE.Vector3(0, 0, -1);
-            window.select.plane.matrixWorld.multiplyMatrices(window.select.plane.matrixWorld, (new THREE.Matrix4()).makeTranslation(0, 0, (-resize_dot*small_d*resize_dir.z)/50));
-            calculate_box_location();
+            resize_dir = new THREE.Vector3(0, 0, 1);
+            window.select.plane.matrixWorld.multiplyMatrices(window.select.plane.matrixWorld, (new THREE.Matrix4()).makeTranslation(0, 0, (-resize_dot*small_d*resize_dir.z)/35));
+            /*if (window.select.hparent != "unassigned"){
+                calculate_box_location(window.select, window.select);
+            }*/
             render();
         }
         else if (current_mode == RESIZE_MODE) {
@@ -199,7 +220,6 @@ function onDocumentMouseMove(event) {
             console.log(resize_vx, resize_vy);
             console.log((resize_x1 - resize_x0), (resize_y1 - resize_y0));
             var resize_dot = ((resize_x1 - resize_x0)*resize_vx + (resize_y1 - resize_y0)*resize_vy)*0.3;
-            var resize_mag = Math.sqrt(Math.pow((resize_x1 - resize_x0), 2) + Math.pow((resize_y1 - resize_y0), 2));
             resize_x0 = resize_x1;
             resize_y0 = resize_y1;
             //resize_dot = resize_dot/resize_mag;
@@ -234,7 +254,7 @@ function onDocumentMouseMove(event) {
             resize_pos0 = window.select.cube.position.clone();
             render();
         }
-        else if ($(event.target).parents('div#main_media').length && !$(event.target).parents('div#icon_wrapper').length && event.target.id != "icon_wrapper") { //event.target.id != "icon_wrapper" && event.target.tagName != "BUTTON" && event.target.tagName != "FONT") && (event.target.id != "icon_container")) { // && (event.target.tagName == "canvas")) {
+        else if ($(event.target).parents('div#main_media').length && !$(event.target).parents('div#icon_wrapper').length && event.target.id != "icon_wrapper" && window.select.cube) { //event.target.id != "icon_wrapper" && event.target.tagName != "BUTTON" && event.target.tagName != "FONT") && (event.target.id != "icon_container")) { // && (event.target.tagName == "canvas")) {
             var cube_hover = [];
             if (window.select.cube) {
                 cube_hover = ray.intersectObject(window.select.cube, true);
@@ -285,18 +305,15 @@ function onDocumentMouseMove(event) {
                 draggable = false;
             }
             var rect = document.getElementById("im").getBoundingClientRect();
-            if ((current_mode == BOX_MOVE_MODE) && (elementMouseIsOver != icon_container)) {
-                var current_plane = window.select.plane;
+            if ((current_mode == BOX_MOVE_MODE)) {
                 if (window.select.hparent == "unassigned"){
                     a = ray.intersectObject(vert_plane, false);
                 }else{
                     a = ray.intersectObject(window.select.plane, false);
                 }
                 for (var i = 0; i < a.length; i++) {
-                    var i_mat = new THREE.Matrix4().getInverse(window.select.plane.matrixWorld);
-                    a[i].point.applyMatrix4(i_mat);
-                    //var z_holder = window.select.cube.position.z;
-                    window.select.cube.position.copy(cube_original.clone().add(a[i].point.sub(click_original)))
+                    var i_mat = new THREE.Matrix4().getInverse(window.select.cube.parent.matrixWorld);
+                    window.select.cube.position.copy(cube_original.clone().add(a[i].point.sub(click_original)).applyMatrix4(i_mat));
                 }
                 /*if (window.select.hparent != "unassigned"){
                     diagonal = Math.sqrt(Math.pow(window.select.cube.scale.x*small_w/2, 2) + Math.pow(window.select.cube.scale.y*small_d/2, 2));
@@ -345,6 +362,9 @@ function onDocumentMouseUp(event) {
     var anyRerendering = false;
     if (current_mode == BOX_MOVE_MODE || current_mode == RESIZE_MODE){
         main_threed_handler.BoxAutoSave();
+    }
+    if (current_mode == VERTICAL_PLANE_MOVE_MODE){
+        main_threed_handler.PlaneAutoSave();
     }
     current_mode = 0;
     if ((document.getElementById("navigation")) && (document.getElementById("navigation").checked === false))

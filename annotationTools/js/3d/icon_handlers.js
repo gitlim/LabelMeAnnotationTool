@@ -257,10 +257,13 @@ function ThreeDHoverHighlight(object){// need third options for planes
                 }
                 changeColor(window.select.cube, 0xffff00);
             }else{
+                console.log("display");
                 window.select.plane.material.visible = true;
                 DisplayVPTools();
                 main_threed_handler.LoadDifferentPlane(window.select.ID);
             }
+        }else{
+            main_threed_handler.GotoFirstAnnoObject();
         }
     }else if (object.cube){//for cube
         guide_Z_line.material.visible = false;

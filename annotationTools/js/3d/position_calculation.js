@@ -13,7 +13,7 @@ function calculate_box_location(cube_object, support_object){
     }
     if (plane_intersection){
         for (var i = 0; i < plane_intersection.length; i++){
-            var i_mat2 = new THREE.Matrix4().getInverse(cube_object.plane.matrixWorld);
+            var i_mat2 = new THREE.Matrix4().getInverse(cube_object.cube.parent.matrixWorld);
             plane_intersection[i].point.applyMatrix4(i_mat2);//x and y in support plane
             cube_object.cube.position.copy(plane_intersection[i].point);
             proportion_scale = camera.position.distanceTo(plane_intersection[i].point.applyMatrix4(cube_object.plane.matrixWorld))/camera.position.distanceTo(cube_position_0_static);
@@ -29,10 +29,12 @@ function calculate_box_location(cube_object, support_object){
     proportion_array[cube_object.ID] = arrowHelper.arrow_box.scale.x;
     if (cube_object.hchildren.length > 0){
         for (var i = 0; i < cube_object.hchildren.length; i++){
-            calculate_children_box_locations(cube_object.hchildren[i])
+            if (cube_object.hchildren[i].cube){
+                calculate_children_box_locations(cube_object.hchildren[i]);
+            }
         }
     }
-    check_plane_box_collision();
+    //check_plane_box_collision();
     main_threed_handler.BoxAutoSave(cube_object.ID);
     render();
 }
@@ -51,7 +53,7 @@ function calculate_children_box_locations(object){
     var plane_intersection = optical_ray.intersectObject(object.plane, false);
     if (plane_intersection){
         for (var i = 0; i < plane_intersection.length; i++){
-            var i_mat = new THREE.Matrix4().getInverse(object.plane.matrixWorld);
+            var i_mat = new THREE.Matrix4().getInverse(object.cube.parent.matrixWorld);
             plane_intersection[i].point.applyMatrix4(i_mat);
             object.cube.position.copy(plane_intersection[i].point);
             var proportion_scale = camera.position.distanceTo(plane_intersection[i].point.applyMatrix4(object.plane.matrixWorld.clone()))/camera.position.distanceTo(target_cube_position_0_static);
@@ -75,4 +77,25 @@ function calculate_children_box_locations(object){
 
 function CalculateBoxInitialPosition(){
 
+}
+
+function CalculateBoxCanBeAdded(cube_object, support_object){
+    var cube_position = cube_object.cube.position.clone().applyMatrix4(cube_object.plane.matrixWorld.clone());
+    var direction = new THREE.Vector3(cube_position.x - camera.position.x, cube_position.y - camera.position.y, cube_position.z - camera.position.z).normalize();
+    var optical_ray = new THREE.Raycaster(camera.position, direction);
+    if (!(support_object.cube)){//if support object is a plane - making the cube object plane the same height as the plane that is supporting
+        var plane_intersection = optical_ray.intersectObject(support_object.plane, false);
+    }else{//if support object is a cube - moving the plane of the cube object to the correct height
+        var test_plane = cube_object.plane.clone();
+        test_plane.matrixWorld.multiplyMatrices(support_object.plane.matrixWorld.clone(), (new THREE.Matrix4()).makeTranslation(0, 0, support_object.cube.scale.z*small_h))
+        //cube_object.plane.matrixWorld.multiplyMatrices(support_object.plane.matrixWorld.clone(), (new THREE.Matrix4()).makeTranslation(0, 0, support_object.cube.scale.z*small_h));
+        var plane_intersection = optical_ray.intersectObject(test_plane, false);
+    }
+    if (plane_intersection[0]){
+        console.log("yes");
+        return true;
+    }else{
+        console.log("no");
+        return false;
+    }
 }

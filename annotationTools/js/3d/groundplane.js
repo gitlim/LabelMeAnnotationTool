@@ -57,7 +57,7 @@ function init_kinetic_stage() {
 
     pt_layer = new Kinetic.Layer();
 
-    var circle = new Kinetic.Circle({//this is the draggable point
+    /*var circle = new Kinetic.Circle({//this is the draggable point
     name: "op_circle",
     x: 500*scale_factor,
     y: 500*scale_factor,
@@ -69,7 +69,7 @@ function init_kinetic_stage() {
     op_x = 500*scale_factor;
     op_y = 500*scale_factor;
     circle.on("dragmove", op_drag);
-    pt_layer.add(circle);
+    pt_layer.add(circle);*/
 
     stage.add(pt_layer);
 
@@ -127,14 +127,14 @@ function dist2(a, b) {//distances squared between two vp_s
     return Math.pow(a.x2d-b.x2d,2) + Math.pow(a.y2d-b.y2d,2);
 }
 
-function op_drag(e) {
+/*function op_drag(e) {
     //reassigning circle coordinates after it is moved
     op_x = e.targetNode.x();
     op_y = e.targetNode.y();
     console.log(op_x, op_y);
     main_threed_handler.PlaneAutoSave();
     update_plane().done(main_threed_handler.PlaneAutoSave);
-}
+}*/
 
 function point_drag() {
     var point_id = this.name();
@@ -367,7 +367,7 @@ function update_plane() {
     if (current_time - last_update > 100) {
     last_update = current_time;
     } else {
-    return r;
+        return r;
     }
 
     if ((typeof GLOBAL_DEBUG != 'undefined') &&(GLOBAL_DEBUG)) {
@@ -493,14 +493,14 @@ function update_plane() {
     K[9] = -axis_z[1];
     K[10] = -axis_z[2];
     K[11] = 0;
-    K[12] = -(axis_x[0]+axis_y[0]) + (op_x - init_width/2)/gp_f;
-    K[13] = (axis_x[1]+axis_y[1]) - (op_y - init_height/2)/gp_f;
+    K[12] = -(axis_x[0]+axis_y[0]) + 1;
+    K[13] = (axis_x[1]+axis_y[1]) - 1;
     K[14] = (axis_x[2]+axis_y[2]) -1;
     K[15] = 1;
 
     rerender_plane(K);
 
-    console.log(op_x, op_y);
+    //console.log(op_x, op_y);
 
     setTimeout(function(){
         r.resolve();
@@ -694,9 +694,13 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
         selected_plane = hover_object.plane;
     }else if (window.select && !(window.select.cube)){
         selected_plane = window.select.plane;
+    }else{
+        return;
     }
+    console.log(window.select);
     console.log(K);
     camera.matrixAutoUpdate=false;
+    box_camera.matrixAutoUpdate=false;
     selected_plane.matrixAutoUpdate=false;
     selected_plane.matrixWorld.elements= K;// setting selected_plane to camera transformation
 
@@ -766,9 +770,15 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
     var theCanvas = document.getElementById("cnvs"); //setting up the camera so that it is using the canvas parameters
     camera = new THREE.PerspectiveCamera(Math.atan(theCanvas.height/gp_f/2)/Math.PI*180*2, theCanvas.width/theCanvas.height, .01, 20000);
     camera.position.z = 0;
+
     selected_plane.material.visible = true;
 
+    var boxCanvas = document.getElementById("boxCanvas"); 
+    box_camera = new THREE.PerspectiveCamera(Math.atan(theCanvas.height/gp_f/2)/Math.PI*180*2, theCanvas.width/theCanvas.height, .01, 20000);
+    box_camera.position.z = 0;
+
     renderer.render(scene, camera);
+    box_renderer.render(box_scene, camera);
 
 }
 

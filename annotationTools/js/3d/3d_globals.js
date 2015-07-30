@@ -16,6 +16,10 @@ var scene;     // The 3D scene that will be rendered, containing the cube.
 var camera;    // The camera that takes the picture of the scene.
 var old_camera;
 
+var box_renderer;
+var box_scene;
+var box_camera;
+
 var sidemode = 1;
 
 var plane;
@@ -107,3 +111,6 @@ var original_number_of_lines = 0;
 
 var hover_object;
 var groundplane_id;
+var renderer_last_update = 0;
+
+var clip_on = 0;

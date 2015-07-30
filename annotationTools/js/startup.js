@@ -334,6 +334,7 @@ function SetDrawingMode(mode){
         }  
         $("#container").css('display', 'none');
         $("#cnvs").css('display', 'none');
+        $("#boxCanvas").css('display', 'none');
         $("#clipCanvas").css('display', 'none');
         $("#container").css('z-index', '-3');
         ShowAllPolygons();
@@ -349,7 +350,7 @@ function SetDrawingMode(mode){
     }
     if (mode == 1) {
         $("#container").css('display', 'none');
-        $("#cnvs").css('display', 'none');
+        $("#boxCanvas").css('display', 'none');
         $("#clipCanvas").css('display', 'none');
         if(draw_anno) {
         alert("Need to close current polygon first.");
@@ -364,6 +365,7 @@ function SetDrawingMode(mode){
     if (mode == 2){
       $("#container").css('display', 'block');
       $("#cnvs").css('display', 'block');
+      $("#boxCanvas").css('display', 'block');
       $("#container").css('z-index', '1');
       HideAllPolygons();
       if (document.getElementById("canvasDiv")){

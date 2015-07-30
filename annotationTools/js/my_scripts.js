@@ -223,12 +223,11 @@ function selectObject(idx) {
   selected_poly = idx;
   if(view_ObjList) ChangeLinkColorFG(idx);
   main_canvas.annotations[anid].FillPolygon();
-  
   // Select object parts:
   var selected_poly_parts = getPartChildrens(idx);
   for (var i=0; i<selected_poly_parts.length; i++) {
     var anid = main_canvas.GetAnnoIndex(selected_poly_parts[i]);
-    if ((main_canvas.GetAnnoByID(anid).GetType() != 2) && (main_canvas.GetAnnoByID(anid).GetType() != 3)){
+    if ((main_canvas.GetAnnoByID(idx).GetType() != 2) && (main_canvas.GetAnnoByID(idx).GetType() != 3)){
       if((selected_poly_parts[i]!=selected_poly) && main_canvas.annotations[anid].hidden) {
         main_canvas.annotations[anid].DrawPolygon(main_media.GetImRatio(), LMgetObjectField(LM_xml,selected_poly_parts[i],'x'), LMgetObjectField(LM_xml,selected_poly_parts[i],'y'));
     }
@@ -251,10 +250,10 @@ function unselectObjects() {
   for (var i=0; i<selected_poly_parts.length; i++) {
 
     var anid = main_canvas.GetAnnoIndex(selected_poly_parts[i]);
-    if((selected_poly_parts[i]!=selected_poly) && main_canvas.annotations[anid].hidden) {
-      main_canvas.annotations[anid].DeletePolygon();
+    if((selected_poly_parts[i]!=selected_poly) && main_canvas.annotations[selected_poly].hidden) {
+      main_canvas.annotations[selected_poly].DeletePolygon();
     }
-    main_canvas.annotations[anid].UnfillPolygon();
+    main_canvas.annotations[selected_poly].UnfillPolygon();
   }
   
   // Reset selected_poly variable:
