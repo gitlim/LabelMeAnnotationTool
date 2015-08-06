@@ -48,11 +48,10 @@ function StartupLabelMe() {
           var anno_file = main_media.GetFileInfo().GetFullName();
           anno_file = 'Annotations/' + anno_file.substr(0,anno_file.length-4) + '.xml' + '?' + Math.random();
           ReadXML(anno_file,LoadAnnotationSuccess,LoadAnnotation404);
-        init_kinetic_stage();
-        init();
       };
       // Get the image:
         main_media.GetNewImage(main_media_onload_helper2);
+
         //document.getElementById("icon_wrapper").style.display = "block";
         //CreateModelList();
         FinishStartup();
@@ -90,6 +89,10 @@ function LoadAnnotationSuccess(xml) {
   // Set global variable:
   LM_xml = xml;
 
+
+  var obj_elts = LM_xml.getElementsByTagName("object");
+
+
   // Set AllAnnotations array:
   SetAllAnnotationsArray();
 
@@ -100,7 +103,11 @@ function LoadAnnotationSuccess(xml) {
     if((view_Existing&&!isDeleted)||(isDeleted&&view_Deleted)) {
       // Attach to main_canvas:
       main_canvas.AttachAnnotation(new annotation(pp));
-      if (!video_mode && LMgetObjectField(LM_xml, pp, 'x') == null){
+      if (threed_mode && obj_elts[pp].getElementsByTagName("plane").length > 0){//planes
+        main_canvas.annotations[main_canvas.annotations.length -1].SetType(2);
+      }else if (threed_mode && obj_elts[pp].getElementsByTagName("cube").length > 0){//boxes 
+        main_canvas.annotations[main_canvas.annotations.length -1].SetType(3);
+      }else if (!video_mode && LMgetObjectField(LM_xml, pp, 'x') == null){
         main_canvas.annotations[main_canvas.annotations.length -1].SetType(1);
         main_canvas.annotations[main_canvas.annotations.length -1].scribble = new scribble(pp);
       }
@@ -237,11 +244,21 @@ function FinishStartup() {
   // Enable scribble mode:
   InitializeAnnotationTools('label_buttons_drawing','main_media');
   if (threed_mode){
-      Initialize3dButtons(); //create tool buttons and iccon container
+      Initialize3dButtons(); //create tool buttons and icon container
   }
   if (threed_mode){
-      main_threed_handler.CreateGroundplane();
-      drawing_mode = 2;
+      init_kinetic_stage();
+      init();
+      main_threed_handler.LoadThreeDObjectsOnStartup();
+      if (object_list.length < 1){
+        main_threed_handler.CreateGroundplane();
+      }
+      SetDrawingMode(2);
+      window.select = object_list[0];
+      HighlightSelectedThreeDObject();
+      document.getElementById('Link'+groundplane_id).style.color = '#FF0000';
+      update_plane();
+      render();
   }
   // Set action when the user presses a key:
   document.onkeyup = main_handler.KeyPress;

@@ -108,6 +108,16 @@ function LMgetObjectField(xml,ind_object, name, frame) {
 		}
 		return K;
 	}
+	if (name == 'cube_matrix'){
+		if (obj.children('cube').children('cube_matrix').length > 0){
+			var M = new Array(16);
+			M = obj.children('cube').children('cube_matrix').text().match(/[\S]+/g);
+			for (var i = 0; i < M.length; i++){
+				M[i] = parseFloat(M[i]);
+			}
+		}
+		return M;
+	}
 	if (name == 'lines'){
 		var lines = new Array();
 		for (var i = 0; i < obj.children('plane').children('lines').find('vp_line').length; i++){
@@ -139,6 +149,26 @@ function LMgetObjectField(xml,ind_object, name, frame) {
 			tmp = parseInt(tmp);
 		}
 		return tmp;
+	}
+	if (name == 'cube_position' || name == 'cube_scale'){
+		if (obj.children('cube').children(name).length > 0){
+			var vector = new THREE.Vector3();
+			var vector_array = obj.children('cube').children(name).text().match(/[\S]+/g);
+			for (var i = 0; i < vector_array.length; i++){
+				vector_array[i] = parseFloat(vector_array[i]);
+			}
+		}
+		vector.x = vector_array[0];
+		vector.y = vector_array[1];
+		vector.z = vector_array[2];
+		
+		return vector;
+	}
+	if (name == 'cube_rotation'){
+		if (obj.children('cube').children('cube_rotation').length > 0){
+			var rotation = parseFloat(obj.children('cube').children('cube_rotation').text());
+		}
+		return rotation;
 	}
 	return null;
 }

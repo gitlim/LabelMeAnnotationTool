@@ -1,7 +1,7 @@
 function HighlightSelectedThreeDObject() {//now really only highlighting
-    if (!LMgetObjectField(LM_xml, window.select.ID, "ispartof")){
-        ClearCanvas();
-    }
+    //if (!LMgetObjectField(LM_xml, window.select.ID, "ispartof")){
+    ClearCanvas();
+    //}
     for (var i = 0; i < object_list.length; i++) {
         if (object_list[i].cube) changeColor(object_list[i].cube, 0xffffff);
         object_list[i].plane.material.visible = false;
@@ -11,12 +11,15 @@ function HighlightSelectedThreeDObject() {//now really only highlighting
             console.log("highlight");
             changeColor(window.select.cube, 0xffff00);
             window.select.cube.traverse( function ( object ) { object.visible = true; } );
+            if (!isNaN(LMgetObjectField(LM_xml, window.select.ID, "ispartof")) && !clip_on ){
+                CreatePolygonClip(LMgetObjectField(LM_xml, window.select.ID, "ispartof"));
+            }
         }
         else{
            main_threed_handler.LoadDifferentPlane(window.select.ID);
-            if (LMgetObjectField(LM_xml, window.select.ID, "ispartof") && !clip_on ){
+            if (!isNaN(LMgetObjectField(LM_xml, window.select.ID, "ispartof")) && !clip_on ){
                 CreatePolygonClip(LMgetObjectField(LM_xml, window.select.ID, "ispartof"));
-            }else if ((window.select.hparent != "unassigned" && LMgetObjectField(LM_xml, window.select.hparent.ID, "ispartof"))){
+            }else if ((window.select.hparent != "unassigned" && !isNaN(LMgetObjectField(LM_xml, window.select.hparent.ID, "ispartof")))){
                 CreatePolygonClip(LMgetObjectField(LM_xml, window.select.hparent.ID, "ispartof"));
             }
             window.select.plane.material.visible = true;
@@ -47,6 +50,7 @@ function DisplayVPTools(){
     for (var i = intersect_box.children.length - 1; i > -1; i--){
             intersect_box.remove(intersect_box.children[i]);
     }
+    stage.draw();
 }
 
 

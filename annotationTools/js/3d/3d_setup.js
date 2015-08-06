@@ -60,7 +60,7 @@ function init(){
         }
         if (!box_renderer) { // If the WebGLRenderer couldn't be created, try a CanvasRenderer.
             box_renderer = new THREE.CanvasRenderer( { canvas: boxCanvas } );
-            box_renderer.setSize(theCanvas.width,theCanvas.height);
+            box_renderer.setSize(theCanvas.width*2,theCanvas.height*2);
             //document.getElementById("message").innerHTML =
             //"WebGL not available; falling back to CanvasRenderer.";
         }
@@ -92,8 +92,7 @@ function init(){
     render();
     setup_model_list();
     update_plane();
-
-    ID_dict["GP"] = plane;
+    //ID_dict["GP"] = plane;
     render();
 }
 
@@ -111,7 +110,7 @@ function createWorld() {// split into different parts for 3d and gp later
     // This section is for drawing the groundplane, arguments are how plane is divided
     var plane_geometry = new THREE.PlaneGeometry(20, 20, 100, 100);
     var gp_plane_geometry = new THREE.PlaneGeometry(20, 20, 100, 100);
-    var vert_plane_geometry = new THREE.PlaneGeometry(2, 2, 40, 40);
+    var vert_plane_geometry = new THREE.PlaneGeometry(200, 200, 40, 40);
     var plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var vert_plane_material = new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide, wireframe: true});
     var gp_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
@@ -195,44 +194,45 @@ function render() {
         if (typeof proportion_array[window.select.ID] == "undefined"){
             proportion_array[window.select.ID] = 1;
         }
-        var arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
-        var indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
-        var plane_object_position = ConvertPosition(window.select.cube, plane_object.parent);
-        arrowHelper.matrixWorld = window.select.plane.matrixWorld.clone();
-        arrowHelper.arrow_box.rotation.z = window.select.cube.rotation.z;
-        arrowHelper.arrow_box.position.set(arrow_box_position.x, arrow_box_position.y,arrow_box_position.z + small_h*0.5*window.select.cube.scale.z);
-        arrowHelper.arrow_list[1].setLength(window.select.cube.scale.y*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
-        arrowHelper.arrow_list[2].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
-        arrowHelper.arrow_list[3].setLength(window.select.cube.scale.y*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
-        arrowHelper.arrow_list[4].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
-        arrowHelper.arrow_list[0].setLength(small_w, arrowhead_size, arrowhead_size);
-        indicator_box.position.set(indicator_box_position.x,indicator_box_position.y,indicator_box_position.z + small_h*0.5*window.select.cube.scale.z);
-        arrowHelper.arrow_box.scale.x = proportion_array[window.select.ID];
-        arrowHelper.arrow_box.scale.y = proportion_array[window.select.ID];
-        arrowHelper.arrow_box.scale.z = proportion_array[window.select.ID];
-        indicator_box.scale.x = proportion_array[window.select.ID];
-        indicator_box.scale.y = proportion_array[window.select.ID];
-        indicator_box.scale.z = proportion_array[window.select.ID];
         if (window.select.cube.parent != window.select.plane){
             window.select.cube.parent.matrixWorld = window.select.plane.matrixWorld.clone();
             window.select.cube.parent.material.visible = false;
         }
+        arrowHelper.matrixWorld = window.select.plane.matrixWorld.clone();
+        if (!arrow_box_position || !indicator_box_position){
+            arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
+            indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
+        }
+        var plane_object_position = ConvertPosition(window.select.cube, plane_object.parent);
+        arrowHelper.arrow_box.rotation.z = window.select.cube.rotation.z;
+        arrowHelper.arrow_box.position.set(arrow_box_position.x, arrow_box_position.y, arrow_box_position.z + small_h*0.5*window.select.cube.scale.z);
+        arrowHelper.arrow_list[1].setLength(window.select.cube.scale.y*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
+        arrowHelper.arrow_list[2].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
+        arrowHelper.arrow_list[3].setLength(window.select.cube.scale.y*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
+        arrowHelper.arrow_list[4].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
+        arrowHelper.arrow_list[0].setLength(indicator_box.scale.x*0.1, arrowhead_size, arrowhead_size);
+        indicator_box.position.set(indicator_box_position.x,indicator_box_position.y,indicator_box_position.z + small_h*0.5*window.select.cube.scale.z);
+        /*arrowHelper.arrow_box.scale.x = proportion_array[window.select.ID];
+        arrowHelper.arrow_box.scale.y = proportion_array[window.select.ID];
+        arrowHelper.arrow_box.scale.z = proportion_array[window.select.ID];*/
+        /*indicator_box.scale.x = proportion_array[window.select.ID];
+        indicator_box.scale.y = proportion_array[window.select.ID];
+        indicator_box.scale.z = proportion_array[window.select.ID];*/
         if (window.select.cube){
             plane_object.position.setX(plane_object_position.x);
             plane_object.position.setY(plane_object_position.y);
             plane_object.position.setZ(plane_object_position.z);
         }
-        toggle_cube_resize_arrows(true);
+        /*toggle_cube_resize_arrows(true);
         toggle_cube_move_indicators(true);
-        toggle_cube_rotate_indicators(true);
+        toggle_cube_rotate_indicators(true);*/
     }else{
         toggle_cube_resize_arrows(false);
         toggle_cube_move_indicators(false);
         toggle_cube_rotate_indicators(false);
     }
-    renderer.render(scene, camera);
     box_renderer.render(box_scene, camera);
-    console.log("render");
+    renderer.render(scene, camera);
 }
 
 function ConvertPosition(convert_object, target_object){//converts position of convert_object to coordinates in target_object matrixworld

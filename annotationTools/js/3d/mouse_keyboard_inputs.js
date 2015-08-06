@@ -42,6 +42,11 @@ function onDocumentMouseDown(event) {
     }
     setupRay(event);
     setupBoxRay(event);
+    var scale_factor = main_media.GetImRatio();
+    var x = GetEventPosX(event);
+    var y = GetEventPosY(event);
+    var point = new Point(x, y);
+    console.log(x,y);
     for (var i = 0; i < arrowHelper.arrow_list.length; i++) {
         resize_arrowhead_intersect = ray.intersectObject(arrowHelper.arrow_list[i].cone, false);
         if (resize_arrowhead_intersect[0]){
@@ -89,6 +94,10 @@ function onDocumentMouseDown(event) {
             cube_click = box_ray.intersectObject(window.select.cube, true);
         }else{        
             cube_click = ray.intersectObject(window.select.cube, true);
+        }
+        if (polygon && !(polygon.pointInPoly(point)) && window.select.lock_inside_clip_area){
+            console.log("point not in polygon");
+            cube_click = [];
         }
         if (cube_click.length > 0){
             for (var i = 0; i < cube_click.length; i++){
@@ -175,10 +184,22 @@ function onDocumentMouseDown(event) {
 }
 
 function onDocumentMouseMove(event) {
+    if ((event.target.tagName != "canvas" && event.target.tagName != "div") || !(window.select)){
+        return;
+    }
     setupRay(event);
     setupBoxRay(event);
+    var scale_factor = main_media.GetImRatio();
+    var x = GetEventPosX(event);
+    var y = GetEventPosY(event);
+    var point = new Point(x, y);
+    var is_point_in_poly = true;
     if (!window.select){
         return;
+    }
+    if (polygon){
+        var is_point_in_poly = polygon.pointInPoly(point);
+        if (BOX_MOVE_MODE && is_point_in_poly) window.select.lock_inside_clip_area = true;
     }
     if ($('#im').has(event.target)){
         if (nav_toggle == true) {
@@ -188,7 +209,6 @@ function onDocumentMouseMove(event) {
             rotateUp( 2 * Math.PI * rotateDelta.y / renderer.domElement.clientHeight * rotateSpeed );
             rotateStart.copy( rotateEnd );
             update(camera);
-            render();
         }
         if (current_mode == ROTATE_MODE){
             var radians = targetRotationOnMouseDown + (event.clientX - prevX)/500 * Math.PI;
@@ -212,6 +232,12 @@ function onDocumentMouseMove(event) {
             /*if (window.select.hparent != "unassigned"){
                 calculate_box_location(window.select, window.select);
             }*/
+            if(window.select.cube){
+                arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
+                indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
+            }
+            if (window.select.hparent && window.select.cube) check_plane_box_collision();
+            update_plane();
             render();
         }
         else if (current_mode == RESIZE_MODE) {
@@ -252,6 +278,8 @@ function onDocumentMouseMove(event) {
             window.select.cube.position.z = resize_pos0.z - small_d*0.5*(window.select.cube.scale.z - resize_scale0.z);
             resize_scale0 = window.select.cube.scale.clone();
             resize_pos0 = window.select.cube.position.clone();
+            arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
+            indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
             render();
         }
         else if ($(event.target).parents('div#main_media').length && !$(event.target).parents('div#icon_wrapper').length && event.target.id != "icon_wrapper" && window.select.cube) { //event.target.id != "icon_wrapper" && event.target.tagName != "BUTTON" && event.target.tagName != "FONT") && (event.target.id != "icon_container")) { // && (event.target.tagName == "canvas")) {
@@ -305,7 +333,7 @@ function onDocumentMouseMove(event) {
                 draggable = false;
             }
             var rect = document.getElementById("im").getBoundingClientRect();
-            if ((current_mode == BOX_MOVE_MODE)) {
+            if ((current_mode == BOX_MOVE_MODE) && is_point_in_poly) {
                 if (window.select.hparent == "unassigned"){
                     a = ray.intersectObject(vert_plane, false);
                 }else{
@@ -350,10 +378,17 @@ function onDocumentMouseMove(event) {
                         }
                     }
                 }*/
+                arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
+                indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
                 render();
             }
         }
     }
+    if (window.select.cube){
+        arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
+        indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
+    }
+
 }
 
 function onDocumentMouseUp(event) {
@@ -364,7 +399,8 @@ function onDocumentMouseUp(event) {
         main_threed_handler.BoxAutoSave();
     }
     if (current_mode == VERTICAL_PLANE_MOVE_MODE){
-        main_threed_handler.PlaneAutoSave();
+        update_plane();
+        main_threed_handler.PlaneAutoSave(window.select.ID);
     }
     current_mode = 0;
     if ((document.getElementById("navigation")) && (document.getElementById("navigation").checked === false))

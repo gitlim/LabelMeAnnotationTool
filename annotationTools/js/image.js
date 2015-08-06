@@ -84,7 +84,11 @@ function image(id) {
         $("#select_canvas").width(this.width_curr).height(this.height_curr);
         $("#draw_canvas").width(this.width_curr).height(this.height_curr);
         $("#query_canvas").width(this.width_curr).height(this.height_curr);
+        $("#cnvs").width(this.width_curr).height(this.height_curr);
+        $("#boxCanvas").width(this.width_curr).height(this.height_curr);
         $("#clipCanvas").width(this.width_curr).height(this.height_curr);
+        $("#container").width(this.width_curr).height(this.height_curr);
+
 
 
 
@@ -199,7 +203,6 @@ function image(id) {
         $("#boxCanvas").width(this.width_curr).height(this.height_curr);
         $("#clipCanvas").width(this.width_curr).height(this.height_curr);
         $("#container").width(this.width_curr).height(this.height_curr);
-        $(".kineticjs-content").width(this.width_curr).height(this.height_curr);
         stage.setWidth(this.width_curr);
         stage.setHeight(this.height_curr);
         if (amt != "fitted"){
@@ -211,7 +214,6 @@ function image(id) {
             stage.setScaleY(1);
         }
         stage.draw();
-        $("#icon_wrapper").width(this.width_curr);
     }
 	/*************************************************************/
 	/*************************************************************/

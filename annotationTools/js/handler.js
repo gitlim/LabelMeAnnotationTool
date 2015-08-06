@@ -118,6 +118,11 @@ function handler() {
 				selected_poly = -1;
 				unselectObjects(); // Perhaps this should go elsewhere...
 				StopEditEvent();
+
+				if (threed_mode){
+					window.select = null;
+					ClearCanvas();
+				}
 		};
 		
 		// Handles when the user clicks on the link for an annotation.
@@ -165,6 +170,7 @@ function handler() {
 					$("#container").css('display', 'none');
 			        $("#cnvs").css('display', 'none');
 			        $("#clipCanvas").css('display', 'none');
+			        $("#boxCanvas").css('display', 'none');
 			        $("#container").css('z-index', '-3');
 				}
 		};
@@ -181,9 +187,26 @@ function handler() {
 					$("#container").css('display', 'block');
 			      $("#cnvs").css('display', 'block');
 			      $("#container").css('z-index', '1');
+			      $("#boxCanvas").css('display', 'block');
 			      HideAllPolygons();
-				}
+			      if (window.select && (LMgetObjectField(LM_xml, window.select.ID, "ispartof")) && window.select.hparent == "unassigned"){
+		            CreatePolygonClip(LMgetObjectField(LM_xml, window.select.ID, "ispartof"));
+		        }else{
+		        	if (window.select){ var ancestor = window.select.hparent;
+			        	while (ancestor != "unassigned"){
+			        		ancestor = ancestor.hparent;
+			        	}
+			        }
+		        	if (LMgetObjectField(LM_xml, ancestor.ID, "ispartof")){
+		        		CreatePolygonClip(LMgetObjectField(LM_xml, ancestor.ID, "ispartof"));
+		        	}else{
+		        		ClearCanvas();
+		        	}
+		        }
+				hover_object = null;
 				ThreeDHoverHighlight();
+				}
+			
 			}
 		};
 		

@@ -16,10 +16,20 @@ function toggle_cube_resize_arrows(toggle){
     }
 }
 
-function setup_arrowheads_rescaling(){
-    var distance_from_origin = window.select.cube.position.clone().applyMatrix4(window.select.plane.matrixWorld.clone()).distanceTo(camera.position);
+function setup_arrowheads_rescaling(object){
+    if (!object){
+        object = window.select;
+    }
+    if (!object.cube){
+        return;
+    }
+    var distance_from_origin = object.cube.position.clone().applyMatrix4(object.cube.parent.matrixWorld.clone()).distanceTo(camera.position);
     var arrowhead_scale = distance_from_origin;
     arrowhead_size = 0.0075*arrowhead_scale;
+    indicator_box.scale.set(arrowhead_scale, arrowhead_scale, arrowhead_scale);
+    /*for (var i = 0; i < intersect_box.children.length; i++){
+        intersect_box.children[i].scale.set(0.001*arrowhead_scale);
+    }*/
 }
 
 function initialize_cube_indicators(){
@@ -91,7 +101,8 @@ function initialize_cube_indicators(){
 }
 
 function check_plane_box_collision(object) {
-    if (typeof object == "undefined"){
+    console.log("check plane box collision");
+    if (!object){
         object = window.select;
     }
     var pts0 = [0, 0, 0, 1, 1, 2, 2, 3, 4, 4, 5, 6];
@@ -104,17 +115,18 @@ function check_plane_box_collision(object) {
     for (var i = length - 1; i > -1; i--){
             intersect_box.remove(intersect_box.children[i]);
     }
-    var cubeGeometry = new THREE.CubeGeometry(.005, .005, .005);
+    var cubeGeometry = new THREE.CubeGeometry(1, 1, 1);
     var cubeMaterial = new THREE.MeshBasicMaterial({color: 0x0000ff});
     var eps = 0.0001;
     var raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3());
 
     if (object_list.length) {
         for (var i = 0; i < object_list.length; i++) {
-            if (object_list[i].plane == object.plane || (object_list[i].cube && object_list[i].cube.visible == false)){
+            if (object_list[i].plane == object.plane || (object_list[i].cube && object_list[i].cube.visible == false) || !(object_list[i].cube)){
                 continue;
             }
-            if (object_list[i].cube){
+            var distance_from_origin = object_list[i].cube.position.clone().applyMatrix4(object_list[i].cube.parent.matrixWorld.clone()).distanceTo(camera.position);
+            if (object_list[i].cube && object_list[i].cube.hparent != "unassigned"){
                 vert = object_list[i].cube.children[0].geometry.vertices;
                 for (var j = 0; j < pts0.length; j++) {
                     var vert0 = vert[pts0[j]].clone().applyMatrix4(object_list[i].cube.matrixWorld);
@@ -131,6 +143,7 @@ function check_plane_box_collision(object) {
                             }
                             var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
                             cube.position.set(intersects[k].point.x,intersects[k].point.y,intersects[k].point.z);
+                            cube.scale.set(distance_from_origin*0.01, distance_from_origin*0.01, distance_from_origin*0.01);
                             intersect_box.add(cube);
                         }
                     }
@@ -140,24 +153,9 @@ function check_plane_box_collision(object) {
         box_scene.add(intersect_box);
     }
 
-    if (object_list.length && (object.hparent != "unassigned") && (object.hparent.plane != plane) && object != plane) {
-        var line_raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3());
-        var line_vert1 = new THREE.Vector3(.985, .985, -100).applyMatrix4(plane.matrixWorld);
-        var line_vert2 = new THREE.Vector3(.985, .985, 100).applyMatrix4(plane.matrixWorld);
-        //var line_vert1 = line_vert[0].clone().applyMatrix4(object.cube.matrixWorld);
-        //var line_vert2 = line_vert[1].clone().applyMatrix4(object.cube.matrixWorld);
-        var direction = new THREE.Vector3().subVectors(line_vert2, line_vert1);
-
-        line_raycaster.set(line_vert1, direction);
-        line_intersect = line_raycaster.intersectObject(object.plane, false);
-        var cubeGeometry2 = new THREE.CubeGeometry(.02, .02, .02);
-        var cubeMaterial2 = new THREE.MeshBasicMaterial({color: 0xff0000});
-        if ((line_intersect.length > 0)){
-            //plane_cube.material.color.setHex( 0xff0000 );
-            box_scene.add(intersect_box);
-            var position = new THREE.Vector3(1, 1, 0).applyMatrix4(object.plane.matrixWorld.clone());
-        }else if (line_intersect.length){
-            var position = new THREE.Vector3(1, 1, 0).applyMatrix4(object.plane.matrixWorld.clone());
+    if (object_list.length && (object.hparent != "unassigned")) {
+        for (var i = 0; i < intersect_box.children.length; i++){
+            intersect_box.children[i].material.visible = true;
         }
     }else{
         for (var i = 0; i < intersect_box.children.length; i++){

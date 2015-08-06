@@ -14,6 +14,7 @@ function object_instance(){
     this.icon;
 
     this.cube;
+    this.lock_inside_clip_area = false;
 }
 
 function check_oldest_ancestor(oldest_ancestor){

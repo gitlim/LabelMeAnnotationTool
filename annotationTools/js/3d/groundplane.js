@@ -137,6 +137,7 @@ function dist2(a, b) {//distances squared between two vp_s
 }*/
 
 function point_drag() {
+    current_mode = 0;
     var point_id = this.name();
     var layer = this.getParent();
     var point_id = parseInt(point_id.substring(1));
@@ -170,7 +171,8 @@ function point_drag() {
         line.points([vp_s[line_id].x2d[0], vp_s[line_id].y2d[0], vp_s[line_id].x2d[1], vp_s[line_id].y2d[1]]);
     });
 
-    update_plane().done(main_threed_handler.PlaneAutoSave);
+    update_plane();
+    main_threed_handler.PlaneAutoSave();
 }
 
 /*function highlight_line(){
@@ -361,6 +363,11 @@ function changeLineType(){
 
 function update_plane() {
     console.log("selected_plane updated");
+     if (hover_object && !(hover_object.cube)){//when hovering ofer a link is going on;
+        selected_plane = hover_object.plane;
+    }else if (window.select && !(window.select.cube)){
+        selected_plane = window.select.plane;
+    }
     var r = $.Deferred();
     var d = new Date();
     current_time = d.getTime();
@@ -481,6 +488,15 @@ function update_plane() {
     }
     if ((window.select) && window.select.plane == plane) gp_f = f;
     K = mat4.create();//transformation matrix
+    if (current_mode == VERTICAL_PLANE_MOVE_MODE){
+        //transform1 = window.select.plane.matrixWorld.elements[12];
+        height_transform = selected_plane.matrixWorld.elements[13];
+        //transform3 = window.select.plane.matrixWorld.elements[14];
+    }
+    if (!height_transform){
+        height_transform = 0;
+    }
+    console.log(height_transform);
     K[0] = axis_x[0];
     K[1] = -axis_x[1];
     K[2] = -axis_x[2];
@@ -494,7 +510,8 @@ function update_plane() {
     K[10] = -axis_z[2];
     K[11] = 0;
     K[12] = -(axis_x[0]+axis_y[0]) + 1;
-    K[13] = (axis_x[1]+axis_y[1]) - 1;
+    //K[13] = 0;//transform2;//(axis_x[1]+axis_y[1]) - 1;
+    K[13] = height_transform;
     K[14] = (axis_x[2]+axis_y[2]) -1;
     K[15] = 1;
 

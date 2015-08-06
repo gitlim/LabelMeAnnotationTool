@@ -244,6 +244,9 @@ function ThreeDHoverHighlight(object){// need third options for planes
     }
     if (!(object)){
         if (window.select){
+            if (!isNaN(LMgetObjectField(LM_xml, window.select.ID, "ispartof")) && !clip_on ){
+                CreatePolygonClip(LMgetObjectField(LM_xml, window.select.ID, "ispartof"));
+            }
             if (window.select.cube){// hiding GP tools and making visible resize arrows if groundplane is not the selected object
                 console.log("hover")
                 guide_Z_line.material.visible = false;
@@ -256,6 +259,9 @@ function ThreeDHoverHighlight(object){// need third options for planes
                     check_plane_box_collision();
                 }
                 changeColor(window.select.cube, 0xffff00);
+                toggle_cube_resize_arrows(true);
+                toggle_cube_move_indicators(true);
+                toggle_cube_rotate_indicators(true);
             }else{
                 console.log("display");
                 window.select.plane.material.visible = true;

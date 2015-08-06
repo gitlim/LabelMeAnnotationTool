@@ -15,6 +15,7 @@ var renderer;  // A three.js WebGL or Canvas renderer.
 var scene;     // The 3D scene that will be rendered, containing the cube.
 var camera;    // The camera that takes the picture of the scene.
 var old_camera;
+var K;
 
 var box_renderer;
 var box_scene;
@@ -114,3 +115,9 @@ var groundplane_id;
 var renderer_last_update = 0;
 
 var clip_on = 0;
+var polygon = null;
+var selected_plane = null;
+var height_transform;
+
+var arrow_box_position;
+var indicator_box_position;
