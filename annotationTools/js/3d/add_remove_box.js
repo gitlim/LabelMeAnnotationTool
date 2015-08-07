@@ -32,6 +32,7 @@ function add_box_internal() {
     window.select.plane = new_plane;
     var cubeGeometry = new THREE.CubeGeometry(small_w, small_h, small_d);
     var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true});
+    cubeMaterial.wireframLinewidth = 2;
     var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
     window.select.cube = new THREE.Object3D();
     window.select.cube.add(cube);
@@ -135,6 +136,7 @@ function add_cube_to_new_scene(idx, new_scene){
     }
     var cubeGeometry = new THREE.CubeGeometry(small_w, small_h, small_d);
     var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true});
+    cubeMaterial.wireframLinewidth = 2;
     var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
     var new_cube = new THREE.Object3D();
     ID_dict[idx].cube.traverse(function(object){ID_dict[idx].cube.remove(object);})

@@ -238,7 +238,6 @@ function onDocumentMouseMove(event) {
             }
             if (window.select.hparent && window.select.cube) check_plane_box_collision();
             update_plane();
-            render();
         }
         else if (current_mode == RESIZE_MODE) {
             var resize_x1 = event.clientX;
@@ -529,4 +528,24 @@ function calculateResizeMagnitude(resize_x0, resize_y0){
     original_arrowhead_point = new_point;
     console.log(magnitude);
     return magnitude;
+}
+
+function SynchronizeSupportPlanes(object){
+    if (!object){
+        object = window.select;
+    }
+    for (var i = 0; i < object.hchildren.length; i++){
+        object.hchildren[i].plane.matrixWorld = object.plane.matrixWorld.clone();
+        if (object.hchildren[i].cube && object.hchildren[i].cube.parent != object.hchildren[i].plane){
+            object.hchildren[i].cube.parent.matrixWorld = object.hchildren[i].plane.matrixWorld.clone();
+        }
+        SynchronizeSupportPlanes(object.hchildren[i]);
+    }
+    if (object.hparent != "unassigned" && !object.hparent.cube){
+        object.hparent.plane.matrixWorld = object.plane.matrixWorld.clone();
+        main_threed_handler.PlaneAutoSave(object.hparent.ID);
+        console.log(object.hparent.ID);
+        console.log("saving parent");
+    }
+    render();
 }

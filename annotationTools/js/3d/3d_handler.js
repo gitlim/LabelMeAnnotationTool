@@ -54,6 +54,7 @@ function threed_handler(){
 		if(ts.length==20) html_str += '<date>' + ts + '</date>';
 		html_str += '<id>' + anno.anno_id + '</id>';
 		if(anno.GetType() == 2) {//for planes
+			var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
 			html_str += '<type>';
 			html_str += 'plane';
 			html_str += '</type>';
@@ -61,10 +62,10 @@ function threed_handler(){
 			html_str += '<lines>';
 			for (var i = 0; i < vp_s.length; i++){
 				html_str += '<vp_line>';
-				html_str += '<x1>' + vp_s[i].x2d[0] + '</x1>';
-				html_str += '<y1>' + vp_s[i].y2d[0] + '</y1>';
-				html_str += '<x2>' + vp_s[i].x2d[1] + '</x2>';
-				html_str += '<y2>' + vp_s[i].y2d[1] + '</y2>';
+				html_str += '<x1>' + vp_s[i].x2d[0]/scale_factor + '</x1>';
+				html_str += '<y1>' + vp_s[i].y2d[0]/scale_factor + '</y1>';
+				html_str += '<x2>' + vp_s[i].x2d[1]/scale_factor + '</x2>';
+				html_str += '<y2>' + vp_s[i].y2d[1]/scale_factor + '</y2>';
 				html_str += '<label>' + vp_label[i] + '</label>';
 				html_str += '</vp_line>';
 			}
@@ -198,6 +199,7 @@ function threed_handler(){
 				alert("You must close the edit popup first.");
 			}
 		}
+		hover_object = null;
 	};
 
 	this.AnnotationLinkMouseOver = function(a){
@@ -206,20 +208,27 @@ function threed_handler(){
 		hover_object = ID_dict[a];
 		this.ThreeDToFore();
 		document.getElementById('Link'+a).style.color = '#FF0000';
-		if (!isNaN(LMgetObjectField(LM_xml, a, "ispartof")) && main_canvas.GetAnnoByID(a).GetType() == 2){
+		var idx = a;
+		var parent = LMgetObjectField(LM_xml, idx, 'ispartof');
+		while (!isNaN(parent) && main_canvas.GetAnnoByID(parent).GetType() != 0 && main_canvas.GetAnnoByID(parent).GetType() != 1){
+			idx = LMgetObjectField(LM_xml, idx, 'ispartof');
+			parent = LMgetObjectField(LM_xml, idx, 'ispartof');
+		}
+		console.log(idx);
+		if (!isNaN(LMgetObjectField(LM_xml, idx, "ispartof"))){
 			if (window.select != hover_object){
-				CreatePolygonClip(LMgetObjectField(LM_xml, a, "ispartof"));
+				CreatePolygonClip(LMgetObjectField(LM_xml, idx, "ispartof"));
 				toggle_cube_resize_arrows(false);
 	            toggle_cube_move_indicators(false);
 	            toggle_cube_rotate_indicators(false);
 			}
-		}else if (ID_dict[a].hparent != "unassigned" && !isNaN(LMgetObjectField(LM_xml, ID_dict[a].hparent.ID, "ispartof"))){
+		/*}else if (ID_dict[a].hparent != "unassigned" && !isNaN(LMgetObjectField(LM_xml, ID_dict[a].hparent.ID, "ispartof"))){
 			if (window.select != hover_object){
 				CreatePolygonClip(LMgetObjectField(LM_xml, ID_dict[a].hparent.ID, "ispartof"));
 				toggle_cube_resize_arrows(false);
                 toggle_cube_move_indicators(false);
                 toggle_cube_rotate_indicators(false);
-			}
+			}*/
 		}else{
 			ClearCanvas();
 		}
@@ -300,7 +309,7 @@ function threed_handler(){
 	    InsertServerLogData('cpts_not_modified');
 	    
 	    // Set <automatic> in XML:
-	    LMsetObjectField(LM_xml, anno_id, 'automatic', '0');
+	    LMsetObjectField(LM_xml, anid, 'automatic', '0');
 	    
 	    // Write XML to server:
 	    WriteXML(SubmitXmlUrl,LM_xml,function(){return;});
@@ -310,7 +319,7 @@ function threed_handler(){
 	  $('#select_canvas').css('z-index','0');
 	  $('#select_canvas_div').css('z-index','0');
 	  //var anno = main_canvas.DetachAnnotation(anno_id);
-	  var anno = main_canvas.annotations[anno_id];
+	  var anno = main_canvas.GetAnnoByID(anno_id);
 	  
 	  editedControlPoints = 0;
 	    
@@ -437,6 +446,7 @@ function threed_handler(){
 
 	this.CreateGroundplane = function(){//for creation of the first plane (groundplane)
 		var numItems = $(LM_xml).children('annotation').children('object').length;
+		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
 		console.log($(LM_xml));
 	    threed_anno = new annotation(numItems);
 	    threed_anno.SetType(2);
@@ -477,10 +487,10 @@ function threed_handler(){
 		html_str += '<lines>';
 		for (var i = 0; i < vp_s.length; i++){
 			html_str += '<vp_line>';
-			html_str += '<x1>' + vp_s[i].x2d[0] + '</x1>';
-			html_str += '<y1>' + vp_s[i].y2d[0] + '</y1>';
-			html_str += '<x2>' + vp_s[i].x2d[1] + '</x2>';
-			html_str += '<y2>' + vp_s[i].y2d[1] + '</y2>';
+			html_str += '<x1>' + vp_s[i].x2d[0]/scale_factor + '</x1>';
+			html_str += '<y1>' + vp_s[i].y2d[0]/scale_factor + '</y1>';
+			html_str += '<x2>' + vp_s[i].x2d[1]/scale_factor + '</x2>';
+			html_str += '<y2>' + vp_s[i].y2d[1]/scale_factor + '</y2>';
 			html_str += '<label>' + vp_label[i] + '</label>';
 			html_str += '</vp_line>';
 		}
@@ -517,7 +527,7 @@ function threed_handler(){
 
 	this.PlaneAutoSave = function(index){
 		if (!(hover_object)){
-			if (!index){
+			if (index == null){
 				var index = window.select.ID;
 			}
 		}else{
@@ -701,6 +711,7 @@ function threed_handler(){
 			    new_box_object.plane = new_plane;
 			    var cubeGeometry = new THREE.CubeGeometry(small_w, small_h, small_d);
 			    var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true});
+			    cubeMaterial.wireframeLinewidth = 2;
 			    var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
 			   	new_box_object.cube = new THREE.Object3D();
 			    new_box_object.cube.add(cube);

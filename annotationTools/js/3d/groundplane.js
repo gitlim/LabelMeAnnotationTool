@@ -368,6 +368,9 @@ function update_plane() {
     }else if (window.select && !(window.select.cube)){
         selected_plane = window.select.plane;
     }
+    if (window.select){
+        SynchronizeSupportPlanes();
+    }
     var r = $.Deferred();
     var d = new Date();
     current_time = d.getTime();

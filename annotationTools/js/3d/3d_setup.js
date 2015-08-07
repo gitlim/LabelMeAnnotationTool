@@ -55,12 +55,13 @@ function init(){
                             antialias: true
                             });
             }
+            box_renderer.setSize(theCanvas.width, theCanvas.height);
         }
         catch (e) {
         }
         if (!box_renderer) { // If the WebGLRenderer couldn't be created, try a CanvasRenderer.
             box_renderer = new THREE.CanvasRenderer( { canvas: boxCanvas } );
-            box_renderer.setSize(theCanvas.width*2,theCanvas.height*2);
+            box_renderer.setSize(theCanvas.width,theCanvas.height);
             //document.getElementById("message").innerHTML =
             //"WebGL not available; falling back to CanvasRenderer.";
         }
@@ -142,7 +143,6 @@ function createWorld() {// split into different parts for 3d and gp later
     guide_Z_line = new THREE.Line(line_geometry, line_material);
     guide_Z_line.position.set(1,1,0);
     gp_plane.add(guide_Z_line);
-
 
     // Box of Z-lines for guiding
     guide_box = new THREE.Object3D();

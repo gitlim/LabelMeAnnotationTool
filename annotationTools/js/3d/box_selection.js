@@ -1,27 +1,41 @@
 function HighlightSelectedThreeDObject() {//now really only highlighting
     //if (!LMgetObjectField(LM_xml, window.select.ID, "ispartof")){
-    ClearCanvas();
+
     //}
     for (var i = 0; i < object_list.length; i++) {
         if (object_list[i].cube) changeColor(object_list[i].cube, 0xffffff);
         object_list[i].plane.material.visible = false;
     }
     if (window.select) {
+        var idx = window.select.ID;
+        var parent = LMgetObjectField(LM_xml, idx, 'ispartof');
+        while (!isNaN(parent) && main_canvas.GetAnnoByID(parent).GetType() != 0 && main_canvas.GetAnnoByID(parent).GetType() != 1){
+            idx = LMgetObjectField(LM_xml, idx, 'ispartof');
+            parent = LMgetObjectField(LM_xml, idx, 'ispartof');
+        }
+        if(!isNaN(LMgetObjectField(LM_xml, idx, "ispartof"))){
+            CreatePolygonClip(LMgetObjectField(LM_xml, idx, "ispartof"));
+        }else{
+            ClearCanvas();
+        }
         if (window.select.cube){
+            for (var i = 0; i < stage.children.length; i++) {
+                    stage.children[i].hide();
+            }
             console.log("highlight");
             changeColor(window.select.cube, 0xffff00);
             window.select.cube.traverse( function ( object ) { object.visible = true; } );
-            if (!isNaN(LMgetObjectField(LM_xml, window.select.ID, "ispartof")) && !clip_on ){
+            /*if (!isNaN(LMgetObjectField(LM_xml, window.select.ID, "ispartof")) && !clip_on ){
                 CreatePolygonClip(LMgetObjectField(LM_xml, window.select.ID, "ispartof"));
-            }
+            }*/
         }
         else{
            main_threed_handler.LoadDifferentPlane(window.select.ID);
-            if (!isNaN(LMgetObjectField(LM_xml, window.select.ID, "ispartof")) && !clip_on ){
+            /*if (!isNaN(LMgetObjectField(LM_xml, window.select.ID, "ispartof")) && !clip_on ){
                 CreatePolygonClip(LMgetObjectField(LM_xml, window.select.ID, "ispartof"));
             }else if ((window.select.hparent != "unassigned" && !isNaN(LMgetObjectField(LM_xml, window.select.hparent.ID, "ispartof")))){
                 CreatePolygonClip(LMgetObjectField(LM_xml, window.select.hparent.ID, "ispartof"));
-            }
+            }*/
             window.select.plane.material.visible = true;
             guide_Z_line.material.visible = true;
             DisplayVPTools();

@@ -71,7 +71,7 @@ function RenderObjectList() {
       
       if (use_parts) {
 	// define drag events (but only if the tool is allowed to use parts)
-	html_str += 'draggable="true" ondragstart="drag(event, '+ii+')" '+
+	html_str += 'ondragstart="drag(event, '+ii+')" '+
 	  'ondragend="dragend(event, '+ii+')" '+
 	  'ondrop="drop(event, '+ii+')" '+
 	  'ondragenter="return dragEnter(event)" '+
@@ -101,8 +101,9 @@ function RenderObjectList() {
   	'onmouseout="main_handler.AnnotationLinkMouseOut();" ';
       }
       if (use_parts) {
-	html_str += 'ondrop="drop(event, '+ii+')" '+
+	html_str += 'draggable = "true" ondrop="drop(event, '+ii+')" '+
 	  'ondragend="dragend(event, '+ii+')" '+
+    'ondragstart="drag(event, '+ii+')" '+ 
 	  'ondragenter="return dragEnter(event)" '+
 	  'ondragover="return dragOver(event)"';
       }
@@ -237,6 +238,18 @@ function drop(event, object_id) {
   // modify part structure
   if(object_id!=part_id) { // messy but will be cleaned up
     if (threed_mode){
+      if (main_canvas.GetAnnoByID(part_id).GetType() == 2 && main_canvas.GetAnnoByID(object_id).GetType() == 3){
+        alert("You cannot assign a plane to a 3D box")
+        return;
+      }
+      if (main_canvas.GetAnnoByID(part_id).GetType() == 2 && main_canvas.GetAnnoByID(object_id).GetType() == 2){
+        alert("You cannot assign a plane to another plane");
+        return;
+      }
+      if (main_canvas.GetAnnoByID(part_id).GetType() == 3 && (main_canvas.GetAnnoByID(object_id).GetType() == 1 || main_canvas.GetAnnoByID(object_id).GetType() == 0)){
+        alert("You cannot assign a box to a polygon");
+        return;
+      }
       if (main_canvas.GetAnnoByID(part_id).GetType() == 3 && main_canvas.GetAnnoByID(object_id).GetType() == 2){
         threed_is_position_possible = CalculateBoxCanBeAdded(ID_dict[part_id], ID_dict[object_id]);
       }
