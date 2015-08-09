@@ -287,7 +287,17 @@ function threed_handler(){
 	    }
        	HighlightSelectedThreeDObject();
 	  	document.getElementById('Link'+idx).style.color = '#FF0000';
-	  	render();
+	  	if (object_list.length && ((window.select.hparent != "unassigned") || (!window.select.cube))) {
+        	for (var i = 0; i < intersect_box.children.length; i++){
+            	intersect_box.children[i].material.visible = true;
+        	}
+  	  	}else{
+        	for (var i = 0; i < intersect_box.children.length; i++){
+            	intersect_box.children[i].material.visible = false;
+        	}
+    	}
+	  	renderer.render(scene, camera);
+	  	box_renderer.render(box_scene, camera);
 	};
 
 	this.ThreeDAnnotationEdit = function(idx){
@@ -634,7 +644,7 @@ function threed_handler(){
             cube_position_0_static = cube_object.cube.position.clone();
             cube_position_0_static.setZ(cube_object.cube.position.z - cube_object.cube.scale.z*small_h/2);
             cube_position_0.applyMatrix4(cube_object.cube.parent.matrixWorld.clone());
-            cube_position_0_static.applyMatrix4(cube_object.plane.matrixWorld.clone());
+            cube_position_0_static.applyMatrix4(cube_object.cube.parent.matrixWorld.clone());
             cube_object.plane.material.visible = true;
             old_x = cube_object.cube.scale.x;
             old_y = cube_object.cube.scale.y;

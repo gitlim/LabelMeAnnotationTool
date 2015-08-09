@@ -717,8 +717,6 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
     }else{
         return;
     }
-    console.log(window.select);
-    console.log(K);
     camera.matrixAutoUpdate=false;
     box_camera.matrixAutoUpdate=false;
     selected_plane.matrixAutoUpdate=false;

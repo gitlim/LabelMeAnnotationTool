@@ -67,8 +67,13 @@ function onDocumentMouseDown(event) {
             vector3.subVectors(vector2, vector1);
             resize_vx = (vector3.x)*renderer.domElement.width/2;
             resize_vy = (-1*vector3.y)*renderer.domElement.height/2;*/
+            old_scale = window.select.cube.scale.clone();
             var vector1 = new THREE.Vector3(0, 0, 0).applyMatrix4(resize_arrowhead_intersect[0].object.matrixWorld);
             var vector2 = new THREE.Vector3(0, 1, 0).applyMatrix4(resize_arrowhead_intersect[0].object.matrixWorld);
+            var arrow_vector = resize_arrowhead_intersect[0].point.sub(new THREE.Vector3(0, 0, 0).applyMatrix4(resize_arrowhead_intersect[0].object.matrixWorld.clone()));
+            arrow_vector.projectOnPlane(new THREE.Vector3(0, 0, 1));
+            old_length = arrow_vector.length();
+            console.log(old_length);
             var proj2 = new THREE.Projector();
             var M = arrowHelper.arrow_list[i].matrixWorld.clone();
             proj2.projectVector(vector1, camera);
@@ -176,11 +181,9 @@ function onDocumentMouseDown(event) {
         targetRotationOnMouseDown = window.select.cube.rotation.z;
         event.preventDefault();
         current_mode = ROTATE_MODE;
-        return false;
     }
-    render();
     console.log(current_mode);
-    return true;
+    return;
 }
 
 function onDocumentMouseMove(event) {
@@ -216,6 +219,8 @@ function onDocumentMouseMove(event) {
             rotate_mode_indicators[1].material.visible = true;
             toggle_cube_rotate_indicators(true);
             cube_rotate(radians);
+            render_box_object(window.select);
+
         }
         if (current_mode == VERTICAL_PLANE_MOVE_MODE) {
             toggle_cube_rotate_indicators(false);
@@ -233,10 +238,19 @@ function onDocumentMouseMove(event) {
                 calculate_box_location(window.select, window.select);
             }*/
             if(window.select.cube){
-                arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
-                indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
+                /*arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
+                indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);*/
+                if (window.select.cube.parent != window.select.plane){
+                    window.select.cube.parent.matrixWorld = window.select.plane.matrixWorld.clone();
+                }
+                arrow_box_position = null;
+                indicator_box_position = null;
+                render_box_object(window.select);
+
             }
-            if (window.select.hparent && window.select.cube) check_plane_box_collision();
+            render_plane_object(window.select);
+            if (window.select.plane != plane) check_plane_box_collision();
+            SynchronizeSupportPlanes();
             update_plane();
         }
         else if (current_mode == RESIZE_MODE) {
@@ -279,7 +293,7 @@ function onDocumentMouseMove(event) {
             resize_pos0 = window.select.cube.position.clone();
             arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
             indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
-            render();
+            render_box_object(window.select);
         }
         else if ($(event.target).parents('div#main_media').length && !$(event.target).parents('div#icon_wrapper').length && event.target.id != "icon_wrapper" && window.select.cube) { //event.target.id != "icon_wrapper" && event.target.tagName != "BUTTON" && event.target.tagName != "FONT") && (event.target.id != "icon_container")) { // && (event.target.tagName == "canvas")) {
             var cube_hover = [];
@@ -342,44 +356,44 @@ function onDocumentMouseMove(event) {
                     var i_mat = new THREE.Matrix4().getInverse(window.select.cube.parent.matrixWorld);
                     window.select.cube.position.copy(cube_original.clone().add(a[i].point.sub(click_original)).applyMatrix4(i_mat));
                 }
-                /*if (window.select.hparent != "unassigned"){
+                if (window.select.hparent != "unassigned"){
                     diagonal = Math.sqrt(Math.pow(window.select.cube.scale.x*small_w/2, 2) + Math.pow(window.select.cube.scale.y*small_d/2, 2));
                     if (Math.tan(window.select.cube.rotation.z) >= 0 && Math.cos(window.select.cube.rotation.z) >= 0){//only working from -pi/2 to +pi/2
-                        if (window.select.cube.position.x + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 1){
-                            window.select.cube.position.setX(1 - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
+                        if (window.select.cube.position.x + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 10){
+                            window.select.cube.position.setX(10 - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
                         }
-                        if (window.select.cube.position.y + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 1){
-                            window.select.cube.position.setY(1 - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
+                        if (window.select.cube.position.y + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 10){
+                            window.select.cube.position.setY(10 - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
                         }
                     }
                     if (Math.tan(window.select.cube.rotation.z) < 0 && Math.cos(window.select.cube.rotation.z) >= 0){
-                        if (window.select.cube.position.x + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 1){
-                            window.select.cube.position.setX(1 - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
+                        if (window.select.cube.position.x + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 10){
+                            window.select.cube.position.setX(10 - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
                         }
-                        if (window.select.cube.position.y + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 1){
-                            window.select.cube.position.setY(1 - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
+                        if (window.select.cube.position.y + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 10){
+                            window.select.cube.position.setY(10 - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
                         }
                     }
                     if (Math.tan(window.select.cube.rotation.z) >= 0 && Math.cos(window.select.cube.rotation.z) < 0){
-                        if (window.select.cube.position.x - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 1){
-                            window.select.cube.position.setX(1 + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
+                        if (window.select.cube.position.x - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 10){
+                            window.select.cube.position.setX(10 + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
                         }
-                        if (window.select.cube.position.y - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 1){
-                            window.select.cube.position.setY(1 + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
+                        if (window.select.cube.position.y - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 10){
+                            window.select.cube.position.setY(10 + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
                         }
                     }
                     if (Math.tan(window.select.cube.rotation.z) < 0 && Math.cos(window.select.cube.rotation.z) < 0){
-                        if (window.select.cube.position.x - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 1){
-                            window.select.cube.position.setX(1 + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
+                        if (window.select.cube.position.x - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 10){
+                            window.select.cube.position.setX(10 + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
                         }
-                        if (window.select.cube.position.y - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 1){
-                            window.select.cube.position.setY(1 + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
+                        if (window.select.cube.position.y - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 10){
+                            window.select.cube.position.setY(10 + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
                         }
                     }
-                }*/
+                }
                 arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
                 indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
-                render();
+                render_box_object(window.select)
             }
         }
     }
@@ -539,6 +553,7 @@ function SynchronizeSupportPlanes(object){
         if (object.hchildren[i].cube && object.hchildren[i].cube.parent != object.hchildren[i].plane){
             object.hchildren[i].cube.parent.matrixWorld = object.hchildren[i].plane.matrixWorld.clone();
         }
+        //render_box_object(object.hchildren[i]);
         SynchronizeSupportPlanes(object.hchildren[i]);
     }
     if (object.hparent != "unassigned" && !object.hparent.cube){
@@ -547,5 +562,4 @@ function SynchronizeSupportPlanes(object){
         console.log(object.hparent.ID);
         console.log("saving parent");
     }
-    render();
 }

@@ -122,7 +122,7 @@ function check_plane_box_collision(object) {
 
     if (object_list.length) {
         for (var i = 0; i < object_list.length; i++) {
-            if (object_list[i].plane == object.plane || (object_list[i].cube && object_list[i].cube.visible == false) || !(object_list[i].cube)){
+            if (object_list[i].plane == object.plane || (object_list[i].cube && object_list[i].cube.visible == false) || !(object_list[i].cube) || (object_list[i].hparent == "unassigned")){
                 continue;
             }
             var distance_from_origin = object_list[i].cube.position.clone().applyMatrix4(object_list[i].cube.parent.matrixWorld.clone()).distanceTo(camera.position);
@@ -152,8 +152,7 @@ function check_plane_box_collision(object) {
         }
         box_scene.add(intersect_box);
     }
-
-    if (object_list.length && (object.hparent != "unassigned")) {
+    /*if (object_list.length && ((object.hparent != "unassigned") || (!object.cube))) {
         for (var i = 0; i < intersect_box.children.length; i++){
             intersect_box.children[i].material.visible = true;
         }
@@ -161,7 +160,6 @@ function check_plane_box_collision(object) {
         for (var i = 0; i < intersect_box.children.length; i++){
             intersect_box.children[i].material.visible = false;
         }
-    }
-    render();
+    }*/
 }
 

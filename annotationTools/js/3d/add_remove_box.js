@@ -23,30 +23,32 @@ function add_box_internal() {
     var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var new_plane_geometry = new THREE.PlaneGeometry(20, 20, 100, 100);
     var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
-    new_plane.matrixAutoUpdate = false;
-    console.log(new_plane.matrixWorld);
     new_plane.matrixWorld = plane.matrixWorld.clone();
-    console.log(new_plane.matrixWorld);
-    console.log(new_plane.matrixWorld.clone());
+    new_plane.matrixAutoUpdate = false;
+    new_plane.matrixWorldNeedsUpdate = false;
     new_plane.material.visible = false;
     window.select.plane = new_plane;
     var cubeGeometry = new THREE.CubeGeometry(small_w, small_h, small_d);
     var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true});
-    cubeMaterial.wireframLinewidth = 2;
+    cubeMaterial.wireframeLinewidth = 2;
     var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
     window.select.cube = new THREE.Object3D();
     window.select.cube.add(cube);
-    console.log(plane.matrixWorld);
-    //window.select.plane.matrixWorld.copy(plane.matrixWorld);
-    console.log(window.select.plane.matrixWorld);
     scene.add(window.select.plane);
-    window.select.plane.add(window.select.cube);
+    //new_box_object.plane.add(new_box_object.cube);
+    var box_scene_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
+    box_scene_plane.matrixWorld = new_plane.matrixWorld.clone();
+    box_scene_plane.matrixAutoUpdate = false;
+    box_scene_plane.material.visible = false;
+    box_scene_plane.add(window.select.cube);
+    box_scene.add(box_scene_plane);
+    box_scene_plane.matrixWorldNeedsUpdate = false;
     var projector = new THREE.Projector();
     var mouse3D = projector.unprojectVector(new THREE.Vector3(  0, 0, 1 ), camera );
     var direction = mouse3D.sub(camera.position).normalize();
     var position = direction.clone();
     //position = position.applyMatrix4(plane.matrixWorld);
-    var i_mat = new THREE.Matrix4().getInverse(window.select.plane.matrixWorld.clone());
+    var i_mat = new THREE.Matrix4().getInverse(window.select.cube.parent.matrixWorld.clone());
     position = position.applyMatrix4(i_mat);
     window.select.cube.position.setX(position.x);
     window.select.cube.position.setY(position.y);
@@ -79,7 +81,7 @@ function remove_object_internal(object) {//change to remove_object_internal to s
         return;
     } else if (object.plane.parent == scene){
         scene.remove(object.plane);
-    }if (object.cube.parent.parent == box_scene){
+    }if (object.cube && object.cube.parent.parent == box_scene){
         box_scene.remove(object.cube.parent);
     }
     for (var i = 0; i < object.hchildren.length; i++){

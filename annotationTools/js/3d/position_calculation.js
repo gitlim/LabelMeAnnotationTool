@@ -5,15 +5,14 @@ function calculate_box_location(cube_object, support_object){ // make it the bot
     }
     var direction = new THREE.Vector3(cube_position_0.x - camera.position.x, cube_position_0.y - camera.position.y, cube_position_0.z - camera.position.z).normalize();
     var optical_ray = new THREE.Raycaster(camera.position, direction);
-    if (current_mode == VERTICAL_PLANE_MOVE_MODE){
-        var plane_intersection = optical_ray.intersectObject(cube_object.plane, false);
+    if (CheckIfSupportedByGroundplane(support_object) == false){
+        return;
     }else if (!(support_object.cube)){//if support object is a plane - making the cube object plane the same height as the plane that is supporting
         var plane_intersection = optical_ray.intersectObject(support_object.plane, false);
         cube_object.plane.matrixWorld = support_object.plane.matrixWorld.clone();
         if (cube_object.cube.parent != cube_object.plane){
             cube_object.cube.parent.matrixWorld = cube_object.plane.matrixWorld.clone();
         }
-
     }else{//if support object is a cube - moving the plane of the cube object to the correct height
         cube_object.plane.matrixWorld.multiplyMatrices(support_object.plane.matrixWorld.clone(), (new THREE.Matrix4()).makeTranslation(0, 0, support_object.cube.scale.z*small_h));
         var plane_intersection = optical_ray.intersectObject(cube_object.plane, false);
@@ -23,10 +22,10 @@ function calculate_box_location(cube_object, support_object){ // make it the bot
     }
     if (plane_intersection){
         for (var i = 0; i < plane_intersection.length; i++){
-            var i_mat2 = new THREE.Matrix4().getInverse(cube_object.plane.matrixWorld);
+            var i_mat2 = new THREE.Matrix4().getInverse(cube_object.cube.parent.matrixWorld);
             plane_intersection[i].point.applyMatrix4(i_mat2);//x and y in support plane
             cube_object.cube.position.copy(plane_intersection[i].point);
-            proportion_scale = camera.position.distanceTo(plane_intersection[i].point.applyMatrix4(cube_object.plane.matrixWorld))/camera.position.distanceTo(cube_position_0_static);
+            proportion_scale = camera.position.distanceTo(plane_intersection[i].point.applyMatrix4(cube_object.cube.parent.matrixWorld.clone()))/camera.position.distanceTo(cube_position_0_static);
             cube_object.cube.scale.x = proportion_scale*old_x;
             cube_object.cube.scale.y = proportion_scale*old_y;
             cube_object.cube.scale.z = proportion_scale*old_z;
@@ -56,13 +55,13 @@ function calculate_children_box_locations(object){
         return;
     }
     target_cube_position_0 = object.cube.position.clone();
-    target_cube_position_0.setZ(object.cube.position.z - object.cube.scale.z*0.05/2);
+    target_cube_position_0.setZ(object.cube.position.z - object.cube.scale.z*small_h/2);
     target_cube_position_0_static = object.cube.position.clone();
-    target_cube_position_0_static.setZ(object.cube.position.z - object.cube.scale.z*0.05/2);
+    target_cube_position_0_static.setZ(object.cube.position.z - object.cube.scale.z*small_h/2);
     target_cube_position_0.applyMatrix4(object.cube.parent.matrixWorld.clone());
     target_cube_position_0_static.applyMatrix4(object.cube.parent.matrixWorld.clone());
     target_cube_scale_0 = object.cube.scale.clone();
-    object.plane.matrixWorld.multiplyMatrices(object.hparent.plane.matrixWorld, (new THREE.Matrix4()).makeTranslation(0, 0, object.hparent.cube.scale.z*small_w));
+    object.plane.matrixWorld.multiplyMatrices(object.hparent.plane.matrixWorld.clone(), (new THREE.Matrix4()).makeTranslation(0, 0, object.hparent.cube.scale.z*small_w));
     if (object.cube.parent != object.plane){
             object.cube.parent.matrixWorld = object.plane.matrixWorld.clone();
     }
@@ -71,10 +70,10 @@ function calculate_children_box_locations(object){
     var plane_intersection = optical_ray.intersectObject(object.plane, false);
     if (plane_intersection){
         for (var i = 0; i < plane_intersection.length; i++){
-            var i_mat = new THREE.Matrix4().getInverse(object.cube.plane.matrixWorld);
+            var i_mat = new THREE.Matrix4().getInverse(object.cube.parent.matrixWorld.clone());
             plane_intersection[i].point.applyMatrix4(i_mat);
             object.cube.position.copy(plane_intersection[i].point);
-            var proportion_scale = camera.position.distanceTo(plane_intersection[i].point.applyMatrix4(object.plane.matrixWorld.clone()))/camera.position.distanceTo(target_cube_position_0_static);
+            var proportion_scale = camera.position.distanceTo(plane_intersection[i].point.applyMatrix4(object.cube.parent.matrixWorld.clone()))/camera.position.distanceTo(target_cube_position_0_static);
             object.cube.scale.x = proportion_scale*target_cube_scale_0.x;
             object.cube.scale.y = proportion_scale*target_cube_scale_0.y;
             object.cube.scale.z = proportion_scale*target_cube_scale_0.z;
@@ -95,7 +94,7 @@ function calculate_children_box_locations(object){
 
 
 function CalculateBoxCanBeAdded(cube_object, support_object){
-    var cube_position = cube_object.cube.position.clone().applyMatrix4(cube_object.plane.matrixWorld.clone());
+    var cube_position = cube_object.cube.position.clone().applyMatrix4(cube_object.cube.parent.matrixWorld.clone());
     cube_position.setZ(cube_position - cube_object.cube.scale.z*0.05/2);
     var direction = new THREE.Vector3(cube_position.x - camera.position.x, cube_position.y - camera.position.y, cube_position.z - camera.position.z).normalize();
     var optical_ray = new THREE.Raycaster(camera.position, direction);
@@ -112,6 +111,18 @@ function CalculateBoxCanBeAdded(cube_object, support_object){
         return true;
     }else{
         console.log("no");
+        return false;
+    }
+}
+
+function CheckIfSupportedByGroundplane(object){
+    var ancestor = object;
+    while (ancestor.hparent && ancestor.hparent != "unassigned"){
+        ancestor = ancestor.hparent;
+    }
+    if (ancestor.plane = plane){
+        return true;
+    }else{
         return false;
     }
 }

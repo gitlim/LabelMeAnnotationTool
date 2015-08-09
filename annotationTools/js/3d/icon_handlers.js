@@ -268,6 +268,7 @@ function ThreeDHoverHighlight(object){// need third options for planes
                 DisplayVPTools();
                 main_threed_handler.LoadDifferentPlane(window.select.ID);
             }
+            check_plane_box_collision();
         }else{
             main_threed_handler.GotoFirstAnnoObject();
         }

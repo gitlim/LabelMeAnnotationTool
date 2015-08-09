@@ -42,7 +42,6 @@
 }
 
 .objectListLink {
-    -moz-user-select:none;
     	-khtml-user-drag: element;
     cursor: move;
 }

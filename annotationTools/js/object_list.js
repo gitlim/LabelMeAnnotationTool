@@ -71,7 +71,8 @@ function RenderObjectList() {
       
       if (use_parts) {
 	// define drag events (but only if the tool is allowed to use parts)
-	html_str += 'ondragstart="drag(event, '+ii+')" '+
+	html_str += 
+  'draggable="true" ondragstart="drag(event, '+ii+')" '+
 	  'ondragend="dragend(event, '+ii+')" '+
 	  'ondrop="drop(event, '+ii+')" '+
 	  'ondragenter="return dragEnter(event)" '+
@@ -101,11 +102,11 @@ function RenderObjectList() {
   	'onmouseout="main_handler.AnnotationLinkMouseOut();" ';
       }
       if (use_parts) {
-	html_str += 'draggable = "true" ondrop="drop(event, '+ii+')" '+
+	html_str += 'ondrop="drop(event, '+ii+')" '+
 	  'ondragend="dragend(event, '+ii+')" '+
-    'ondragstart="drag(event, '+ii+')" '+ 
 	  'ondragenter="return dragEnter(event)" '+
 	  'ondragover="return dragOver(event)"';
+
       }
       
       if(isDeleted) {
@@ -139,6 +140,14 @@ function RenderObjectList() {
   
   // Attach annotation list to 'anno_anchor' DIV element:
   $('#anno_anchor').append(html_str);
+
+  /*for (var j = 0; j < Npolygons; j++){
+     $(function() {
+        $( "#Link" + j).draggable({
+            drag: function(event, j) {drag(event, j); }
+        });
+    });
+  }*/
 }
 
 
@@ -210,8 +219,11 @@ function ShowAllPolygons() {
 
 function drag(event, part_id) {
   // stores the object id in the data that is being dragged.
+  console.log(event);
+  event.dataTransfer.effectAllowed = "all";
   event.dataTransfer.setData("Text", part_id);
-}
+  }
+
 
 function dragend(event, object_id) {
   event.preventDefault();
