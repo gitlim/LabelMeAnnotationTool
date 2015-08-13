@@ -46,6 +46,8 @@ function calculate_box_location(cube_object, support_object){ // make it the bot
     if (window.select) check_plane_box_collision();
     arrow_box_position = null;
     indicator_box_position = null;
+    CalculateAxis(cube_object.ID);
+    CalculateNewOpY(cube_object.plane.matrixWorld.elements);
     render();
 }
 

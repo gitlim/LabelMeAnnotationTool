@@ -25,10 +25,11 @@ function setup_arrowheads_rescaling(object){
     }
     var distance_from_origin = object.cube.position.clone().applyMatrix4(object.cube.parent.matrixWorld.clone()).distanceTo(camera.position);
     arrowhead_scale_array = new Array(5);
+    var diagonal = Math.sqrt(Math.pow(object.cube.scale.x, 2) + Math.pow(object.cube.scale.y, 2) + Math.pow(object.cube.scale.z, 2));
     var arrow_box_position = ConvertPosition(object.cube, arrowHelper);
     arrowHelper.arrow_box.position.set(arrow_box_position.x, arrow_box_position.y, arrow_box_position.z + small_h*0.5*window.select.cube.scale.z);
     for (var i = 0; i < arrowHelper.arrow_list.length; i++){
-        arrowhead_scale_array[i] = 0.0075*arrowHelper.arrow_list[i].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[i].cone.parent.matrixWorld.clone()).distanceTo(camera.position);
+        arrowhead_scale_array[i] = 0.005*Math.sqrt(arrowHelper.arrow_list[i].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[i].cone.parent.matrixWorld.clone()).distanceTo(camera.position))*Math.cbrt(diagonal);
     }
     arrowhead_scale = distance_from_origin; // kept just for backwards compatibility in case I missed any cases where this variable was used
     indicator_box.scale.set(distance_from_origin, distance_from_origin, distance_from_origin);

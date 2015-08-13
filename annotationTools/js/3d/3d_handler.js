@@ -573,6 +573,7 @@ function threed_handler(){
 		}else{
 			return;
 		}
+		if (index == groundplane_id) var f = gp_f;
 		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
 		var lines = "";
 		for (var i = 0; i < vp_s.length; i++){
@@ -731,7 +732,7 @@ function threed_handler(){
 			    new_plane_object.ID = i;
 			    ID_dict[i] = new_plane_object;
 			    var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
-			    var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 100, 100);
+			    var new_plane_geometry = new THREE.PlaneGeometry(200, 200, 100, 100);
 			    var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
 			    if (i == 0){
   					ID_dict[i].plane = plane;
@@ -750,7 +751,7 @@ function threed_handler(){
 			    new_box_object.ID = i; 
 			    ID_dict[i] = new_box_object;
 			    var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
-			    var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 100, 100);
+			    var new_plane_geometry = new THREE.PlaneGeometry(200, 200, 100, 100);
 			    var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
 			    new_plane.matrixWorld.elements = LMgetObjectField(LM_xml, i, 'cube_matrix');
 			    new_plane.matrixAutoUpdate = false;

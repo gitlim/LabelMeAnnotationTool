@@ -351,8 +351,10 @@ function remove_icon() {
 
 function ShowPlanes(){
     IsHidingAllPlanes = false;
+    RenderObjectList();
     if (window.select){
         object = window.select;
+        document.getElementById('Link'+ window.select.ID).style.color = '#FF0000';
     }else if (hover_object){
         object = hover_object;
     }else{
@@ -362,20 +364,22 @@ function ShowPlanes(){
     if ((!(object.cube)) || object.hparent != "unassigned"){
         object.plane.material.visible = true;
         DisplayVPTools();
-    } 
+    }
+    check_plane_box_collision();
     renderer.render(scene, camera);
-    RenderObjectList();
+
 }
 
 function HideAllPlanes(){
     IsHidingAllPlanes = true;
     for (var i = 0; i < object_list.length; i++){
-        if (!object_list[i].cube){
-            object_list[i].plane.material.visible = false;
-        }
+        object_list[i].plane.material.visible = false;
     }
     for (var i = 0; i < stage.children.length; i++) {
             stage.children[i].hide();
+    }
+    for (var i = 0; i < intersect_box.children.length; i++){
+            intersect_box.children[i].material.visible = false;
     }
     RenderObjectList(); 
     renderer.render(scene, camera); 

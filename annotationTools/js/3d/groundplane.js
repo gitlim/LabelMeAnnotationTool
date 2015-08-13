@@ -1034,7 +1034,7 @@ function CalculateAxis(idx){
         //vec3.cross(axis_z, axis_x, axis_y);
         vec3.normalize(axis_z, axis_z);
     }
-    if (idx == groundplane_id){
+    /*if (selected_plane == plane){
         gp_f = f;
-    }
+    }*/
 }
