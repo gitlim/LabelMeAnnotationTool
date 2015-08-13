@@ -24,9 +24,14 @@ function setup_arrowheads_rescaling(object){
         return;
     }
     var distance_from_origin = object.cube.position.clone().applyMatrix4(object.cube.parent.matrixWorld.clone()).distanceTo(camera.position);
-    var arrowhead_scale = distance_from_origin;
-    arrowhead_size = 0.0075*arrowhead_scale;
-    indicator_box.scale.set(arrowhead_scale, arrowhead_scale, arrowhead_scale);
+    arrowhead_scale_array = new Array(5);
+    var arrow_box_position = ConvertPosition(object.cube, arrowHelper);
+    arrowHelper.arrow_box.position.set(arrow_box_position.x, arrow_box_position.y, arrow_box_position.z + small_h*0.5*window.select.cube.scale.z);
+    for (var i = 0; i < arrowHelper.arrow_list.length; i++){
+        arrowhead_scale_array[i] = 0.0075*arrowHelper.arrow_list[i].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[i].cone.parent.matrixWorld.clone()).distanceTo(camera.position);
+    }
+    arrowhead_scale = distance_from_origin; // kept just for backwards compatibility in case I missed any cases where this variable was used
+    indicator_box.scale.set(distance_from_origin, distance_from_origin, distance_from_origin);
     /*for (var i = 0; i < intersect_box.children.length; i++){
         intersect_box.children[i].scale.set(0.001*arrowhead_scale);
     }*/
@@ -152,7 +157,7 @@ function check_plane_box_collision(object) {
         }
         box_scene.add(intersect_box);
     }
-    /*if (object_list.length && ((object.hparent != "unassigned") || (!object.cube))) {
+    if (object_list.length && IsHidingAllPlanes == false && ((object.hparent != "unassigned") || (!object.cube))) {
         for (var i = 0; i < intersect_box.children.length; i++){
             intersect_box.children[i].material.visible = true;
         }
@@ -160,6 +165,6 @@ function check_plane_box_collision(object) {
         for (var i = 0; i < intersect_box.children.length; i++){
             intersect_box.children[i].material.visible = false;
         }
-    }*/
+    }
 }
 

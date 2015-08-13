@@ -110,7 +110,7 @@ function add_plane(){
     ID_dict[window.select.ID] = window.select;
     mkThreeDPopup(1, 1);
     var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
-    var new_plane_geometry = new THREE.PlaneGeometry(20, 20, 100, 100);
+    var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 100, 100);
     var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
     new_plane.material.visible = true;
     new_plane.matrixAutoUpdate = false;
@@ -127,7 +127,7 @@ function add_plane(){
 function add_cube_to_new_scene(idx, new_scene){
     var cube_object = ID_dict[idx];
     var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
-    var new_plane_geometry = new THREE.PlaneGeometry(20, 20, 100, 100);
+    var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 100, 100);
     var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
     new_plane.matrixWorld = cube_object.plane.matrixWorld.clone();
     new_plane.matrixAutoUpdate = false;
@@ -138,8 +138,8 @@ function add_cube_to_new_scene(idx, new_scene){
     }
     var cubeGeometry = new THREE.CubeGeometry(small_w, small_h, small_d);
     var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true});
-    cubeMaterial.wireframLinewidth = 2;
-    var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
+    cubeMaterial.wireframeLinewidth = 2;
+    var cube = new THREE.Mesh( cubeGeometry, cubeMaterial);
     var new_cube = new THREE.Object3D();
     ID_dict[idx].cube.traverse(function(object){ID_dict[idx].cube.remove(object);})
     new_cube = ID_dict[idx].cube.clone();

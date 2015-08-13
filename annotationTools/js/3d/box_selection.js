@@ -30,6 +30,7 @@ function HighlightSelectedThreeDObject() {//now really only highlighting
             }*/
         }
         else{
+            if (IsHidingAllPlanes) ShowPlanes();
            main_threed_handler.LoadDifferentPlane(window.select.ID);
             /*if (!isNaN(LMgetObjectField(LM_xml, window.select.ID, "ispartof")) && !clip_on ){
                 CreatePolygonClip(LMgetObjectField(LM_xml, window.select.ID, "ispartof"));

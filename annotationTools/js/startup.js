@@ -249,15 +249,18 @@ function FinishStartup() {
   if (threed_mode){
       init_kinetic_stage();
       init();
+      SetDrawingMode(2);
+      render();
       main_threed_handler.LoadThreeDObjectsOnStartup();
+      render();
       if (object_list.length < 1){
         main_threed_handler.CreateGroundplane();
+        main_threed_handler.PlaneAutoSave(groundplane_id);
       }
-      SetDrawingMode(2);
       window.select = object_list[0];
       HighlightSelectedThreeDObject();
       document.getElementById('Link'+groundplane_id).style.color = '#FF0000';
-      update_plane();
+      main_threed_handler.LoadDifferentPlane(groundplane_id);
       render();
   }
   // Set action when the user presses a key:
@@ -279,12 +282,27 @@ function Initialize3dButtons(){
         <button id="add_box" type="button" name="add" value="Add" onclick = "SetDrawingMode(2);">Add Box</button> \
         <button id = "add_plane" type = "submit" name = "height" onclick = "SetDrawingMode(2);" >Add Plane</button> \
         <button id="remove" type="button" name="remove" value="Remove" onclick = "SetDrawingMode(2);">Delete</button> \
+        <button id="navigation" type="button" name="navigation" value="Nav" onclick = "SetDrawingMode(2);">Nav</button> \
         <!--<button id = "clone" type = "submit" name = "clone" onclick = "clone_box(); SetDrawingMode(2);">Clone</button>--> \
     </div>';
     $('#label_buttons_drawing').append(html_str);
     $( "#add_box" ).on("click", function() { add_box_internal();} );
     $( "#add_plane" ).on("click", function() { update_plane().done(add_plane);} );
     $( "#remove" ).on("click", function() { main_threed_handler.EditBubbleDeleteButton();});
+    $( "#navigation" ).on("click", function() { 
+      if (nav_on == false){
+        nav_on = true; 
+        copy_camera();
+        for (var i = 0; i < stage.children.length; i++) {
+            stage.children[i].hide();
+        }
+        stage.draw();
+      }else{
+        nav_on = false; 
+        camera = old_camera; 
+        HighlightSelectedThreeDObject();
+        render();};});
+
 }
 
 // Initialize the segmentation tool. This function is called when the field

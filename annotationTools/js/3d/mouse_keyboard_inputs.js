@@ -47,11 +47,19 @@ function onDocumentMouseDown(event) {
     var y = GetEventPosY(event);
     var point = new Point(x, y);
     console.log(x,y);
+    if (nav_on == true){
+        rotateStart.set( event.clientX, event.clientY );
+        console.log('mouse down rotate');
+        nav_toggle = true;
+        return;
+    }
     for (var i = 0; i < arrowHelper.arrow_list.length; i++) {
         resize_arrowhead_intersect = ray.intersectObject(arrowHelper.arrow_list[i].cone, false);
         if (resize_arrowhead_intersect[0]){
-            window.select.cube.matrixAutoUpdate = true;
+            //window.select.cube.matrixAutoUpdate = true;
+            arrow_index = i;
             //console.log("intersect");
+            original_intersect_point = resize_arrowhead_intersect[0].point.clone();
             ray_vector_orig = resize_arrowhead_intersect[0].point.sub(camera.position);
             original_arrowhead_point = ray_vector_orig;
             arrowhead_object = resize_arrowhead_intersect[0].object;
@@ -60,34 +68,96 @@ function onDocumentMouseDown(event) {
             arrowHelper.arrow_list[i].cone.material.color.setHex(0x0000ff);
             resize_x0 = event.clientX;
             resize_y0 = event.clientY;
-            /*var vector1 = new THREE.Vector3(0, 0, 0).applyMatrix4(arrowHelper.arrow_list[i].matrixWorld);
+            var vector1 = new THREE.Vector3(0, 0, 0).applyMatrix4(arrowHelper.arrow_list[i].matrixWorld);
             var vector2 = new THREE.Vector3(0, 1, 0).applyMatrix4(arrowHelper.arrow_list[i].matrixWorld);
             var proj2 = new THREE.Projector();
             var vector3 = new THREE.Vector3();
             vector3.subVectors(vector2, vector1);
             resize_vx = (vector3.x)*renderer.domElement.width/2;
-            resize_vy = (-1*vector3.y)*renderer.domElement.height/2;*/
+            resize_vy = (-1*vector3.y)*renderer.domElement.height/2;
+            old_arrow_position = window.select.cube.position.clone();
+            old_arrow_position.z = old_arrow_position.z + window.select.cube.scale.z*0.5*small_h;
+            old_arrow_position.applyMatrix4(window.select.cube.parent.matrixWorld.clone());
+            original_scale = window.select.cube.scale.clone();
+           
+            /*var projector = new THREE.Projector();
+            var mouse3D = projector.unprojectVector(new THREE.Vector3(  0, 0, 1 ), camera );
+            var direction = mouse3D.sub(camera.position).normalize();
+            var normal = direction.clone().normalize();
+            old_arrow_position = window.select.cube.position.clone();
+            old_arrow_position.z = old_arrow_position.z + window.select.cube.scale.z*0.5*small_h;
+            old_arrow_position.applyMatrix4(window.select.cube.parent.matrixWorld.clone());
+            arrow_vector = arrowHelper.arrow_list[i].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[i].cone.parent.matrixWorld.clone());
+            arrow_vector = arrow_vector.sub(old_arrow_position);//
+            proj_vector = arrow_vector.clone().projectOnPlane(normal);
             old_scale = window.select.cube.scale.clone();
             var vector1 = new THREE.Vector3(0, 0, 0).applyMatrix4(resize_arrowhead_intersect[0].object.matrixWorld);
             var vector2 = new THREE.Vector3(0, 1, 0).applyMatrix4(resize_arrowhead_intersect[0].object.matrixWorld);
-            var arrow_vector = resize_arrowhead_intersect[0].point.sub(new THREE.Vector3(0, 0, 0).applyMatrix4(resize_arrowhead_intersect[0].object.matrixWorld.clone()));
-            arrow_vector.projectOnPlane(new THREE.Vector3(0, 0, 1));
-            old_length = arrow_vector.length();
-            console.log(old_length);
             var proj2 = new THREE.Projector();
             var M = arrowHelper.arrow_list[i].matrixWorld.clone();
             proj2.projectVector(vector1, camera);
             proj2.projectVector(vector2, camera);
             resize_vx = (vector2.x-vector1.x)* renderer.domElement.width/2;
             resize_vy = (-vector2.y+vector1.y)*renderer.domElement.height/2;
-            //console.log(vector1, vector2);
+            //console.log(vector1, vector2);*/
             var resize_norm = Math.sqrt(resize_vx*resize_vx+resize_vy*resize_vy);
             resize_vx = resize_vx / resize_norm;
             resize_vy = resize_vy / resize_norm;
-            resize_scale0 = window.select.cube.scale.clone();
             resize_scale0_orig = window.select.cube.scale.clone();
-            resize_pos0 = window.select.cube.position.clone();//world coordinates
+            resize_pos0 = window.select.cube.position.clone();//
             resize_dir = arrowHelper.arrow_list[i].direction;
+            var vert_plane_ray = ray.intersectObject(vert_plane, false);
+            arrow_position = arrowHelper.arrow_box.position.clone();
+            arrow_position.applyMatrix4(arrowHelper.arrow_box.parent.matrixWorld.clone());
+            var i_mat = new THREE.Matrix4().getInverse(vert_plane.matrixWorld.clone());
+            var projector = new THREE.Projector();
+            var mouse3D = projector.unprojectVector(new THREE.Vector3(  0, 0, 1 ), camera );
+            var direction = mouse3D.sub(camera.position).normalize();
+            var normal = direction.clone().normalize();
+            arrow_vector = arrowHelper.arrow_list[arrow_index].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[arrow_index].cone.parent.matrixWorld.clone());
+            arrow_vector = arrow_vector.sub(arrow_position.clone());
+            proj_vector = arrow_vector.clone().projectOnPlane(normal).normalize();
+            resize_scale0 = window.select.cube.scale.clone();
+
+
+            /*********************************************/
+            normal_for_plane_for_projection = arrow_vector.clone().cross(proj_vector.clone());
+            //old_ray_vector = arrowHelper.arrow_list[arrow_index].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[arrow_index].cone.parent.matrixWorld.clone()).sub(camera.position).projectOnPlane(normal_for_plane_for_projection);
+            old_ray_vector = arrow_position.clone().sub(camera.position).projectOnPlane(normal_for_plane_for_projection);
+            old_arrow_cone_position = arrowHelper.arrow_list[arrow_index].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[arrow_index].cone.parent.matrixWorld.clone());
+            old_ray_cone_vector = old_arrow_cone_position.clone().sub(camera.position).projectOnPlane(normal_for_plane_for_projection);
+            old_ray_length = old_ray_vector.length();
+            /**********************************************/
+
+
+
+            /*if (vert_plane_ray.length){
+                console.log(vert_plane_ray[0].point);
+                var change_vector = vert_plane_ray[0].point.clone().sub(arrow_position.clone());
+                console.log(change_vector);
+                change_vector.projectOnPlane(new THREE.Vector3(0, 0, 1));
+                var projected_change_vector = change_vector.projectOnVector(proj_vector.clone());
+                var angle_a = vert_plane_ray[0].point.clone().sub(camera.position.clone()).normalize().angleTo(arrow_vector.clone()); // these aren't on the right plane
+                var angle_b = Math.PI - vert_plane_ray[0].point.clone().sub(camera.position.clone()).normalize().angleTo(proj_vector.clone());
+                var scaling = projected_change_vector.length()/Math.sin(angle_a)*Math.sin(angle_b);
+                //console.log(scaling);
+
+
+                test_normal_for_plane_for_projection = arrow_vector.clone().cross(proj_vector.clone());
+                test_old_ray_vector = arrow_position.clone().sub(camera.position).projectOnPlane(test_normal_for_plane_for_projection.clone());
+                console.log(arrow_position.clone());
+                test_old_ray_length = test_old_ray_vector.length();
+                console.log(test_old_ray_length);
+                //test_projected_new_vector_b = arrowHelper.arrow_list[i].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[i].cone.parent.matrixWorld.clone()).sub(camera.position);
+                test_projected_new_vector = arrowHelper.arrow_list[i].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[i].cone.parent.matrixWorld.clone()).sub(camera.position).projectOnPlane(test_normal_for_plane_for_projection);
+                var test_angle_c = test_projected_new_vector.angleTo(arrow_vector);
+                var test_angle_d = test_projected_new_vector.angleTo(test_old_ray_vector);
+                test_resize_amount = test_old_ray_length/Math.sin(test_angle_c)*Math.sin(test_angle_d);
+                console.log(test_resize_amount);
+                console.log(arrow_vector.length());
+            }*/
+
+    
             //console.log(resize_dir);
         }else{
             arrowHelper.arrow_list[i].cone.material.color.setHex(0xff0000);
@@ -127,25 +197,40 @@ function onDocumentMouseDown(event) {
     if ((!(window.select.cube) || (window.select.hparent != "unassigned")) && (current_mode != RESIZE_MODE) && (current_mode != VERTICAL_PLANE_MOVE_MODE) && (current_mode != BOX_MOVE_MODE)){
         a = ray.intersectObject(window.select.plane, false);
         if (a.length) {
+            prev_event_x = event.clientX;
+            prev_event_y = event.clientY;
             var i_mat = new THREE.Matrix4().getInverse(window.select.plane.matrixWorld.clone());
-            console.log("blah");
             console.log(a[0].point);
             console.log(a[0].point.applyMatrix4(i_mat));
             resize_x0 = event.clientX;
             resize_y0 = event.clientY;
-            var vector1 = new THREE.Vector3();
-            var vector2 = new THREE.Vector3();
+            plane_vector1 = new THREE.Vector3();
+            plane_vector2 = new THREE.Vector3();
             var proj2 = new THREE.Projector();
             var M = window.select.plane.matrixWorld.clone().multiply(camera.matrixWorld.clone());
-            proj2.projectVector(vector1.getPositionFromMatrix(M),camera);
-            proj2.projectVector(vector2.getPositionFromMatrix(M.clone().multiply(new THREE.Matrix4().makeTranslation(0, 1, 0))),camera);
-            resize_vx = (vector2.x-vector1.x)* renderer.domElement.width/2;
-            resize_vy = (-vector2.y+vector1.y)*renderer.domElement.height/2;
+            proj2.projectVector(plane_vector1.getPositionFromMatrix(M),camera);
+            proj2.projectVector(plane_vector2.getPositionFromMatrix(M.clone().multiply(new THREE.Matrix4().makeTranslation(0, 1, 0))),camera);
+            resize_vx = (plane_vector2.x-plane_vector1.x)* renderer.domElement.width/2;
+            resize_vy = (-plane_vector2.y+plane_vector1.y)*renderer.domElement.height/2;
             var resize_norm = Math.sqrt(resize_vx*resize_vx+resize_vy*resize_vy);
             var sign = Math.sign(resize_vy);
             resize_vx = resize_vx / resize_norm;
             resize_vy = resize_vy / resize_norm;
             resize_vy = sign/Math.pow(Math.abs(resize_vy), 1.005);
+
+            /*************************************************************************/
+             projected_normal = plane_vector2.clone().sub(plane_vector1.clone()).projectOnPlane(new THREE.Vector3(0, 0, 1));
+             var projector = new THREE.Projector();
+            var mouse3D = projector.unprojectVector(a[0].point.clone().normalize(), camera );
+            var direction = mouse3D.sub(camera.position).normalize();
+             var vert_plane_ray = new THREE.Raycaster(camera.position, mouse3D)
+             vert_plane_ray.set(camera.position, direction);
+             var vert_plane_intersection = ray.intersectObject(vert_plane, false);
+             if (vert_plane_intersection[0]){
+                old_vert_plane_intersect_point = vert_plane_intersection[0].point;
+             }
+
+
             /*if (Math.abs(resize_vy > 4)){
                 resize_vy = sign*2;
             }
@@ -197,6 +282,16 @@ function onDocumentMouseMove(event) {
     var y = GetEventPosY(event);
     var point = new Point(x, y);
     var is_point_in_poly = true;
+    if (nav_toggle == true && $('#im').has(event.target)) {
+            rotateEnd.set( event.clientX, event.clientY );
+            rotateDelta.subVectors( rotateEnd, rotateStart );
+            rotateLeft( 2 * Math.PI * rotateDelta.x / renderer.domElement.clientWidth * rotateSpeed );
+            rotateUp( 2 * Math.PI * rotateDelta.y / renderer.domElement.clientHeight * rotateSpeed );
+            rotateStart.copy( rotateEnd );
+            update(camera);
+            renderer.render(scene, camera);
+            box_renderer.render(box_scene, camera);
+    }
     if (!window.select){
         return;
     }
@@ -205,14 +300,6 @@ function onDocumentMouseMove(event) {
         if (BOX_MOVE_MODE && is_point_in_poly) window.select.lock_inside_clip_area = true;
     }
     if ($('#im').has(event.target)){
-        if (nav_toggle == true) {
-            rotateEnd.set( event.clientX, event.clientY );
-            rotateDelta.subVectors( rotateEnd, rotateStart );
-            rotateLeft( 2 * Math.PI * rotateDelta.x / renderer.domElement.clientWidth * rotateSpeed );
-            rotateUp( 2 * Math.PI * rotateDelta.y / renderer.domElement.clientHeight * rotateSpeed );
-            rotateStart.copy( rotateEnd );
-            update(camera);
-        }
         if (current_mode == ROTATE_MODE){
             var radians = targetRotationOnMouseDown + (event.clientX - prevX)/500 * Math.PI;
             radians = targetRotationOnMouseDown + (event.clientX - prevX)/250 * Math.PI;
@@ -222,9 +309,23 @@ function onDocumentMouseMove(event) {
             render_box_object(window.select);
 
         }
-        if (current_mode == VERTICAL_PLANE_MOVE_MODE) {
+        if (current_mode == VERTICAL_PLANE_MOVE_MODE && IsHidingAllPlanes == false) {
             toggle_cube_rotate_indicators(false);
             toggle_cube_move_indicators(false);
+            op_x = op_x + event.clientX - prev_event_x;
+            op_y = op_y + event.clientY - prev_event_y;
+            prev_event_x = event.clientX;
+            prev_event_y = event.clientY;
+
+            console.log(op_x, op_y);
+            vert_plane_intersect = ray.intersectObject(vert_plane, false);
+            if (vert_plane_intersect[0]){
+                var change_vector = vert_plane_intersect[0].point.clone().sub(old_vert_plane_intersect_point);
+                console.log(change_vector);
+                change_vector.projectOnVector(projected_normal);
+                var plane_scaling = change_vector.projectOnVector(plane_vector2.clone().sub(plane_vector1.clone())).length();
+                old_vert_plane_intersect_point = vert_plane_intersect[0].point.clone();
+            }
             var resize_x1 = event.clientX;
             var resize_y1 = event.clientY;
             var resize_dot = (-1*resize_y1 + resize_y0)*Math.abs(resize_vy);
@@ -233,7 +334,8 @@ function onDocumentMouseMove(event) {
             resize_x0 = resize_x1;
             resize_y0 = resize_y1;
             resize_dir = new THREE.Vector3(0, 0, 1);
-            window.select.plane.matrixWorld.multiplyMatrices(window.select.plane.matrixWorld, (new THREE.Matrix4()).makeTranslation(0, 0, (-resize_dot*small_d*resize_dir.z)/35));
+            console.log(plane_scaling);
+            //window.select.plane.matrixWorld.multiplyMatrices(window.select.plane.matrixWorld, (new THREE.Matrix4()).makeTranslation(0, 0, (2*Math.sign(resize_dot)*plane_scaling*resize_dir.z)));
             /*if (window.select.hparent != "unassigned"){
                 calculate_box_location(window.select, window.select);
             }*/
@@ -254,16 +356,144 @@ function onDocumentMouseMove(event) {
             update_plane();
         }
         else if (current_mode == RESIZE_MODE) {
+            console.log("box_resize");
             var resize_x1 = event.clientX;
             var resize_y1 = event.clientY;
-            console.log(resize_vx, resize_vy);
-            console.log((resize_x1 - resize_x0), (resize_y1 - resize_y0));
+            //console.log(resize_vx, resize_vy);
+            //console.log((resize_x1 - resize_x0), (resize_y1 - resize_y0));
             var resize_dot = ((resize_x1 - resize_x0)*resize_vx + (resize_y1 - resize_y0)*resize_vy)*0.3;
             resize_x0 = resize_x1;
             resize_y0 = resize_y1;
             //resize_dot = resize_dot/resize_mag;
-            window.select.cube.scale.set(window.select.cube.scale.x-resize_dot*small_w*Math.abs(resize_dir.x), window.select.cube.scale.y-resize_dot*small_h*Math.abs(resize_dir.y), window.select.cube.scale.z-resize_dot*small_d*resize_dir.z);
-            console.log(resize_dot);
+            //window.select.cube.scale.set(window.select.cube.scale.x-resize_dot*small_w*Math.abs(resize_dir.x), window.select.cube.scale.y-resize_dot*small_h*Math.abs(resize_dir.y), window.select.cube.scale.z-resize_dot*small_d*resize_dir.z);
+             //console.log(resize_dot);
+            var vert_plane_ray = ray.intersectObject(vert_plane, false);
+            //arrow_position = arrowHelper.arrow_box.position.clone();
+            ///arrow_position.applyMatrix4(arrowHelper.arrow_box.parent.matrixWorld.clone());
+            var i_mat = new THREE.Matrix4().getInverse(vert_plane.matrixWorld.clone());
+            var projector = new THREE.Projector();
+            var mouse3D = projector.unprojectVector(new THREE.Vector3(  0, 0, 1 ), camera );
+            var direction = mouse3D.sub(camera.position).normalize();
+            var normal = direction.clone().normalize();
+            //arrow_vector = arrowHelper.arrow_list[arrow_index].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[arrow_index].cone.parent.matrixWorld.clone());
+            //arrow_vector = arrow_vector.sub(arrow_position.clone());
+            //console.log(arrow_vector.length());
+
+            //old_arrow_cone_position = arrowHelper.arrow_list[arrow_index].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[arrow_index].cone.parent.matrixWorld.clone());
+            //old_ray_cone_vector = old_arrow_cone_position.clone().sub(camera.position).projectOnPlane(normal_for_plane_for_projection);
+            //console.log(arrow_vector.clone().normalize());
+            if (vert_plane_ray[0]){
+                console.log(vert_plane_ray[0].point);
+                var change_vector = vert_plane_ray[0].point.clone().sub(old_arrow_cone_position.clone());
+                console.log(old_arrow_cone_position.clone());
+                //console.log(change_vector);
+                change_vector.projectOnPlane(normal);
+                console.log("change vector");
+                console.log(change_vector);
+                sign = Math.sign(change_vector.clone().normalize().dot(proj_vector.clone().normalize())); // see if projection of change vector on proj vector is positive or negative
+                console.log(change_vector.clone().normalize().dot(proj_vector.clone().normalize()));
+                //console.log(sign);
+                //if (vert_plane_ray[0].point.clone().sub(arrow_position.clone()).projectOnPlane(normal).length() > proj_vector.length()) return;
+                //console.log(change_vector);
+                //console.log(change_vector.clone().normalize().add(proj_vector.clone().normalize()).length());
+                //console.log(change_vector.clone().length());
+                projected_new_vector = vert_plane_ray[0].point.clone().sub(camera.position).projectOnPlane(normal_for_plane_for_projection);
+                var projector = new THREE.Projector();
+                ray_vector0 = old_arrow_cone_position.clone().sub(camera.position).projectOnPlane(normal_for_plane_for_projection);
+                var mouse3D = projector.unprojectVector(ray_vector0.clone().normalize(), camera );
+                var direction = mouse3D.sub(camera.position).normalize();
+                distance_ray = new THREE.Raycaster(camera.position, mouse3D);
+                distance_ray.set(camera.position, direction);
+                var distance_ray_intersect = distance_ray.intersectObject(vert_plane, false);
+                //old_vector_distance_to_arrow_origin = distance_ray_intersect[0].point.distanceTo(old_arrow_position);
+                //new_vector_distance_to_arrow_origin = projected_new_vector.distanceTo(old_arrow_position);
+               // console.log(old_vector_distance_to_arrow_origin);
+                //console.log(new_vector_distance_to_arrow_origin);
+                /*if (change_vector.clone().normalize().add(proj_vector.clone().normalize()).length() < 1){
+                    sign_constant = -1
+                }else{
+                    sign_constant = 1;
+                }*/
+                /*var projected_change_vector = change_vector.projectOnVector(proj_vector.clone());
+                var angle_a = vert_plane_ray[0].point.clone().sub(camera.position.clone()).normalize().angleTo(arrow_vector.clone());//opposite of projected_change_vector
+                var angle_b = vert_plane_ray[0].point.clone().sub(camera.position.clone()).normalize().angleTo(proj_vector.clone());*/
+                //var scaling = projected_change_vector.length()/Math.sin(angle_a)*Math.sin(angle_b);
+                old_ray_vector = old_ray_cone_vector.clone().sub(camera.position);
+                old_ray_vector.projectOnPlane(normal_for_plane_for_projection.clone());
+                //console.log(old_ray_vector);
+
+                /**********************************************************************************/
+                /*normal_for_plane_for_projection = arrow_vector.clone().cross(proj_vector.clone());
+                old_ray_vector = arrowHelper.arrow_list[arrow_index].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[arrow_index].cone.parent.matrixWorld.clone()).sub(camera.position);
+                old_ray_vector.projectOnPlane(normal_for_plane_for_projection.clone());
+                old_ray_length = old_ray_vector.length();
+                projected_new_vector = vert_plane_ray[0].point.clone().sub(camera.position).projectOnPlane(normal_for_plane_for_projection);
+                var angle_c = projected_new_vector.angleTo(arrow_vector);
+                var angle_d = projected_new_vector.angleTo(old_ray_vector);
+                var resize_amount = old_ray_length/Math.sin(angle_c)*Math.sin(angle_d);
+                console.log(resize_amount);*/
+                //console.log(test_old_ray_length);
+                //test_projected_new_vector_b = arrowHelper.arrow_list[i].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[i].cone.parent.matrixWorld.clone()).sub(camera.position);
+                var angle_c = projected_new_vector.angleTo(arrow_vector);// doesn't change
+                var angle_d = projected_new_vector.angleTo(old_ray_vector); //this oscillates
+                /*console.log(old_ray_vector.length());
+                console.log(Math.sin(angle_c));
+                console.log(Math.sin(angle_d));
+                console.log(Math.sin(angle_d)/Math.sin(angle_c));*/
+                var resize_amount = old_ray_vector.length()/Math.sin(angle_c)*Math.sin(angle_d);
+                console.log(resize_amount);
+                /**********************************************************************************/
+                //console.log(projected_change_vector.length())
+                //console.log(scaling);
+                //sign_constant = 1;
+                sign_constant = sign;
+                var resize_constant_a = 20;
+                var resize_constant_b = 20;
+                var difference_factor = window.select.cube.position.clone().distanceTo(resize_pos0)/small_w;
+                console.log(resize_pos0);
+                if (resize_dir.x){
+                    window.select.cube.scale.setX(original_scale.x + sign_constant*resize_amount/small_w);
+                    if (window.select.cube.scale.x > 200){
+                        window.select.cube.scale.x = 200;
+                        return;
+                    }
+                    if (window.select.cube.scale.x < 0){
+                        window.select.cube.scale.x = 0;
+                        return;
+                    }
+                }else if (resize_dir.y){
+                    window.select.cube.scale.setY(original_scale.y + sign_constant*resize_amount/small_w);
+                    if (window.select.cube.scale.y > 200){
+                        window.select.cube.scale.y = 200;
+                        return;
+                    }
+                    if (window.select.cube.scale.y < 0){
+                        window.select.cube.scale.y = 0;
+                        return;
+                    }
+                }else if (resize_dir.z){
+                    window.select.cube.scale.setZ(original_scale.z + sign_constant*resize_amount/small_w);
+                    if (window.select.cube.scale.z > 200){
+                        window.select.cube.scale.z = 200;
+                        return;
+                    }
+                    if (window.select.cube.scale.y < 0){
+                        window.select.cube.scale.y = 0;
+                        return;
+                    }
+                    window.select.cube.position.z = resize_pos0.z + small_h*0.5*(window.select.cube.scale.z - resize_scale0.z);
+                }
+                //window.select.cube.scale.set(16*scaling*Math.abs(resize_dir.x), 16*scaling*Math.abs(resize_dir.y), 16*scaling*resize_dir.z);
+                //console.log(scaling);
+                /*********/
+                /**********/
+            }
+            //resize_pos0 = window.select.cube.position.clone();
+
+            //resize_pos0 = window.select.cube.position.clone();
+
+            //console.log(resize_scale0);
+
             /*if (resize_dir.x < 0){
                 window.select.cube.position.x = resize_pos0.x - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.cos(window.select.cube.rotation.z) + small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.sin(window.select.cube.rotation.z);
                 window.select.cube.position.y = resize_pos0.y - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.sin(window.select.cube.rotation.z) - small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.cos(window.select.cube.rotation.z);
@@ -280,19 +510,17 @@ function onDocumentMouseMove(event) {
                 window.select.cube.position.x = resize_pos0.x + small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.cos(window.select.cube.rotation.z) - small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.sin(window.select.cube.rotation.z);
                 window.select.cube.position.y = resize_pos0.y + small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.sin(window.select.cube.rotation.z) + small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.cos(window.select.cube.rotation.z);
             }*/
-            if (resize_dir.x > 0 || resize_dir.y > 0){
-                window.select.cube.position.x = resize_pos0.x - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.cos(window.select.cube.rotation.z) + small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.sin(window.select.cube.rotation.z);
-                window.select.cube.position.y = resize_pos0.y - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.sin(window.select.cube.rotation.z) - small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.cos(window.select.cube.rotation.z);
+            if (resize_dir.x < 0 || resize_dir.y < 0){
+                window.select.cube.position.setX(resize_pos0.x - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.cos(window.select.cube.rotation.z) + small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.sin(window.select.cube.rotation.z));
+                window.select.cube.position.setY(resize_pos0.y - small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.sin(window.select.cube.rotation.z) - small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.cos(window.select.cube.rotation.z));
             }
-            else if (resize_dir.x < 0 || resize_dir.y < 0){
-                window.select.cube.position.x = resize_pos0.x + small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.cos(window.select.cube.rotation.z) - small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.sin(window.select.cube.rotation.z);
-                window.select.cube.position.y = resize_pos0.y + small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.sin(window.select.cube.rotation.z) + small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.cos(window.select.cube.rotation.z);
+            else if (resize_dir.x > 0 || resize_dir.y > 0){
+                window.select.cube.position.setX(resize_pos0.x + small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.cos(window.select.cube.rotation.z) - small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.sin(window.select.cube.rotation.z));
+                window.select.cube.position.setY(resize_pos0.y + small_w*0.5*(window.select.cube.scale.x - resize_scale0.x)*Math.sin(window.select.cube.rotation.z) + small_h*0.5*(window.select.cube.scale.y - resize_scale0.y)*Math.cos(window.select.cube.rotation.z));
             }
-            window.select.cube.position.z = resize_pos0.z - small_d*0.5*(window.select.cube.scale.z - resize_scale0.z);
-            resize_scale0 = window.select.cube.scale.clone();
-            resize_pos0 = window.select.cube.position.clone();
-            arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
-            indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
+
+            //resize_scale0 = window.select.cube.scale.clone();
+            vert_plane.matrixWorldNeedsUpdate = false;
             render_box_object(window.select);
         }
         else if ($(event.target).parents('div#main_media').length && !$(event.target).parents('div#icon_wrapper').length && event.target.id != "icon_wrapper" && window.select.cube) { //event.target.id != "icon_wrapper" && event.target.tagName != "BUTTON" && event.target.tagName != "FONT") && (event.target.id != "icon_container")) { // && (event.target.tagName == "canvas")) {
@@ -361,7 +589,7 @@ function onDocumentMouseMove(event) {
                     if (Math.tan(window.select.cube.rotation.z) >= 0 && Math.cos(window.select.cube.rotation.z) >= 0){//only working from -pi/2 to +pi/2
                         if (window.select.cube.position.x + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 10){
                             window.select.cube.position.setX(10 - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
-                        }
+                        } 
                         if (window.select.cube.position.y + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 10){
                             window.select.cube.position.setY(10 - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
                         }
@@ -393,7 +621,7 @@ function onDocumentMouseMove(event) {
                 }
                 arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
                 indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
-                render_box_object(window.select)
+                render_box_object(window.select);
             }
         }
     }
@@ -423,15 +651,15 @@ function onDocumentMouseUp(event) {
         }
     }
     else if (nav_toggle == true){
-        nav_toggle = false
-        camera = old_camera;
+        nav_toggle = false;
     }
 
     for (var i = 0; i < arrowHelper.arrow_list.length; i++){
         arrowHelper.arrow_list[i].cone.material.color.setHex(0xff0000);
     }
     if (anyRerendering){
-        render();
+        renderer.render(scene, camera);
+        box_renderer.render(box_scene, camera);
     }
 }
 
@@ -544,22 +772,87 @@ function calculateResizeMagnitude(resize_x0, resize_y0){
     return magnitude;
 }
 
-function SynchronizeSupportPlanes(object){
+function SynchronizeSupportPlanes(object, parentSyncOn){// if parentSyncOn is false, don't sync parent plane (because of recursion, so no loop)
     if (!object){
         object = window.select;
     }
     for (var i = 0; i < object.hchildren.length; i++){
-        object.hchildren[i].plane.matrixWorld = object.plane.matrixWorld.clone();
+        if (!object.cube){
+            object.hchildren[i].plane.matrixWorld = object.plane.matrixWorld.clone();
+        }else{
+            object.hchildren[i].plane.matrixWorld.multiplyMatrices(object.plane.matrixWorld.clone(), (new THREE.Matrix4()).makeTranslation(0, 0, object.cube.scale.z*small_h));
+        }
         if (object.hchildren[i].cube && object.hchildren[i].cube.parent != object.hchildren[i].plane){
             object.hchildren[i].cube.parent.matrixWorld = object.hchildren[i].plane.matrixWorld.clone();
         }
-        //render_box_object(object.hchildren[i]);
-        SynchronizeSupportPlanes(object.hchildren[i]);
+        render_box_object(object.hchildren[i]);
+        SynchronizeSupportPlanes(object.hchildren[i], false);
     }
-    if (object.hparent != "unassigned" && !object.hparent.cube){
+    if (object.hparent != "unassigned" && !object.hparent.cube && parentSyncOn !== false){
         object.hparent.plane.matrixWorld = object.plane.matrixWorld.clone();
+        for (var i = 0; i < object.hparent.hchildren.length; i++){
+            if (object.hparent.hchildren[i] != object){
+                SynchronizeSupportPlanes(object.hparent);
+                console.log("synchronize children");
+            }
+        }
         main_threed_handler.PlaneAutoSave(object.hparent.ID);
         console.log(object.hparent.ID);
         console.log("saving parent");
     }
+}
+function update(camera) {
+    var position = camera.position;
+    var offset = position.clone().sub( target );// so the problem is the target
+
+    // angle from z-axis around y-axis
+    var theta = Math.atan2( offset.x, offset.z );
+
+    // angle from y-axis
+    var phi = Math.atan2( Math.sqrt( offset.x * offset.x + offset.z * offset.z ), offset.y );
+
+    theta += thetaDelta;
+    phi += phiDelta;
+
+    // restrict phi to be between desired limits
+    phi = Math.max( minPolarAngle, Math.min( maxPolarAngle, phi ) );
+
+    // restrict phi to be betwee EPS and PI-EPS
+    phi = Math.max( EPS, Math.min( Math.PI - EPS, phi ) );
+
+    var radius = offset.length() * scale; //offset.length() = 0
+
+    // restrict radius to be between desired limits
+    radius = Math.max( 0, Math.min( Infinity, radius ) );
+
+    offset.x = radius * Math.sin( phi ) * Math.sin( theta );
+    offset.y = radius * Math.cos( phi );
+    offset.z = radius * Math.sin( phi ) * Math.cos( theta );
+
+    position.copy( target ).add( offset );
+
+    camera.lookAt( target );
+
+    //console.log(position);
+
+    thetaDelta = 0;
+    phiDelta = 0;
+    scale = 1;
+}
+
+function copy_camera() {
+    old_camera = new THREE.PerspectiveCamera();
+    old_camera.aspect = camera.aspect;
+    old_camera.near = camera.near;
+    old_camera.far = camera.far;
+    old_camera.fov = camera.fov;
+    old_camera.position = camera.position.clone();
+    old_camera.projectionMatrix = camera.projectionMatrix.clone();
+}
+
+function rotateLeft(angle){
+    thetaDelta -= angle;
+}
+function rotateUp(angle){
+    phiDelta -= angle;
 }

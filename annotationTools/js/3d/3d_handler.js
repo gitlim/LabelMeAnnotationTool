@@ -187,6 +187,14 @@ function threed_handler(){
 	};
 
 	this.AnnotationLinkClick = function(idx){
+		if (edit_popup_open){
+			alert("You must close the current popup");
+			return;
+		}
+		if (nav_on){
+			alert("You must exit navigation mode before selecting another object");
+			return;
+		}
 		if ((window.select) && idx == window.select.ID){
 			select_anno = main_canvas.GetAnnoByID(idx);
 			this.ThreeDAnnotationEdit(idx);
@@ -200,14 +208,25 @@ function threed_handler(){
 			}
 		}
 		hover_object = null;
+		ShowThreeD();
+		document.getElementById('Link'+idx).style.color = '#FF0000';
 	};
 
 	this.AnnotationLinkMouseOver = function(a){
+		if (nav_on){
+			alert("You cannot edit 3D objects while in navigation mode");
+			return;
+		}
+		if (edit_popup_open){
+			return;
+		}
 		console.log(a);
 		HideAllPolygons();
 		hover_object = ID_dict[a];
-		this.ThreeDToFore();
-		document.getElementById('Link'+a).style.color = '#FF0000';
+		//ShowThreeD();
+		this.ThreeDToFore();//for some reason renderobjectlist here makes clicking on the link not work, so doing workaround
+		$('#show_threed_button').replaceWith('<a id="hide_threed_button" href="javascript:HideThreeD();">Hide 3D objects</a>');
+		IsHidingAllThreeD = false;
 		var idx = a;
 		var parent = LMgetObjectField(LM_xml, idx, 'ispartof');
 		while (!isNaN(parent) && main_canvas.GetAnnoByID(parent).GetType() != 0 && main_canvas.GetAnnoByID(parent).GetType() != 1){
@@ -233,6 +252,8 @@ function threed_handler(){
 			ClearCanvas();
 		}
 		ThreeDHoverHighlight(hover_object);
+		//RenderObjectList();
+		document.getElementById('Link'+a).style.color = '#FF0000';
 	};
 
 	this.AnnotationLinkMouseOut = function(){
@@ -262,6 +283,9 @@ function threed_handler(){
 	        $("#boxCanvas").css('display', 'none');
 	        $("#container").css('z-index', '-3');
 	        ShowAllPolygons();
+		}
+		if (window.select){
+			document.getElementById('Link'+window.select.ID).style.color = '#FF0000';
 		}
 	};
 
@@ -296,8 +320,8 @@ function threed_handler(){
             	intersect_box.children[i].material.visible = false;
         	}
     	}
-	  	renderer.render(scene, camera);
-	  	box_renderer.render(box_scene, camera);
+    	check_plane_box_collision();
+	  	render();
 	};
 
 	this.ThreeDAnnotationEdit = function(idx){
@@ -455,6 +479,7 @@ function threed_handler(){
 	};
 
 	this.CreateGroundplane = function(){//for creation of the first plane (groundplane)
+		console.log("create groundplane");
 		var numItems = $(LM_xml).children('annotation').children('object').length;
 		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
 		console.log($(LM_xml));
@@ -467,12 +492,12 @@ function threed_handler(){
 	    ID_dict[window.select.ID] = window.select;
 	    window.select.plane = plane; // setting up the groundplane
 	    scene.add(window.select.plane);
-
 		var anno;
 		edit_popup_open = 0;
 		anno = threed_anno;
-
-
+		op_y = document.getElementById("im").height/2;
+		update_plane();
+		console.log(K);
 		// Update old and new object names for logfile:
 		
 		submission_edited = 0;
@@ -507,8 +532,8 @@ function threed_handler(){
 		html_str += '</lines>';
 		//html_str += '<op_points>' + op_x + ' ' + op_y + '</op_points>';
 		html_str += '<plane_matrix>';
-		for (var i = 0; i < K.length; i++){
-			html_str += K[i] + ' ';
+		for (var i = 0; i < window.select.plane.matrixWorld.elements.length; i++){
+			html_str += window.select.plane.matrixWorld.elements[i] + ' ';
 		}
 		html_str += '</plane_matrix>';
 		html_str += '<focal_length>' + f + '</focal_length>';
@@ -522,7 +547,7 @@ function threed_handler(){
 		WriteXML(SubmitXmlUrl,LM_xml,function(){return;});
 			
 		if(view_ObjList) RenderObjectList();
-		this.SelectObject(threed_anno.anno_id);
+		this.SelectObject(window.select.ID);
 
 		var m = main_media.GetFileInfo().GetMode();
 		if(m=='mt') {
@@ -531,7 +556,7 @@ function threed_handler(){
 			document.getElementById('LMurl').value = LMbaseurl + '?collection=LabelMe&mode=i&folder=' + main_media.GetFileInfo().GetDirName() + '&image=' + main_media.GetFileInfo().GetImName();
 		if(global_count >= mt_N) document.getElementById('mt_submit').disabled=false;
 		}
-		update_plane().done(this.PlaneAutoSave);
+		this.PlaneAutoSave(window.select.ID);
 		render();
 	};
 
@@ -590,11 +615,17 @@ function threed_handler(){
 	        addVPline(vp_label.length-1, vp_layer);
 		}
 		f = LMgetObjectField(LM_xml, idx, 'focal_length');
-		var op_circle = stage.find('.op_circle')[0];
+		//var op_circle = stage.find('.op_circle')[0];
 		/*op_circle.setX(op_x);
 		op_circle.setY(op_y);*/
+		CalculateAxis(idx);
+		CalculateNewOpY(L);
+		update_plane();
 		rerender_plane(L);
+		//update_plane();
 		height_transform = L[13];
+		horizontal_transform = L[12];
+		vertical_transform = L[14];
 		stage.draw();
 		//render();
 	};
@@ -686,31 +717,35 @@ function threed_handler(){
 		var obj_elts = LM_xml.getElementsByTagName("object");
   		var num_obj = obj_elts.length;
   		for (var i = 0; i < num_obj; i++){
-  			if (obj_elts[i].getElementsByTagName("plane").length > 0){// for planes
+  			if (LMgetObjectField(LM_xml, i, 'deleted') != 0){
+  				continue;
+  			}
+  			if (obj_elts[i].getElementsByTagName("plane").length > 0 ){// for planes
 	  			object_list.push(new object_instance);
 			    var new_plane_object = object_list[object_list.length-1];
 			    new_plane_object.ID = i;
 			    ID_dict[i] = new_plane_object;
 			    var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
-			    var new_plane_geometry = new THREE.PlaneGeometry(20, 20, 100, 100);
+			    var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 100, 100);
 			    var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
-			    new_plane.material.visible = true;
-			    new_plane.matrixAutoUpdate = false;
-			  	new_plane.matrixWorldNeedsUpdate = false;
-			    new_plane_object.plane = new_plane;
-			    scene.add(new_plane);
-			    new_plane.matrixWorld.elements = LMgetObjectField(LM_xml, i, 'plane_matrix');
 			    if (i == 0){
-  					plane = ID_dict[i].plane;
+  					ID_dict[i].plane = plane;
   					groundplane_id = ID_dict[i].ID;
+  				}else{
+  					new_plane_object.plane = new_plane;
+  					scene.add(new_plane);
   				}
+  				ID_dict[i].plane.material.visible = true;
+			    ID_dict[i].plane.matrixAutoUpdate = false;
+			  	ID_dict[i].plane.matrixWorldNeedsUpdate = false;
+			    ID_dict[i].plane.matrixWorld.elements = LMgetObjectField(LM_xml, i, 'plane_matrix');
   			}else if (obj_elts[i].getElementsByTagName("cube").length > 0){// for boxes
   				object_list.push(new object_instance);
 			    var new_box_object = object_list[object_list.length-1];
 			    new_box_object.ID = i; 
 			    ID_dict[i] = new_box_object;
 			    var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
-			    var new_plane_geometry = new THREE.PlaneGeometry(20, 20, 100, 100);
+			    var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 100, 100);
 			    var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
 			    new_plane.matrixWorld.elements = LMgetObjectField(LM_xml, i, 'cube_matrix');
 			    new_plane.matrixAutoUpdate = false;
@@ -747,18 +782,19 @@ function threed_handler(){
   		for (var i = 0; i < object_list.length; i++){
   			 if (!isNaN(LMgetObjectField(LM_xml, object_list[i].ID, "ispartof")) && ID_dict[LMgetObjectField(LM_xml, object_list[i].ID, "ispartof")]){
 			    	object_list[i].hparent = ID_dict[LMgetObjectField(LM_xml, object_list[i].ID, "ispartof")];
+			    	object_list[i].hparent.hchildren.push(object_list[i]);
 			    	if (object_list[i].cube){
 			    		object_list[i].cube.parent.matrixWorld = object_list[i].hparent.plane.matrixWorld.clone();
 			    	}
 			    }
-			    if (!isNaN(LMgetObjectField(LM_xml, object_list[i].ID, "parts"))){
+			    /*if (!isNaN(LMgetObjectField(LM_xml, object_list[i].ID, "parts"))){
 			    	var child_ID_list = LMgetObjectField(LM_xml, object_list[i].ID, "parts");
 			    	for (var j = 0; j < child_ID_list.length; j++){
-			    		if (ID_dict[child_ID_list[j]]){
+			    		if (!ID_dict[child_ID_list[j]]){
 			    			object_list[i].hchildren.push(ID_dict[child_ID_list[j]])
 			    		}
 			    	}
-			    }
+			    }*/
   		}
   		render();
 	};

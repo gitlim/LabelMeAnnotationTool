@@ -44,8 +44,8 @@ function calculate_box_location(cube_object, support_object){ // make it the bot
     }
     main_threed_handler.BoxAutoSave(cube_object.ID);
     if (window.select) check_plane_box_collision();
-    arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
-    indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
+    arrow_box_position = null;
+    indicator_box_position = null;
     render();
 }
 
@@ -94,8 +94,8 @@ function calculate_children_box_locations(object){
 
 
 function CalculateBoxCanBeAdded(cube_object, support_object){
-    var cube_position = cube_object.cube.position.clone().applyMatrix4(cube_object.cube.parent.matrixWorld.clone());
-    cube_position.setZ(cube_position - cube_object.cube.scale.z*0.05/2);
+    var cube_position = cube_object.cube.position.clone();
+    cube_position.setZ(cube_position.z - cube_object.cube.scale.z*small_h/2).applyMatrix4(cube_object.cube.parent.matrixWorld.clone());
     var direction = new THREE.Vector3(cube_position.x - camera.position.x, cube_position.y - camera.position.y, cube_position.z - camera.position.z).normalize();
     var optical_ray = new THREE.Raycaster(camera.position, direction);
     if (!(support_object.cube)){//if support object is a plane - making the cube object plane the same height as the plane that is supporting
@@ -120,7 +120,7 @@ function CheckIfSupportedByGroundplane(object){
     while (ancestor.hparent && ancestor.hparent != "unassigned"){
         ancestor = ancestor.hparent;
     }
-    if (ancestor.plane = plane){
+    if (ancestor.plane == plane || (ancestor.plane && !(ancestor.cube))){
         return true;
     }else{
         return false;

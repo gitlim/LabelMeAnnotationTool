@@ -42,6 +42,15 @@ function RenderObjectList() {
     IsHidingAllPolygons = false;
     html_str += '<p style="font-size:10px;line-height:100%"><a id="hide_all_button" href="javascript:HideAllPolygons();">Hide all polygons</a></p>';
   }
+  if (IsHidingAllPlanes){
+    html_str += '<p style="font-size:10px;line-height:100%"><a id="show_planes_button" href="javascript:ShowPlanes();">Show planes</a></p>';
+  }else{
+    html_str += '<p style="font-size:10px;line-height:100%"><a id="hide_all_planes_button" href="javascript:HideAllPlanes();">Hide all planes</a></p>';
+  }if (IsHidingAllThreeD){
+      html_str += '<p style="font-size:10px;line-height:100%"><a id="show_threed_button" href="javascript:ShowThreeD();">Show 3D objects</a></p>';
+  }else{
+    html_str += '<p style="font-size:10px;line-height:100%"><a id="hide_threed_button" href="javascript:HideThreeD();">Hide 3D objects</a></p>';
+  }
 
   // Add parts-of drag-and-drop functionality:
   if(use_parts) {

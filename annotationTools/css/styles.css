@@ -135,7 +135,11 @@ height:100%; z-index:0;}
     background-color: #ff9305; font-size: 13px; display: inline;  margin-left: 5px; color: #FFFFFF; border-color: #ff9305; border-width: 1px; margin-top: 5px; border-radius:4px; z-index: 100;
 
 }
-#add{
+#add_box{
+  height:38px;
+  width:38px;
+}
+#add_plane{
   height:38px;
   width:38px;
 }
@@ -143,14 +147,16 @@ height:100%; z-index:0;}
   height:38px;
   width:38px;
 }
-#height{
-  height:38px;
-  width:38px;
-}
 #clone{
   height:38px;
   width:38px;
 }
+
+#navigation{
+  height:38px;
+  width:38px;
+}
+
 #model_column {
     position:relative;
     margin-right:5px;

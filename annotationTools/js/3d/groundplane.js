@@ -66,11 +66,11 @@ function init_kinetic_stage() {
     //fill: 'blue',
     draggable: true,
     });
-    op_x = 500*scale_factor;
-    op_y = 500*scale_factor;
     circle.on("dragmove", op_drag);
     pt_layer.add(circle);*/
 
+    op_x = document.getElementById("im").width/2;//both of these are in kineticjs canvas corodinates
+    op_y = document.getElementById("im").height/2;
     stage.add(pt_layer);
 
     last_update = -999999;
@@ -170,7 +170,6 @@ function point_drag() {
     layer.get('.l'+(line_id)).each(function(line,n) {
         line.points([vp_s[line_id].x2d[0], vp_s[line_id].y2d[0], vp_s[line_id].x2d[1], vp_s[line_id].y2d[1]]);
     });
-
     update_plane();
     main_threed_handler.PlaneAutoSave();
 }
@@ -376,10 +375,14 @@ function update_plane() {
     current_time = d.getTime();
     if (current_time - last_update > 100) {
     last_update = current_time;
-    } else {
+    } else if (typeof K != "undefined"){
+        console.log("skipping plane update");
         return r;
     }
-
+    if (selected_plane == null){
+        console.log("update error");
+        return;
+    } 
     if ((typeof GLOBAL_DEBUG != 'undefined') &&(GLOBAL_DEBUG)) {
 
     } else {// for this part of the code, integrate new line
@@ -494,12 +497,25 @@ function update_plane() {
     if (current_mode == VERTICAL_PLANE_MOVE_MODE){
         //transform1 = window.select.plane.matrixWorld.elements[12];
         height_transform = selected_plane.matrixWorld.elements[13];
-        //transform3 = window.select.plane.matrixWorld.elements[14];
+        horizontal_transform = selected_plane.matrixWorld.elements[12];
+        vertical_transform = selected_plane.matrixWorld.elements[14];
+               //transform3 = window.select.plane.matrixWorld.elements[14];
     }
     if (!height_transform){
         height_transform = 0;
+
     }
-    console.log(height_transform);
+    if (!horizontal_transform){
+        horizontal_transform = 0;
+    }
+    if (!vertical_transform){
+        vertical_transform = 0;
+    }
+
+
+
+    //var transform = selected_plane.position.applyMatrix4
+    console.log(op_y);
     K[0] = axis_x[0];
     K[1] = -axis_x[1];
     K[2] = -axis_x[2];
@@ -512,10 +528,21 @@ function update_plane() {
     K[9] = -axis_z[1];
     K[10] = -axis_z[2];
     K[11] = 0;
-    K[12] = -(axis_x[0]+axis_y[0]) + 1;
-    //K[13] = 0;//transform2;//(axis_x[1]+axis_y[1]) - 1;
-    K[13] = height_transform;
-    K[14] = (axis_x[2]+axis_y[2]) -1;
+   // K[12] = -(axis_x[0]+axis_y[0]) + ;
+    //K[13] = (axis_x[1]+axis_y[1]) - ;
+    K[12] = -(axis_x[0]+axis_y[0]);//converting canvas to three js coordinates
+    img_height = document.getElementById("im").height;
+    bounding_top = 0;
+    if (op_y > 0.9*img_height) op_y = 0.9*img_height;
+    if (op_y < 0.1*img_height) op_y = 0.1*img_height;
+    K[13] = (axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f;
+    K[14] = (axis_x[2]+axis_y[2]) - 1;
+    //K[12] = 
+    //K[13] = 0;//transform2;//
+    //K[12] = horizontal_transform;
+    //
+    //K[13] = height_transform;
+    //K[14] = vertical_transform;
     K[15] = 1;
 
     rerender_plane(K);
@@ -875,3 +902,138 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
             break;
     }
 }*/
+
+function CalculateNewOpY(L){
+    gp_f = LMgetObjectField(LM_xml, groundplane_id, 'focal_length');
+    op_y = ((axis_x[1]+axis_y[1]) - L[13])*gp_f + document.getElementById("im").height/2;
+    console.log(document.getElementById("im").height/2);
+    console.log(gp_f);
+    console.log(L);
+    console.log(axis_x);
+    console.log(axis_y);
+    console.log(op_y);
+}
+
+function CalculateAxis(idx){     
+    selected_plane = ID_dict[idx].plane;
+    var r = $.Deferred();
+    var d = new Date();
+    current_time = d.getTime();
+    if (current_time - last_update > 100) {
+    last_update = current_time;
+    } else if (typeof axis_x != "undefined"){
+        return r;
+    }
+    if ((typeof GLOBAL_DEBUG != 'undefined') &&(GLOBAL_DEBUG)) {
+
+    } else {// for this part of the code, integrate new line
+        for (var l = 1; l <= 3; l++) {
+            vp[l-1] = new VP();
+            var vp_cou = 0;
+            for (var i = 0; i < vp_s.length; i++) {
+                if (vp_label[i] != l)
+                continue;
+                for (var j = i+1; j < vp_s.length; j++) {
+                    if (vp_label[j] != l)
+                    continue;
+
+                    // vanishing points
+                    var x1 = vp_s[i].x2d[0];//assigning vanishing point coordinates to variables for ease of calculation
+                    var x2 = vp_s[i].x2d[1];
+                    var x3 = vp_s[j].x2d[0];
+                    var x4 = vp_s[j].x2d[1];
+
+                    var y1 = vp_s[i].y2d[0];
+                    var y2 = vp_s[i].y2d[1];
+                    var y3 = vp_s[j].y2d[0];
+                    var y4 = vp_s[j].y2d[1];
+
+                    vp[l-1].x2d += ((x1*y2-y1*x2)*(x3-x4) - (x1-x2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));//x coordinate of first vanishing point
+                    vp[l-1].y2d += ((x1*y2-y1*x2)*(y3-y4) - (y1-y2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));//y coordinate of first vanishing point
+                    vp_cou = vp_cou + 1;
+                }
+            }
+            vp[l-1].x2d /= vp_cou;
+            vp[l-1].y2d /= vp_cou;
+        }
+    }
+    var vp_counter = 0;
+    for (var i = 0; i < vp.length; i++){
+        if (isNaN(vp[i].x2d) == false){
+            vp_counter += 1;
+        }
+    }
+    var vp1;
+    var vp2;
+    if (vp_counter == 2){
+        vp_counter = 0;
+        for (var i = 0; i < vp.length; i++){
+            if (isNaN(vp[i].x2d) == false){
+                if (vp_counter == 0){
+                    vp1 = vp[i];
+                }else{
+                    vp2 = vp[i];
+                }
+                vp_counter += 1;
+            }
+        }
+        var cx = init_width/2;
+        var cy = init_height/2;
+        var u = ((cx - vp1.x2d)*(vp2.x2d-vp1.x2d) + (cy - vp1.y2d)*(vp2.y2d-vp1.y2d))/ dist2(vp2, vp1);
+        var vi = new VP();
+        vi.x2d = vp1.x2d + u * (vp2.x2d - vp1.x2d);
+        vi.y2d = vp1.y2d + u * (vp2.y2d - vp1.y2d);
+
+        //f = Math.sqrt(Math.pow(((cx - vp[0].x2d)*(vp[1].x2d - cx)), 2) + Math.pow(((cy - vp[0].y2d)*(vp[1].y2d - cy)), 2));
+        f = Math.sqrt(Math.sqrt(dist2(vi, vp1)) * Math.sqrt(dist2(vi, vp2)));//this is the focal distance / this is actually OcVi
+
+        // rotation / translation/extrinsic
+        axis_x = vec3.create();
+        vec3.set(axis_x, vp1.x2d - cx, vp1.y2d - cy, f);
+        vec3.normalize(axis_x, axis_x);
+
+        axis_y = vec3.create();
+        vec3.set(axis_y, vp2.x2d - cx, vp2.y2d - cy, f);
+        vec3.normalize(axis_y, axis_y);
+
+        axis_z = vec3.create();
+        vec3.set(axis_z, vp[2].x2d - cx, vp[2].y2d - cy, f);
+        vec3.normalize(axis_z, axis_z);
+        vec3.cross(axis_z, axis_x, axis_y);
+
+    }else{
+        var side1_slope = (vp[1].y2d - vp[0].y2d)/(vp[1].x2d - vp[0].x2d);
+        var side2_slope = (vp[2].y2d - vp[1].y2d)/(vp[2].x2d - vp[1].x2d);
+        var side3_slope = (vp[2].y2d - vp[0].y2d)/(vp[2].x2d - vp[0].x2d);
+        var perp_slope1 = -1/side1_slope;
+        var perp_slope2 = -1/side2_slope;
+        var perp_slope3 = -1/side3_slope;
+
+        var cx = (perp_slope1*vp[2].x2d - perp_slope2*vp[0].x2d + vp[0].y2d - vp[2].y2d)/(perp_slope1-perp_slope2);
+        var cy = perp_slope1*(cx - vp[2].x2d) + vp[2].y2d;
+        var u = ((cx - vp[0].x2d)*(vp[1].x2d-vp[0].x2d) + (cy - vp[0].y2d)*(vp[1].y2d-vp[0].y2d))/ dist2(vp[1], vp[0]);
+        var vi = new VP();
+        vi.x2d = vp[0].x2d + u * (vp[1].x2d - vp[0].x2d);
+        vi.y2d = vp[0].y2d + u * (vp[1].y2d - vp[0].y2d);
+
+        //f = Math.sqrt(Math.pow(((cx - vp[0].x2d)*(vp[1].x2d - cx)), 2) + Math.pow(((cy - vp[0].y2d)*(vp[1].y2d - cy)), 2));
+        f = Math.sqrt(Math.sqrt(dist2(vi, vp[0])) * Math.sqrt(dist2(vi, vp[1])));//this is the focal distance / this is actually OcVi
+
+        // rotation / translation/extrinsic
+        axis_x = vec3.create();
+        vec3.set(axis_x, vp[0].x2d - cx, vp[0].y2d - cy, f);
+        vec3.normalize(axis_x, axis_x);
+
+        axis_y = vec3.create();
+        vec3.set(axis_y, vp[1].x2d - cx, vp[1].y2d - cy, f);
+        vec3.normalize(axis_y, axis_y);
+
+        axis_z = vec3.create();
+        vec3.set(axis_z, vp[2].x2d - cx, vp[2].y2d - cy, f);
+        //vec3.cross(axis_z, axis_x, axis_y);
+        vec3.normalize(axis_z, axis_z);
+    }
+    if (idx == groundplane_id){
+        gp_f = f;
+    }
+}

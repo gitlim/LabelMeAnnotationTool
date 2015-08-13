@@ -109,11 +109,15 @@ function createWorld() {// split into different parts for 3d and gp later
         }
     }
     // This section is for drawing the groundplane, arguments are how plane is divided
-    var plane_geometry = new THREE.PlaneGeometry(20, 20, 100, 100);
-    var gp_plane_geometry = new THREE.PlaneGeometry(20, 20, 100, 100);
-    var vert_plane_geometry = new THREE.PlaneGeometry(200, 200, 40, 40);
+
+
+    var plane_geometry = new THREE.PlaneGeometry(2, 2, 100, 100);
+    var gp_plane_geometry = new THREE.PlaneGeometry(2, 2, 100, 100);
+    //gp_plane_geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 10, -10, 0 ) );
+    //plane_geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 10, -10, 0 ) );
+    var vert_plane_geometry = new THREE.PlaneGeometry(200, 200, 400, 400);
     var plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
-    var vert_plane_material = new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide, wireframe: true});
+    var vert_plane_material = new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide, wireframe: false});
     var gp_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     gp_plane = new THREE.Mesh(gp_plane_geometry, gp_plane_material);
     plane = new THREE.Mesh(plane_geometry, plane_material);
@@ -132,6 +136,9 @@ function createWorld() {// split into different parts for 3d and gp later
     plane_object = new THREE.Object3D();
     plane_object.add(vert_plane);
     plane_object.rotation.z = Math.PI/2;
+    plane_object.matrixAutoUdpdate = true;
+    vert_plane.matrixAutoUpdate = false;
+    plane_object.position.set( 0, 0, -1);
 
     // Add Z-direction guide line
     var line_material = new THREE.LineBasicMaterial({color: 0x0000ff});
@@ -177,6 +184,7 @@ function setupRay(event){
     var direction = mouse3D.sub(camera.position).normalize();
     ray = new THREE.Raycaster(camera.position, mouse3D);
     ray.set(camera.position, direction);
+    ray.precision = 0.00000000001;
 }
 
 function setupBoxRay(event){
@@ -194,22 +202,23 @@ function render() {
         if (typeof proportion_array[window.select.ID] == "undefined"){
             proportion_array[window.select.ID] = 1;
         }
+        setup_arrowheads_rescaling(window.select);
         if (window.select.cube.parent != window.select.plane){
             window.select.cube.parent.matrixWorld = window.select.plane.matrixWorld.clone();
         }
         arrowHelper.matrixWorld = window.select.plane.matrixWorld.clone();
-        if (!arrow_box_position || !indicator_box_position){
+        //if (!arrow_box_position || !indicator_box_position || !plane_object_position){
             arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
             indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
-        }
-        var plane_object_position = ConvertPosition(window.select.cube, plane_object.parent);
+            plane_object_position = ConvertPosition(window.select.cube, plane_object.parent);
+        //}
         arrowHelper.arrow_box.rotation.z = window.select.cube.rotation.z;
         arrowHelper.arrow_box.position.set(arrow_box_position.x, arrow_box_position.y, arrow_box_position.z + small_h*0.5*window.select.cube.scale.z);
-        arrowHelper.arrow_list[1].setLength(window.select.cube.scale.y*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
-        arrowHelper.arrow_list[2].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
-        arrowHelper.arrow_list[3].setLength(window.select.cube.scale.y*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
-        arrowHelper.arrow_list[4].setLength(window.select.cube.scale.x*small_d/2/proportion_array[window.select.ID], arrowhead_size, arrowhead_size);
-        arrowHelper.arrow_list[0].setLength(indicator_box.scale.x*0.1, arrowhead_size, arrowhead_size);
+        arrowHelper.arrow_list[1].setLength(window.select.cube.scale.y*small_w/2/proportion_array[window.select.ID], arrowhead_scale_array[1], arrowhead_scale_array[1]);
+        arrowHelper.arrow_list[2].setLength(window.select.cube.scale.x*small_w/2/proportion_array[window.select.ID], arrowhead_scale_array[2], arrowhead_scale_array[2]);
+        arrowHelper.arrow_list[3].setLength(window.select.cube.scale.y*small_w/2/proportion_array[window.select.ID], arrowhead_scale_array[3], arrowhead_scale_array[3]);
+        arrowHelper.arrow_list[4].setLength(window.select.cube.scale.x*small_w/2/proportion_array[window.select.ID], arrowhead_scale_array[4], arrowhead_scale_array[4]);
+        arrowHelper.arrow_list[0].setLength(indicator_box.scale.x*0.1, arrowhead_scale_array[0], arrowhead_scale_array[0]);
         indicator_box.position.set(indicator_box_position.x,indicator_box_position.y,indicator_box_position.z + small_h*0.5*window.select.cube.scale.z);
         /*arrowHelper.arrow_box.scale.x = proportion_array[window.select.ID];
         arrowHelper.arrow_box.scale.y = proportion_array[window.select.ID];
@@ -226,6 +235,11 @@ function render() {
         toggle_cube_move_indicators(true);
         toggle_cube_rotate_indicators(true);*/
     }else{
+        toggle_cube_resize_arrows(false);
+        toggle_cube_move_indicators(false);
+        toggle_cube_rotate_indicators(false);
+    }
+    if (nav_on){
         toggle_cube_resize_arrows(false);
         toggle_cube_move_indicators(false);
         toggle_cube_rotate_indicators(false);
@@ -277,19 +291,21 @@ function render_box_object(object){
         object.cube.parent.matrixWorld = object.plane.matrixWorld.clone();
     }
     if (object == window.select){
+        setup_arrowheads_rescaling(object);
         arrowHelper.matrixWorld = object.plane.matrixWorld.clone();
-        if (!arrow_box_position || !indicator_box_position){
+        if (!arrow_box_position || !indicator_box_position || !plane_object_position){
             arrow_box_position = ConvertPosition(object.cube, arrowHelper);
             indicator_box_position = ConvertPosition(object.cube, indicator_box.parent);
+            plane_object_position = ConvertPosition(window.select.cube, plane_object.parent);
         }
         var plane_object_position = ConvertPosition(object.cube, plane_object.parent);
         arrowHelper.arrow_box.rotation.z = object.cube.rotation.z;
         arrowHelper.arrow_box.position.set(arrow_box_position.x, arrow_box_position.y, arrow_box_position.z + small_h*0.5*object.cube.scale.z);
-        arrowHelper.arrow_list[1].setLength(object.cube.scale.y*small_d/2/proportion_array[object.ID], arrowhead_size, arrowhead_size);
-        arrowHelper.arrow_list[2].setLength(object.cube.scale.x*small_d/2/proportion_array[object.ID], arrowhead_size, arrowhead_size);
-        arrowHelper.arrow_list[3].setLength(object.cube.scale.y*small_d/2/proportion_array[object.ID], arrowhead_size, arrowhead_size);
-        arrowHelper.arrow_list[4].setLength(object.cube.scale.x*small_d/2/proportion_array[object.ID], arrowhead_size, arrowhead_size);
-        arrowHelper.arrow_list[0].setLength(indicator_box.scale.x*0.1, arrowhead_size, arrowhead_size);
+        arrowHelper.arrow_list[1].setLength(object.cube.scale.y*small_w/2/proportion_array[object.ID], arrowhead_scale_array[1], arrowhead_scale_array[1]);
+        arrowHelper.arrow_list[2].setLength(object.cube.scale.x*small_w/2/proportion_array[object.ID], arrowhead_scale_array[2], arrowhead_scale_array[2]);
+        arrowHelper.arrow_list[3].setLength(object.cube.scale.y*small_w/2/proportion_array[object.ID], arrowhead_scale_array[3], arrowhead_scale_array[3]);
+        arrowHelper.arrow_list[4].setLength(object.cube.scale.x*small_w/2/proportion_array[object.ID], arrowhead_scale_array[4], arrowhead_scale_array[4]);
+        arrowHelper.arrow_list[0].setLength(indicator_box.scale.x*0.1, arrowhead_scale_array[0], arrowhead_scale_array[0]);
         indicator_box.position.set(indicator_box_position.x,indicator_box_position.y,indicator_box_position.z + small_h*0.5*object.cube.scale.z);
         plane_object.position.setX(plane_object_position.x);
         plane_object.position.setY(plane_object_position.y);

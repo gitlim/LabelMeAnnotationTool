@@ -254,7 +254,7 @@ function ThreeDHoverHighlight(object){// need third options for planes
                     stage.children[i].hide();
                 }
                 toggle_cube_resize_arrows(true);
-                if (window.select.hparent != "unassigned"){
+                if (window.select.hparent != "unassigned" && IsHidingAllPlanes == false){
                     window.select.plane.material.visible = true;
                     check_plane_box_collision();
                 }
@@ -264,9 +264,12 @@ function ThreeDHoverHighlight(object){// need third options for planes
                 toggle_cube_rotate_indicators(true);
             }else{
                 console.log("display");
-                window.select.plane.material.visible = true;
-                DisplayVPTools();
-                main_threed_handler.LoadDifferentPlane(window.select.ID);
+                if (IsHidingAllPlanes == false){
+                    window.select.plane.material.visible = true;
+                    DisplayVPTools();
+                    main_threed_handler.LoadDifferentPlane(window.select.ID);
+                }
+               
             }
             check_plane_box_collision();
         }else{
@@ -286,7 +289,7 @@ function ThreeDHoverHighlight(object){// need third options for planes
                 object_list[i].plane.material.visible = false;
             }
         }
-        if (object.hparent != "unassigned"){
+        if (object.hparent != "unassigned" && IsHidingAllPlanes == false){
             check_plane_box_collision(object);
             object.plane.material.visible = true;//shows groundplane of cube that is being hovered over
         }
@@ -305,6 +308,7 @@ function ThreeDHoverHighlight(object){// need third options for planes
         object.plane.material.visible = true;
         guide_Z_line.material.visible = true;
         main_threed_handler.LoadDifferentPlane(object.ID);
+        if (IsHidingAllPlanes) ShowPlanes();
     }
     render();
 }
@@ -344,3 +348,58 @@ function remove_icon() {
     reset_icon();
     ThreeDObjectSelect(document.getElementById('GP'));// select GP
 }*/
+
+function ShowPlanes(){
+    IsHidingAllPlanes = false;
+    if (window.select){
+        object = window.select;
+    }else if (hover_object){
+        object = hover_object;
+    }else{
+        RenderObjectList();
+        return;
+    }
+    if ((!(object.cube)) || object.hparent != "unassigned"){
+        object.plane.material.visible = true;
+        DisplayVPTools();
+    } 
+    renderer.render(scene, camera);
+    RenderObjectList();
+}
+
+function HideAllPlanes(){
+    IsHidingAllPlanes = true;
+    for (var i = 0; i < object_list.length; i++){
+        if (!object_list[i].cube){
+            object_list[i].plane.material.visible = false;
+        }
+    }
+    for (var i = 0; i < stage.children.length; i++) {
+            stage.children[i].hide();
+    }
+    RenderObjectList(); 
+    renderer.render(scene, camera); 
+}
+
+function ShowThreeD(){
+    IsHidingAllThreeD = false;
+    $("#container").css('display', 'block');
+    $("#cnvs").css('display', 'block');
+    $("#boxCanvas").css('display', 'block');
+    $("#container").css('z-index', '1');
+    RenderObjectList();
+    if (window.select){
+        HighlightSelectedThreeDObject();
+        document.getElementById('Link'+ window.select.ID).style.color = '#FF0000';
+    }
+}
+
+function HideThreeD(){
+    IsHidingAllThreeD = true;
+    $("#container").css('display', 'none');
+    $("#cnvs").css('display', 'none');
+    $("#boxCanvas").css('display', 'none');
+    $("#clipCanvas").css('display', 'none');
+    $("#container").css('z-index', '-3');
+    RenderObjectList();
+}

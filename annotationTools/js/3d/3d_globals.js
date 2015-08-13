@@ -118,6 +118,10 @@ var clip_on = 0;
 var polygon = null;
 var selected_plane = null;
 var height_transform;
+var horizontal_transform;
+var vertical_transform;
 
 var arrow_box_position;
 var indicator_box_position;
+var IsHidingAllPlanes = false;
+var IsHidingAllThreeD = false;
