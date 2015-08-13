@@ -305,7 +305,12 @@ function threed_handler(){
 	        setup_arrowheads_rescaling();
 	        arrow_box_position = null;
 	    	indicator_box_position = null;
-	    	if (window.select.hparent != "unassigned") check_plane_box_collision();
+	    	if (window.select.hparent != "unassigned"){
+	    		check_plane_box_collision();
+	    		CalculateAxis(idx);
+	    		var L = LMgetObjectField(LM_xml, idx, "cube_matrix");
+				CalculateNewOpY(L);
+	    	} 
 	    }else{
 	    	this.LoadDifferentPlane(idx);
 	    }

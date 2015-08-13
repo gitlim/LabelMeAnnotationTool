@@ -339,6 +339,7 @@ function onDocumentMouseMove(event) {
             /*if (window.select.hparent != "unassigned"){
                 calculate_box_location(window.select, window.select);
             }*/
+            update_plane();
             if(window.select.cube){
                 /*arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
                 indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);*/
@@ -353,7 +354,6 @@ function onDocumentMouseMove(event) {
             render_plane_object(window.select);
             if (window.select.plane != plane) check_plane_box_collision();
             SynchronizeSupportPlanes();
-            update_plane();
         }
         else if (current_mode == RESIZE_MODE) {
             console.log("box_resize");
@@ -619,8 +619,8 @@ function onDocumentMouseMove(event) {
                         }
                     }
                 }
-                arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
-                indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
+                //arrow_box_position = ConvertPosition(window.select.cube, arrowHelper);
+                //indicator_box_position = ConvertPosition(window.select.cube, indicator_box.parent);
                 render_box_object(window.select);
             }
         }

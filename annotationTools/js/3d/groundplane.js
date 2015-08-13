@@ -536,6 +536,8 @@ function update_plane() {
     if (op_y > 0.9*img_height) op_y = 0.9*img_height;
     if (op_y < 0.1*img_height) op_y = 0.1*img_height;
     K[13] = (axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f;
+    console.log((axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f);
+    console.log(K[13]);
     K[14] = (axis_x[2]+axis_y[2]) - 1;
     //K[12] = 
     //K[13] = 0;//transform2;//
@@ -737,10 +739,10 @@ function addVPCircles(id, layer){
 
 
 function rerender_plane(K) {//where K is the new matrix after vanishing point recalculation
-    if (hover_object && !(hover_object.cube)){//when hovering ofer a link is going on;
-        selected_plane = hover_object.plane;
-    }else if (window.select && !(window.select.cube)){
-        selected_plane = window.select.plane;
+    if (hover_object){//when hovering ofer a link is going on;
+        var selected_plane = hover_object.plane;
+    }else if (window.select){
+        var selected_plane = window.select.plane;
     }else{
         return;
     }
@@ -911,7 +913,6 @@ function CalculateNewOpY(L){
     console.log(L);
     console.log(axis_x);
     console.log(axis_y);
-    console.log(op_y);
 }
 
 function CalculateAxis(idx){     

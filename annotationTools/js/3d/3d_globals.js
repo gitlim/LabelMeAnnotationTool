@@ -70,7 +70,7 @@ var nav_on = false;
 
 var minPolarAngle = 0; // radians
 var maxPolarAngle = Math.PI; // radians
-var scale = 0.1;
+var scale = 1;
 
 var dollyStart = new THREE.Vector2();
 var dollyDelta = new THREE.Vector2();
