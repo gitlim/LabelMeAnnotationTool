@@ -309,10 +309,10 @@ function onDocumentMouseMove(event) {
             render_box_object(window.select);
 
         }
-        if (current_mode == VERTICAL_PLANE_MOVE_MODE && IsHidingAllPlanes == false) {
+        if (current_mode == VERTICAL_PLANE_MOVE_MODE && IsHidingAllPlanes == false && (window.select.cube)) {
             toggle_cube_rotate_indicators(false);
             toggle_cube_move_indicators(false);
-            op_x = op_x + event.clientX - prev_event_x;
+            //op_x = op_x + event.clientX - prev_event_x;
             op_y = op_y + event.clientY - prev_event_y;
             prev_event_x = event.clientX;
             prev_event_y = event.clientY;
@@ -587,35 +587,35 @@ function onDocumentMouseMove(event) {
                 if (window.select.hparent != "unassigned"){
                     diagonal = Math.sqrt(Math.pow(window.select.cube.scale.x*small_w/2, 2) + Math.pow(window.select.cube.scale.y*small_d/2, 2));
                     if (Math.tan(window.select.cube.rotation.z) >= 0 && Math.cos(window.select.cube.rotation.z) >= 0){//only working from -pi/2 to +pi/2
-                        if (window.select.cube.position.x + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 100){
-                            window.select.cube.position.setX(100 - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
+                        if (window.select.cube.position.x + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 1){
+                            window.select.cube.position.setX(1 - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
                         } 
-                        if (window.select.cube.position.y + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 100){
-                            window.select.cube.position.setY(100 - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
+                        if (window.select.cube.position.y + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 1){
+                            window.select.cube.position.setY(1 - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
                         }
                     }
                     if (Math.tan(window.select.cube.rotation.z) < 0 && Math.cos(window.select.cube.rotation.z) >= 0){
-                        if (window.select.cube.position.x + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 100){
-                            window.select.cube.position.setX(100 - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
+                        if (window.select.cube.position.x + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 1){
+                            window.select.cube.position.setX(1 - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
                         }
-                        if (window.select.cube.position.y + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 100){
-                            window.select.cube.position.setY(100 - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
+                        if (window.select.cube.position.y + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 1){
+                            window.select.cube.position.setY(1 - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
                         }
                     }
                     if (Math.tan(window.select.cube.rotation.z) >= 0 && Math.cos(window.select.cube.rotation.z) < 0){
-                        if (window.select.cube.position.x - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 100){
-                            window.select.cube.position.setX(100 + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
+                        if (window.select.cube.position.x - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 1){
+                            window.select.cube.position.setX(1 + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
                         }
-                        if (window.select.cube.position.y - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 100){
-                            window.select.cube.position.setY(100 + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
+                        if (window.select.cube.position.y - diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 1){
+                            window.select.cube.position.setY(1 + diagonal*Math.cos(window.select.cube.rotation.z - Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
                         }
                     }
                     if (Math.tan(window.select.cube.rotation.z) < 0 && Math.cos(window.select.cube.rotation.z) < 0){
-                        if (window.select.cube.position.x - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 100){
-                            window.select.cube.position.setX(100 + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
+                        if (window.select.cube.position.x - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)) > 1){
+                            window.select.cube.position.setX(1 + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.y/window.select.cube.scale.x)));
                         }
-                        if (window.select.cube.position.y - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 100){
-                            window.select.cube.position.setY(100 + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
+                        if (window.select.cube.position.y - diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)) > 1){
+                            window.select.cube.position.setY(1 + diagonal*Math.cos(window.select.cube.rotation.z + Math.atan(window.select.cube.scale.x/window.select.cube.scale.y)));
                         }
                     }
                 }

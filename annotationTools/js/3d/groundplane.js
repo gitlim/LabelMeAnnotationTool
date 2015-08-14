@@ -57,17 +57,17 @@ function init_kinetic_stage() {
 
     pt_layer = new Kinetic.Layer();
 
-    /*var circle = new Kinetic.Circle({//this is the draggable point
+    var circle = new Kinetic.Circle({//this is the draggable point
     name: "op_circle",
-    x: 500*scale_factor,
-    y: 500*scale_factor,
+    x: document.getElementById("im").width/2,
+    y: document.getElementById("im").height/2,
     radius: 8,
     stroke: 'blue',
     //fill: 'blue',
     draggable: true,
     });
     circle.on("dragmove", op_drag);
-    pt_layer.add(circle);*/
+    pt_layer.add(circle);
 
     op_x = document.getElementById("im").width/2;//both of these are in kineticjs canvas corodinates
     op_y = document.getElementById("im").height/2;
@@ -127,14 +127,14 @@ function dist2(a, b) {//distances squared between two vp_s
     return Math.pow(a.x2d-b.x2d,2) + Math.pow(a.y2d-b.y2d,2);
 }
 
-/*function op_drag(e) {
+function op_drag(e) {
     //reassigning circle coordinates after it is moved
     op_x = e.targetNode.x();
     op_y = e.targetNode.y();
     console.log(op_x, op_y);
     main_threed_handler.PlaneAutoSave();
     update_plane().done(main_threed_handler.PlaneAutoSave);
-}*/
+}
 
 function point_drag() {
     current_mode = 0;
@@ -494,25 +494,6 @@ function update_plane() {
     }
     if ((window.select) && window.select.plane == plane) gp_f = f;
     K = mat4.create();//transformation matrix
-    if (current_mode == VERTICAL_PLANE_MOVE_MODE){
-        //transform1 = window.select.plane.matrixWorld.elements[12];
-        height_transform = selected_plane.matrixWorld.elements[13];
-        horizontal_transform = selected_plane.matrixWorld.elements[12];
-        vertical_transform = selected_plane.matrixWorld.elements[14];
-               //transform3 = window.select.plane.matrixWorld.elements[14];
-    }
-    if (!height_transform){
-        height_transform = 0;
-
-    }
-    if (!horizontal_transform){
-        horizontal_transform = 0;
-    }
-    if (!vertical_transform){
-        vertical_transform = 0;
-    }
-
-
 
     //var transform = selected_plane.position.applyMatrix4
     console.log(op_y);
@@ -530,14 +511,14 @@ function update_plane() {
     K[11] = 0;
    // K[12] = -(axis_x[0]+axis_y[0]) + ;
     //K[13] = (axis_x[1]+axis_y[1]) - ;
-    K[12] = -(axis_x[0]+axis_y[0]);//converting canvas to three js coordinates
+    K[12] = -(axis_x[0]+axis_y[0]) + (op_x - document.getElementById("im").width/2)/gp_f;//converting canvas to three js coordinates
     img_height = document.getElementById("im").height;
     bounding_top = 0;
-    if (op_y > 0.9*img_height) op_y = 0.9*img_height;
-    if (op_y < 0.1*img_height) op_y = 0.1*img_height;
+    if (op_y > 0.9*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE) op_y = 0.9*img_height;
+    if (op_y < 0.1*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE) op_y = 0.1*img_height;
     K[13] = (axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f;
-    console.log((axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f);
-    console.log(K[13]);
+    //console.log((axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f);
+    //console.log(K[13]);
     K[14] = (axis_x[2]+axis_y[2]) - 1;
     //K[12] = 
     //K[13] = 0;//transform2;//
@@ -906,6 +887,7 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
 }*/
 
 function CalculateNewOpY(L){
+    return;
     gp_f = LMgetObjectField(LM_xml, groundplane_id, 'focal_length');
     op_y = ((axis_x[1]+axis_y[1]) - L[13])*gp_f + document.getElementById("im").height/2;
     console.log(document.getElementById("im").height/2);
@@ -915,7 +897,8 @@ function CalculateNewOpY(L){
     console.log(axis_y);
 }
 
-function CalculateAxis(idx){     
+function CalculateAxis(idx){
+    return;     
     selected_plane = ID_dict[idx].plane;
     var r = $.Deferred();
     var d = new Date();

@@ -39,6 +39,9 @@ canvas {
   -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
 }
 
+#tool_buttons{
+  overflow: auto;
+}
 
 #framebar{
 height:80px;

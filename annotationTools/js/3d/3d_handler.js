@@ -70,7 +70,7 @@ function threed_handler(){
 				html_str += '</vp_line>';
 			}
 			html_str += '</lines>';
-			//html_str += '<op_points>' + op_x + ' ' + op_y + ' ' + '</op_points>';
+			html_str += '<op_points>' + op_x/scale_factor + ' ' + op_y/scale_factor + '</op_points>';
 			html_str += '<plane_matrix>';
 			for (var i = 0; i < K.length; i++){
 				html_str += K[i] + ' ';
@@ -307,9 +307,9 @@ function threed_handler(){
 	    	indicator_box_position = null;
 	    	if (window.select.hparent != "unassigned"){
 	    		check_plane_box_collision();
-	    		CalculateAxis(idx);
+	    		/*CalculateAxis(idx);
 	    		var L = LMgetObjectField(LM_xml, idx, "cube_matrix");
-				CalculateNewOpY(L);
+				CalculateNewOpY(L);*/
 	    	} 
 	    }else{
 	    	this.LoadDifferentPlane(idx);
@@ -500,7 +500,7 @@ function threed_handler(){
 		var anno;
 		edit_popup_open = 0;
 		anno = threed_anno;
-		op_y = document.getElementById("im").height/2;
+		//op_y = document.getElementById("im").height/2;
 		update_plane();
 		console.log(K);
 		// Update old and new object names for logfile:
@@ -535,7 +535,7 @@ function threed_handler(){
 			html_str += '</vp_line>';
 		}
 		html_str += '</lines>';
-		//html_str += '<op_points>' + op_x + ' ' + op_y + '</op_points>';
+		html_str += '<op_points>' + op_x/scale_factor + ' ' + op_y/scale_factor + '</op_points>';
 		html_str += '<plane_matrix>';
 		for (var i = 0; i < window.select.plane.matrixWorld.elements.length; i++){
 			html_str += window.select.plane.matrixWorld.elements[i] + ' ';
@@ -586,9 +586,9 @@ function threed_handler(){
 				lines += '</vp_line>';
 		}
 		LMsetObjectField(LM_xml, index, 'lines', lines);
-		/*var op_points = '';
-		op_points = op_x + ' ' + op_y;
-		LMsetObjectField(LM_xml, index, 'op_points', op_points);*/
+		var op_points = '';
+		op_points = op_x/scale_factor + ' ' + op_y/scale_factor;
+		LMsetObjectField(LM_xml, index, 'op_points', op_points);
 		var matrix = "";
 		for (var i = 0; i < ID_dict[index].plane.matrixWorld.elements.length; i++){
 				matrix += ID_dict[index].plane.matrixWorld.elements[i] + ' ';
@@ -602,12 +602,14 @@ function threed_handler(){
 
 	this.LoadDifferentPlane = function(idx){
 		vp_layer.removeChildren(); // purges all previous lines
-		var L = LMgetObjectField(LM_xml, idx, 'plane_matrix');
+		K = LMgetObjectField(LM_xml, idx, 'plane_matrix');
 		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
 		lines_array = LMgetObjectField(LM_xml, idx, 'lines');
-		/*var op_points = LMgetObjectField(LM_xml, idx, 'op_points');
-		op_x = op_points[0];
-		op_y = op_points[1];*/
+		var op_points = LMgetObjectField(LM_xml, idx, 'op_points');
+		op_x = op_points[0]*scale_factor;
+		op_y = op_points[1]*scale_factor;
+		pt_layer.children[0].x(op_x);
+		pt_layer.children[0].y(op_y);
 		vp_label = [];
 		vp_s = [];
 		for (var i = 0; i < lines_array.length; i+=5){
@@ -621,17 +623,14 @@ function threed_handler(){
 	        addVPline(vp_label.length-1, vp_layer);
 		}
 		f = LMgetObjectField(LM_xml, idx, 'focal_length');
-		//var op_circle = stage.find('.op_circle')[0];
-		/*op_circle.setX(op_x);
-		op_circle.setY(op_y);*/
-		CalculateAxis(idx);
-		CalculateNewOpY(L);
+		//CalculateAxis(idx);
+		//CalculateNewOpY(L);
 		update_plane();
-		rerender_plane(L);
-		//update_plane();
-		height_transform = L[13];
+		rerender_plane(K);
+		update_plane();
+		/*height_transform = L[13];
 		horizontal_transform = L[12];
-		vertical_transform = L[14];
+		vertical_transform = L[14];*/
 		stage.draw();
 		//render();
 	};
@@ -732,7 +731,7 @@ function threed_handler(){
 			    new_plane_object.ID = i;
 			    ID_dict[i] = new_plane_object;
 			    var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
-			    var new_plane_geometry = new THREE.PlaneGeometry(200, 200, 100, 100);
+			    var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 20, 20);
 			    var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
 			    if (i == 0){
   					ID_dict[i].plane = plane;
@@ -751,7 +750,7 @@ function threed_handler(){
 			    new_box_object.ID = i; 
 			    ID_dict[i] = new_box_object;
 			    var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
-			    var new_plane_geometry = new THREE.PlaneGeometry(200, 200, 100, 100);
+			    var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 20, 20);
 			    var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
 			    new_plane.matrixWorld.elements = LMgetObjectField(LM_xml, i, 'cube_matrix');
 			    new_plane.matrixAutoUpdate = false;

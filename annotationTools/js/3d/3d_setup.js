@@ -111,8 +111,8 @@ function createWorld() {// split into different parts for 3d and gp later
     // This section is for drawing the groundplane, arguments are how plane is divided
 
 
-    var plane_geometry = new THREE.PlaneGeometry(200, 200, 100, 100);
-    var gp_plane_geometry = new THREE.PlaneGeometry(200, 200, 100, 100);
+    var plane_geometry = new THREE.PlaneGeometry(2, 2, 20, 20);
+    var gp_plane_geometry = new THREE.PlaneGeometry(2, 2, 20, 20);
     //gp_plane_geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 10, -10, 0 ) );
     //plane_geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 10, -10, 0 ) );
     var vert_plane_geometry = new THREE.PlaneGeometry(200, 200, 400, 400);
