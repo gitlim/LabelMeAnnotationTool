@@ -178,13 +178,13 @@ function onDocumentMouseDown(event) {
             for (var i = 0; i < cube_click.length; i++){
                 console.log("box move");
                 window.select.cube.matrixAutoUpdate = true;
-                current_mode = BOX_MOVE_MODE;
                 if (window.select.hparent == "unassigned"){
                     plane_click = ray.intersectObject(vert_plane, false);
                 }else{
                     plane_click = ray.intersectObject(window.select.plane, false);
                 }
                     if (plane_click.length > 0){
+                            current_mode = BOX_MOVE_MODE;
                             click_original = plane_click[0].point; // everything in world coordinates
                             //click_original = plane_click[0].point;
                             console.log(click_original);

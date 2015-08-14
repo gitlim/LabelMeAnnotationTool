@@ -156,5 +156,5 @@ function add_cube_to_new_scene(idx, new_scene){
     new_position = new_position.applyMatrix4(i_mat);
     new_cube.position.set(new_position.x, new_position.y, new_position.z);
     new_cube.rotation.set(0, 0, rotation);
-    new_cube.matrixAutoUpdate = false;
+    //new_cube.matrixAutoUpdate = false;
 }
