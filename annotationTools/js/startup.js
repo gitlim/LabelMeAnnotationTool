@@ -103,7 +103,7 @@ function LoadAnnotationSuccess(xml) {
     if((view_Existing&&!isDeleted)||(isDeleted&&view_Deleted)) {
       // Attach to main_canvas:
       main_canvas.AttachAnnotation(new annotation(pp));
-      if (threed_mode && obj_elts[pp].getElementsByTagName("plane").length > 0){//planes
+      if (threed_mode && obj_elts[pp].getElementsByTagName("plane").length > 0 && threed_mode && obj_elts[pp].getElementsByTagName("cube").length == 0){//planes
         main_canvas.annotations[main_canvas.annotations.length -1].SetType(2);
       }else if (threed_mode && obj_elts[pp].getElementsByTagName("cube").length > 0){//boxes 
         main_canvas.annotations[main_canvas.annotations.length -1].SetType(3);
@@ -278,7 +278,7 @@ function FinishStartup() {
 
 function Initialize3dButtons(){
     var html_str = '<!--BUTTONS FOR 3D--> \
-    <div id = "3d_mode_buttons" class = "annotatemenu"> \
+    <div id = "threed_mode_buttons"> \
         <button id="add_box" type="button" name="add" value="Add" onclick = "SetDrawingMode(2);">Add Box</button> \
         <button id = "add_plane" type = "submit" name = "height" onclick = "SetDrawingMode(2);" >Add Plane</button> \
         <button id="remove" type="button" name="remove" value="Remove" onclick = "SetDrawingMode(2);">Delete</button> \
@@ -401,7 +401,7 @@ function SetDrawingMode(mode){
       $("#container").css('display', 'block');
       $("#cnvs").css('display', 'block');
       $("#boxCanvas").css('display', 'block');
-      $("#container").css('z-index', '1');
+      $("#container").css('z-index', '2');
       HideAllPolygons();
       if (document.getElementById("canvasDiv")){
         scribble_canvas.scribble_image = "";

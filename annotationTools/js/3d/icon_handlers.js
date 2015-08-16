@@ -262,6 +262,8 @@ function ThreeDHoverHighlight(object){// need third options for planes
                 toggle_cube_resize_arrows(true);
                 toggle_cube_move_indicators(true);
                 toggle_cube_rotate_indicators(true);
+                var L = LMgetObjectField(LM_xml, window.select.ID, 'cube_matrix');
+                CalculateNewOp(L);
             }else{
                 console.log("display");
                 if (IsHidingAllPlanes == false){
@@ -390,7 +392,7 @@ function ShowThreeD(){
     $("#container").css('display', 'block');
     $("#cnvs").css('display', 'block');
     $("#boxCanvas").css('display', 'block');
-    $("#container").css('z-index', '1');
+    $("#container").css('z-index', '2');
     RenderObjectList();
     if (window.select){
         HighlightSelectedThreeDObject();
@@ -406,4 +408,39 @@ function HideThreeD(){
     $("#clipCanvas").css('display', 'none');
     $("#container").css('z-index', '-3');
     RenderObjectList();
+}
+
+function HideAllButSelected(){
+    if (!window.select){
+        alert("You do not have a selected 3D object");
+        return;
+    }
+    IsHidingAllButSelected = true;
+    for (var i = 0; i < object_list.length; i ++){
+        if (object_list[i] != window.select && object_list[i].cube) object_list[i].cube.traverse( function ( object ) { object.visible = false; } );
+        if (object_list[i] != window.select) object_list[i].plane.material.visible = false;
+    }
+    for (var i = 0; i < intersect_box.children.length; i++){
+        intersect_box.children[i].material.visible = false;
+    }
+    renderer.render(scene, camera);
+    box_renderer.render(box_scene, camera);
+    RenderObjectList();
+    document.getElementById('Link'+ window.select.ID).style.color = '#FF0000';
+}
+
+function ShowOtherObjects(){
+    if (!window.select){
+        alert("You do not have a selected 3D object")
+        return;
+    }
+    IsHidingAllButSelected = false;
+    for (var i = 0; i < object_list.length; i++){
+        if (object_list[i].cube) object_list[i].cube.traverse( function ( object ) { object.visible = true; } );
+    }
+    check_plane_box_collision();
+    renderer.render(scene, camera);
+    box_renderer.render(box_scene, camera);
+    RenderObjectList();
+    document.getElementById('Link'+ window.select.ID).style.color = '#FF0000';
 }

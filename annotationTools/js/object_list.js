@@ -47,9 +47,14 @@ function RenderObjectList() {
   }else{
     html_str += '<p style="font-size:10px;line-height:100%"><a id="hide_all_planes_button" href="javascript:HideAllPlanes();">Hide all planes</a></p>';
   }if (IsHidingAllThreeD){
-      html_str += '<p style="font-size:10px;line-height:100%"><a id="show_threed_button" href="javascript:ShowThreeD();">Show 3D objects</a></p>';
+      html_str += '<p style="font-size:10px;line-height:100%"><a id="show_threed_button" href="javascript:ShowThreeD();">Show 3D scene</a></p>';
   }else{
-    html_str += '<p style="font-size:10px;line-height:100%"><a id="hide_threed_button" href="javascript:HideThreeD();">Hide 3D objects</a></p>';
+    html_str += '<p style="font-size:10px;line-height:100%"><a id="hide_threed_button" href="javascript:HideThreeD();">Hide 3D scene</a></p>';
+  }
+  if (IsHidingAllButSelected){
+          html_str += '<p style="font-size:10px;line-height:100%"><a id="show_all_cubes_button" href="javascript:ShowOtherObjects();">Show all 3D objects</a></p>';
+  }else{
+          html_str += '<p style="font-size:10px;line-height:100%"><a id="hide_all_but_selected_button" href="javascript:HideAllButSelected();">Hide all 3D objects but selected</a></p>';
   }
 
   // Add parts-of drag-and-drop functionality:
@@ -170,10 +175,11 @@ function ChangeLinkColorBG(idx) {
     var isDeleted = parseInt($(LM_xml).children("annotation").children("object").eq(idx).children("deleted").text());
     if(isDeleted) document.getElementById('Link'+idx).style.color = '#888888';
     else document.getElementById('Link'+idx).style.color = '#0000FF';
+    var anid = main_canvas.GetAnnoIndex(idx);
 
     // If we're hiding all polygons, then remove rendered polygon from canvas:
-    if(IsHidingAllPolygons && main_canvas.annotations[idx].hidden) {
-      main_canvas.annotations[idx].DeletePolygon();
+    if(IsHidingAllPolygons && main_canvas.annotations[anid].hidden) {
+      main_canvas.annotations[anid].DeletePolygon();
     }
   }
 }
@@ -181,11 +187,11 @@ function ChangeLinkColorBG(idx) {
 
 function ChangeLinkColorFG(idx) {
   document.getElementById('Link'+idx).style.color = '#FF0000';
-
+  var anid = main_canvas.GetAnnoIndex(idx);
   // If we're hiding all polygons, then render polygon on canvas:
-  if(IsHidingAllPolygons && main_canvas.annotations[idx].hidden) {
+  if(IsHidingAllPolygons && main_canvas.annotations[anid].hidden) {
     //main_canvas.annotations[idx].DrawPolygon(main_media.GetImRatio(), LMgetObjectField(LM_xml,idx,'x'), LMgetObjectField(LM_xml,idx,'y'));
-    main_canvas.annotations[idx].RenderAnnotation('rest');
+    main_canvas.annotations[anid].RenderAnnotation('rest');
   }
 }
 
@@ -199,6 +205,27 @@ function HideAllPolygons() {
       main_canvas.annotations[i].DeletePolygon();
       main_canvas.annotations[i].hidden = true;
     }
+    if (threed_mode){
+        if (window.select){
+          $("#container").css('display', 'block');
+            $("#cnvs").css('display', 'block');
+            $("#container").css('z-index', '1');
+            $("#boxCanvas").css('display', 'block');
+            if (window.select && (LMgetObjectField(LM_xml, window.select.ID, "ispartof")) && window.select.hparent == "unassigned"){
+                CreatePolygonClip(LMgetObjectField(LM_xml, window.select.ID, "ispartof"));
+            }
+        hover_object = null;
+        ThreeDHoverHighlight();
+        if (IsHidingAllButSelected == true){
+          IsHidingAllButSelected = false;
+          RenderObjectList();
+          main_threed_handler.GotoFirstAnnoObject();
+          
+        }
+        
+        }
+      
+      }
     
     // Create "show all" button:
     $('#hide_all_button').replaceWith('<a id="show_all_button" href="javascript:ShowAllPolygons();">Show all polygons</a>');
@@ -215,6 +242,14 @@ function ShowAllPolygons() {
   // Render the annotations:
   main_canvas.UnhideAllAnnotations();
   main_canvas.RenderAnnotations();
+  if (threed_mode){
+    ClearCanvas();
+    $("#container").css('display', 'none');
+    $("#cnvs").css('display', 'none');
+    $("#clipCanvas").css('display', 'none');
+    $("#boxCanvas").css('display', 'none');
+    $("#container").css('z-index', '-3');
+  }
 
   // Create "hide all" button:
   $('#show_all_button').replaceWith('<a id="hide_all_button" href="javascript:HideAllPolygons();">Hide all polygons</a>');

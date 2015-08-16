@@ -28,7 +28,7 @@ function init(){
         }
 
         scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(45, theCanvas.width/theCanvas.height, .01, 20000);
+        camera = new THREE.PerspectiveCamera(45, theCanvas.width/theCanvas.height, .0001, 200000);
         camera.position.z = 0;
         camera.position.set(0,1,0);
         var manager = new THREE.LoadingManager();
@@ -67,7 +67,7 @@ function init(){
         }
 
         box_scene = new THREE.Scene();
-        box_camera = new THREE.PerspectiveCamera(45, theCanvas.width/theCanvas.height, .01, 20000);
+        box_camera = new THREE.PerspectiveCamera(45, theCanvas.width/theCanvas.height, .0001, 200000);
         box_camera.position.z = 0;
         box_camera.position.set(0,1,0);
         var manager = new THREE.LoadingManager();
@@ -116,12 +116,15 @@ function createWorld() {// split into different parts for 3d and gp later
     //gp_plane_geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 10, -10, 0 ) );
     //plane_geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 10, -10, 0 ) );
     var vert_plane_geometry = new THREE.PlaneGeometry(200, 200, 400, 400);
-    var plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var vert_plane_material = new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide, wireframe: false});
+    var collision_plane_geometry = new THREE.PlaneGeometry(50, 50, 25, 25);
+    var collision_plane_material = new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide, wireframe: true});; 
+    var plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var gp_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     gp_plane = new THREE.Mesh(gp_plane_geometry, gp_plane_material);
     plane = new THREE.Mesh(plane_geometry, plane_material);
     vert_plane = new THREE.Mesh(vert_plane_geometry, vert_plane_material);
+    collision_plane = new THREE.Mesh(collision_plane_geometry, collision_plane_material);
     gp_plane.position.x = 0;
     gp_plane.position.y = 0;
     gp_plane.position.z = 0;
@@ -132,6 +135,8 @@ function createWorld() {// split into different parts for 3d and gp later
     vert_plane.position.y = 0;
     vert_plane.position.z = 0;
     empty_plane = gp_plane.clone();
+    collision_plane.matrixAutoUpdate = false;
+    collision_plane.material.visible = false;
     empty_plane.matrixAutoUpdate = false;
     plane_object = new THREE.Object3D();
     plane_object.add(vert_plane);
@@ -164,6 +169,7 @@ function createWorld() {// split into different parts for 3d and gp later
     }
 
     scene.add(plane);
+    scene.add(collision_plane);
     //scene.add(gp_plane);
     //scene.add(empty_plane);
     scene.add(plane_object);
@@ -171,6 +177,8 @@ function createWorld() {// split into different parts for 3d and gp later
 
 
     vert_plane.material.visible = false;
+    plane.frustumCulled = false;
+    gp_plane.frustumCulled = false;
     initialize_cube_indicators();
     //window.select.parent = scene;
   // Initializing arrowhelper
@@ -203,6 +211,7 @@ function render() {
             proportion_array[window.select.ID] = 1;
         }
         setup_arrowheads_rescaling(window.select);
+        collision_plane.matrixWorld = window.select.plane.matrixWorld.clone();
         if (window.select.cube.parent != window.select.plane){
             window.select.cube.parent.matrixWorld = window.select.plane.matrixWorld.clone();
         }
@@ -287,6 +296,7 @@ function render_box_object(object){
     if (typeof proportion_array[object.ID] == "undefined"){
             proportion_array[object.ID] = 1;
         }
+    collision_plane.matrixWorld = window.select.plane.matrixWorld.clone();
     if (object.cube.parent != object.plane){
         object.cube.parent.matrixWorld = object.plane.matrixWorld.clone();
     }

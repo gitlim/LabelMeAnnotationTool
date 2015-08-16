@@ -3,6 +3,7 @@ var RESIZE_MODE = 1
 var ROTATE_MODE = 2
 var BOX_MOVE_MODE = 3
 var VERTICAL_PLANE_MOVE_MODE = 4
+var POINT_DRAG_MODE = 5;
 var current_mode;
 var pass_val;
 var proportion_array = [];
@@ -125,3 +126,6 @@ var arrow_box_position;
 var indicator_box_position;
 var IsHidingAllPlanes = false;
 var IsHidingAllThreeD = false;
+var IsHidingAllButSelected = false;
+var separation = new Array();
+var plane_height_array = new Array();

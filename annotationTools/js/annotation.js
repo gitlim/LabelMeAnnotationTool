@@ -103,6 +103,8 @@ function annotation(anno_id) {
     
     // Get the array of X control points.
     this.GetPtsX = function () {
+        console.log(this.anno_id);
+        console.log(this.anno_type);
         if (video_mode) return LMgetObjectField(LM_xml, this.anno_id, 'x', oVP.getcurrentFrame());
         else {
             if (this.anno_type == 0) return LMgetObjectField(LM_xml, this.anno_id, 'x');

@@ -149,6 +149,10 @@ function PermissionError() {
   else {
     alert('This polygon was entered by another user.  You can only modify polygons that you have entered.  Do not forget to sign in if you want to be able to edit your annotations');
   }
+  if (threed_mode){
+    main_threed_handler.GotoFirstAnnoObject();
+    ShowAllThreeD();
+  }
 }
 
 function GetTimeStamp() {
@@ -226,12 +230,14 @@ function selectObject(idx) {
   // Select object parts:
   var selected_poly_parts = getPartChildrens(idx);
   for (var i=0; i<selected_poly_parts.length; i++) {
-    var anid = main_canvas.GetAnnoIndex(selected_poly_parts[i]);
-    if ((main_canvas.GetAnnoByID(idx).GetType() != 2) && (main_canvas.GetAnnoByID(idx).GetType() != 3)){
-      if((selected_poly_parts[i]!=selected_poly) && main_canvas.annotations[anid].hidden) {
-        main_canvas.annotations[anid].DrawPolygon(main_media.GetImRatio(), LMgetObjectField(LM_xml,selected_poly_parts[i],'x'), LMgetObjectField(LM_xml,selected_poly_parts[i],'y'));
+    var part_anid = main_canvas.GetAnnoIndex(selected_poly_parts[i]);
+    console.log(part_anid);
+    if (part_anid >= 0 && (main_canvas.GetAnnoByID(idx).GetType() != 2) && (main_canvas.GetAnnoByID(idx).GetType() != 3)){
+      var part_type = main_canvas.annotations[part_anid].GetType();
+      if((selected_poly_parts[i]!=selected_poly) && main_canvas.annotations[part_anid].hidden && part_type != 2 && part_type != 3) {
+        main_canvas.annotations[part_anid].DrawPolygon(main_media.GetImRatio(), LMgetObjectField(LM_xml,selected_poly_parts[i],'x'), LMgetObjectField(LM_xml,selected_poly_parts[i],'y'));
     }
-    main_canvas.annotations[anid].FillPolygon();
+    main_canvas.annotations[part_anid].FillPolygon();
     }
   }
 }
@@ -241,19 +247,19 @@ function unselectObjects() {
   if(selected_poly == -1) return;
   var anid;
 
-  var anid = main_canvas.GetAnnoIndex(selected_poly);
+  anid = main_canvas.GetAnnoIndex(selected_poly);
   if(view_ObjList) ChangeLinkColorBG(selected_poly);
   main_canvas.annotations[anid].UnfillPolygon();
   
   // Unselect object parts:
   var selected_poly_parts = getPartChildrens(selected_poly);
   for (var i=0; i<selected_poly_parts.length; i++) {
-
     var anid = main_canvas.GetAnnoIndex(selected_poly_parts[i]);
-    if((selected_poly_parts[i]!=selected_poly) && main_canvas.annotations[selected_poly].hidden) {
-      main_canvas.annotations[selected_poly].DeletePolygon();
+    console.log(main_canvas.annotations);
+    if(anid >= 0 && (selected_poly_parts[i]!=selected_poly) && main_canvas.annotations[anid].hidden) {
+      main_canvas.annotations[anid].DeletePolygon();
+      main_canvas.annotations[anid].UnfillPolygon();
     }
-    main_canvas.annotations[selected_poly].UnfillPolygon();
   }
   
   // Reset selected_poly variable:

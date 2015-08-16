@@ -16,6 +16,8 @@ function object_instance(){
     this.cube;
     this.lock_inside_clip_area = false;
     this.op_y = null;
+    this.height_from_parent_cube;
+
 }
 
 function check_oldest_ancestor(oldest_ancestor){

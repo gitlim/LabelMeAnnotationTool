@@ -8,7 +8,7 @@ function VP_s() {
     var y2d = new Array();
 
     var xc = document.getElementById("im").width/2;
-    var yc = document.getElementById("im").height/3;
+    var yc = document.getElementById("im").height/2;
 
     // left-top-front
     x2d[0] = xc;
@@ -133,11 +133,12 @@ function op_drag(e) {
     op_y = e.targetNode.y();
     console.log(op_x, op_y);
     main_threed_handler.PlaneAutoSave();
+    check_plane_box_collision();
     update_plane().done(main_threed_handler.PlaneAutoSave);
 }
 
 function point_drag() {
-    current_mode = 0;
+    current_mode = POINT_DRAG_MODE;
     var point_id = this.name();
     var layer = this.getParent();
     var point_id = parseInt(point_id.substring(1));
@@ -171,6 +172,7 @@ function point_drag() {
         line.points([vp_s[line_id].x2d[0], vp_s[line_id].y2d[0], vp_s[line_id].x2d[1], vp_s[line_id].y2d[1]]);
     });
     update_plane();
+    check_plane_box_collision();
     main_threed_handler.PlaneAutoSave();
 }
 
@@ -364,12 +366,14 @@ function update_plane() {
     console.log("selected_plane updated");
      if (hover_object && !(hover_object.cube)){//when hovering ofer a link is going on;
         selected_plane = hover_object.plane;
-    }else if (window.select && !(window.select.cube)){
+    }else if (window.select){
         selected_plane = window.select.plane;
     }
     if (window.select){
+        //CalculateChildrenHeightDifferences(window.select);
         SynchronizeSupportPlanes();
     }
+
     var r = $.Deferred();
     var d = new Date();
     current_time = d.getTime();
@@ -492,7 +496,7 @@ function update_plane() {
         //vec3.cross(axis_z, axis_x, axis_y);
         vec3.normalize(axis_z, axis_z);
     }
-    if ((window.select) && window.select.plane == plane) gp_f = f;
+    if ((selected_plane) && selected_plane == plane) gp_f = f;
     K = mat4.create();//transformation matrix
 
     //var transform = selected_plane.position.applyMatrix4
@@ -514,8 +518,14 @@ function update_plane() {
     K[12] = -(axis_x[0]+axis_y[0]) + (op_x - document.getElementById("im").width/2)/gp_f;//converting canvas to three js coordinates
     img_height = document.getElementById("im").height;
     bounding_top = 0;
-    if (op_y > 0.9*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE) op_y = 0.9*img_height;
-    if (op_y < 0.1*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE) op_y = 0.1*img_height;
+    if (op_y > 0.95*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE) {
+        op_y = 0.95*img_height;
+        pt_layer.children[0].x(op_x);
+    }
+    if (op_y < 0.05*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE){
+        op_y = 0.05*img_height;
+        pt_layer.children[0].y(op_y);
+    }   
     K[13] = (axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f;
     //console.log((axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f);
     //console.log(K[13]);
@@ -558,29 +568,29 @@ function load_vp(vp_out){
         }
         vp_s[0].x2d[0] = vp_s[0].x2d[0] - 100*3*scale_factor_x;//constants are arbitrary for initial lines.
         vp_s[0].x2d[1] = vp_s[0].x2d[1] - 50*3*scale_factor_x;
-        vp_s[0].y2d[0] = vp_s[0].y2d[0] - 60*3*scale_factor_y;
-        vp_s[0].y2d[1] = vp_s[0].y2d[1] - 50*3*scale_factor_y;
+        vp_s[0].y2d[0] = vp_s[0].y2d[0] - 60*3*scale_factor_x;
+        vp_s[0].y2d[1] = vp_s[0].y2d[1] - 50*3*scale_factor_x;
         vp_label[0] = 1;
         addVPline(0, vp_layer);
 
         vp_s[1].x2d[0] = vp_s[1].x2d[0] - 100*3*scale_factor_x;
         vp_s[1].x2d[1] = vp_s[1].x2d[1] - 50*3*scale_factor_x;
-        vp_s[1].y2d[0] = vp_s[1].y2d[0] + 50*1*scale_factor_y;
-        vp_s[1].y2d[1] = vp_s[1].y2d[1] + 50*1*scale_factor_y;
+        vp_s[1].y2d[0] = vp_s[1].y2d[0] + 50*1*scale_factor_x;
+        vp_s[1].y2d[1] = vp_s[1].y2d[1] + 50*1*scale_factor_x;
         vp_label[1] = 1;
         addVPline(1, vp_layer);
 
         vp_s[2].x2d[0] = vp_s[2].x2d[0] + 100*3*scale_factor_x;
         vp_s[2].x2d[1] = vp_s[2].x2d[1] + 50*3*scale_factor_x;
-        vp_s[2].y2d[0] = vp_s[2].y2d[0] - 60*3*scale_factor_y;
-        vp_s[2].y2d[1] = vp_s[2].y2d[1] - 50*3*scale_factor_y;
+        vp_s[2].y2d[0] = vp_s[2].y2d[0] - 60*3*scale_factor_x;
+        vp_s[2].y2d[1] = vp_s[2].y2d[1] - 50*3*scale_factor_x;
         vp_label[2] = 2;
         addVPline(2, vp_layer);
 
         vp_s[3].x2d[0] = vp_s[3].x2d[0] + 100*3*scale_factor_x;
         vp_s[3].x2d[1] = vp_s[3].x2d[1] + 50*3*scale_factor_x;
-        vp_s[3].y2d[0] = vp_s[3].y2d[0] + 50*1*scale_factor_y;
-        vp_s[3].y2d[1] = vp_s[3].y2d[1] + 50*1*scale_factor_y;
+        vp_s[3].y2d[0] = vp_s[3].y2d[0] + 50*1*scale_factor_x;
+        vp_s[3].y2d[1] = vp_s[3].y2d[1] + 50*1*scale_factor_x;
         vp_label[3] = 2;
         addVPline(3, vp_layer);
     }else{
@@ -727,7 +737,7 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
     }else{
         return;
     }
-    camera.matrixAutoUpdate=false;
+    camera.matrixAutoUpdate=false; 
     box_camera.matrixAutoUpdate=false;
     selected_plane.matrixAutoUpdate=false;
     selected_plane.matrixWorld.elements= K;// setting selected_plane to camera transformation
@@ -799,7 +809,11 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
     camera = new THREE.PerspectiveCamera(Math.atan(theCanvas.height/gp_f/2)/Math.PI*180*2, theCanvas.width/theCanvas.height, .01, 20000);
     camera.position.z = 0;
 
-    selected_plane.material.visible = true;
+    //selected_plane.material.visible = true;
+
+    if (selected_plane == window.select.plane){
+        collision_plane.matrixWorld = window.select.plane.matrixWorld.clone();
+    }
 
     var boxCanvas = document.getElementById("boxCanvas"); 
     box_camera = new THREE.PerspectiveCamera(Math.atan(theCanvas.height/gp_f/2)/Math.PI*180*2, theCanvas.width/theCanvas.height, .01, 20000);
@@ -886,15 +900,11 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
     }
 }*/
 
-function CalculateNewOpY(L){
-    return;
+function CalculateNewOp(L){
     gp_f = LMgetObjectField(LM_xml, groundplane_id, 'focal_length');
     op_y = ((axis_x[1]+axis_y[1]) - L[13])*gp_f + document.getElementById("im").height/2;
-    console.log(document.getElementById("im").height/2);
-    console.log(gp_f);
-    console.log(L);
-    console.log(axis_x);
-    console.log(axis_y);
+    op_x = (L[12] + (axis_x[0] + axis_y[0]))*gp_f + document.getElementById("im").width/2;
+    console.log(op_x, op_y);
 }
 
 function CalculateAxis(idx){

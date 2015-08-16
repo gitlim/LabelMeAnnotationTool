@@ -23,6 +23,7 @@ function add_box_internal() {
     var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 20, 20);
     var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
+    new_plane.frustumCulled = false;
     new_plane.matrixWorld = plane.matrixWorld.clone();
     new_plane.matrixAutoUpdate = false;
     new_plane.matrixWorldNeedsUpdate = false;
@@ -114,12 +115,12 @@ function add_plane(){
     var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
     new_plane.material.visible = true;
     new_plane.matrixAutoUpdate = false;
+    new_plane.frustumCulled = false;
     window.select.plane = new_plane;
     scene.add(new_plane);
     HighlightSelectedThreeDObject();
     main_threed_handler.LoadDifferentPlane(groundplane_id);//loads the info of the groundplane
-    window.select.plane.matrixWorld = plane.matrixWorld.clone();
-    main_threed_handler.PlaneAutoSave(window.select.ID); //saves the info to the new plane so that the info is initially the same as groundplane
+    window.select.plane.matrixWorld = plane.matrixWorld.clone(); //saves the info to the new plane so that the info is initially the same as groundplane
     update_plane(); // renders new plane with info
     render();
 }
@@ -132,6 +133,7 @@ function add_cube_to_new_scene(idx, new_scene){
     new_plane.matrixWorld = cube_object.plane.matrixWorld.clone();
     new_plane.matrixAutoUpdate = false;
     new_plane.matrixWorldNeedsUpdate = false;
+    new_plane.frustumCulled = false;
     if (new_scene == box_scene){
         box_scene.add(new_plane);
         new_plane.material.visible = false;

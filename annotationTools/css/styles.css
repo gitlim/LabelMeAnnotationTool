@@ -22,7 +22,7 @@ top:8px; right:8px; width:16em;}
 
 #loading {position:absolute; font-size:large; left:1em;
 top:2em;}
-#main_media {position:absolute; left:0; top:0; border: 1px solid #979797;}
+#main_media {position:absolute; left:0; top:0;}
 
 
 canvas{
@@ -39,8 +39,23 @@ canvas {
   -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
 }
 
-#tool_buttons{
-  overflow: auto;
+#threed_mode_buttons{
+  background-color:#fff;
+  border: 2px solid #000;
+  padding:2px;
+  padding-left:0px;
+  padding-right:0px;
+  padding-top:5px;
+  padding-bottom:5px;
+  -webkit-border-radius:10px;
+  -moz-border-radius:10px;
+  border-radius:10px;
+  /*height:52px;*/
+  left:50px;
+  margin-bottom:10px;
+  display:block;
+  font-size: x-small;
+  text-align: center;
 }
 
 #framebar{

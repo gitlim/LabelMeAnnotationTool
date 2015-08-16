@@ -78,7 +78,11 @@ function handler() {
 			// Refresh object list:
 			if(view_ObjList) {
 	RenderObjectList();
-	ChangeLinkColorFG(anno.GetAnnoID());
+	//ChangeLinkColorFG(anno.GetAnnoID());
+			}
+			if (threed_mode){
+				RenderObjectList();
+				main_threed_handler.GotoFirstAnnoObject();
 			}
 		};
 		
@@ -122,6 +126,7 @@ function handler() {
 				if (threed_mode){
 					window.select = null;
 					ClearCanvas();
+					main_threed_handler.GotoFirstAnnoObject();
 				}
 		};
 		
@@ -205,6 +210,13 @@ function handler() {
 		        }
 				hover_object = null;
 				ThreeDHoverHighlight();
+				if (IsHidingAllButSelected == true){
+					IsHidingAllButSelected = false;
+					RenderObjectList();
+					main_threed_handler.GotoFirstAnnoObject();
+					
+				}
+				
 				}
 			
 			}
