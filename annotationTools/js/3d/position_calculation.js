@@ -1,6 +1,9 @@
 function calculate_box_location(cube_object, support_object){ // make it the bottom position of the object
     //var cube_position_holder = cube_position_0.clone();
-    CalculateChildrenHeightDifferences(support_object);
+    //CalculateChildrenHeightDifferences(support_object);
+    var scale_factor_x = stage.width()/stage.getScaleX();
+    var scale_factor_y = stage.height()/stage.getScaleY();
+    CalculateObjectHeightDifference(cube_object);
     console.log(separation);
     if (!cube_object.cube){
         cube_object.plane.matrixWorld = support_object.plane.matrixWorld.clone();
@@ -8,6 +11,8 @@ function calculate_box_location(cube_object, support_object){ // make it the bot
     var direction = new THREE.Vector3(cube_position_0.x - camera.position.x, cube_position_0.y - camera.position.y, cube_position_0.z - camera.position.z).normalize();
     var optical_ray = new THREE.Raycaster(camera.position, direction);
     if (CheckIfSupportedByGroundplane(support_object) == false){
+        CalculateObjectHeightDifference(cube_object);
+        console.log("not supported");
         return;
     }else if (!(support_object.cube)){//if support object is a plane - making the cube object plane the same height as the plane that is supporting
         collision_plane.matrixWorld = support_object.plane.matrixWorld.clone();
@@ -45,10 +50,10 @@ function calculate_box_location(cube_object, support_object){ // make it the bot
     var lines = '';
     for (var i = 0; i < lines_array.length; i+=5){
                 lines += '<vp_line>';
-                lines += '<x1>' + lines_array[i] + '</x1>';
-                lines += '<y1>' + lines_array[i+1] + '</y1>';
-                lines += '<x2>' + lines_array[i+2] + '</x2>';
-                lines += '<y2>' + lines_array[i+3] + '</y2>';
+                lines += '<x1>' + lines_array[i]/scale_factor_x + '</x1>';
+                lines += '<y1>' + lines_array[i+1]/scale_factor_y + '</y1>';
+                lines += '<x2>' + lines_array[i+2]/scale_factor_x + '</x2>';
+                lines += '<y2>' + lines_array[i+3]/scale_factor_y + '</y2>';
                 lines += '<label>' + lines_array[i+4] + '</label>';
                 lines += '</vp_line>';
         }
@@ -67,10 +72,13 @@ function calculate_box_location(cube_object, support_object){ // make it the bot
     arrow_box_position = null;
     indicator_box_position = null;
     render();
+    //CalculateChildrenHeightDifferences(support_object);
 }
 
 function calculate_children_box_locations(object, parent_scale){
-        CalculateChildrenHeightDifferences(object);
+    var scale_factor_x = stage.width()/stage.getScaleX();
+    var scale_factor_y = stage.height()/stage.getScaleY();
+    //CalculateChildrenHeightDifferences(object);
     if (!object.cube){
         object.plane.matrixWorld = object.hparent.plane.matrixWorld.clone();
         return;
@@ -83,9 +91,11 @@ function calculate_children_box_locations(object, parent_scale){
     target_cube_position_0.applyMatrix4(object.cube.parent.matrixWorld.clone());
     target_cube_position_0_static.applyMatrix4(object.cube.parent.matrixWorld.clone());
     target_cube_scale_0 = object.cube.scale.clone();
-    console.log(object.height_from_parent_cube);
-    object.plane.matrixWorld.multiplyMatrices(object.hparent.plane.matrixWorld.clone(), new THREE.Matrix4().makeTranslation(0, 0, object.hparent.cube.scale.z*0.5*small_h + object.height_from_parent_cube*parent_scale));
+    var holder = object.height_from_parent_cube;
+    object.plane.matrixWorld.multiplyMatrices(object.hparent.plane.matrixWorld.clone(), new THREE.Matrix4().makeTranslation(0, 0, object.hparent.cube.scale.z*0.5*small_h + holder*parent_scale));
+    console.log("translation");
     object.height_from_parent_cube = object.height_from_parent_cube*parent_scale;
+    console.log(object.hparent.cube.scale.z*0.5*small_h + object.height_from_parent_cube*parent_scale);
     if (object.cube.parent != object.plane){
             object.cube.parent.matrixWorld = object.plane.matrixWorld.clone();
     }
@@ -107,17 +117,16 @@ function calculate_children_box_locations(object, parent_scale){
     if (typeof proportion_array[object.ID] == "undefined"){
         proportion_array[object.ID] = 1;
     }
-    //proportion_array[object.ID] = proportion_scale*proportion_array[object.ID];
-
+    //proportion_array[object.ID] = proportion_scale*proportion_array[object.ID]
 
     var lines_array = LMgetObjectField(LM_xml, object.hparent.ID, "lines");
     var lines = '';
     for (var i = 0; i < lines_array.length; i+=5){
                 lines += '<vp_line>';
-                lines += '<x1>' + lines_array[i] + '</x1>';
-                lines += '<y1>' + lines_array[i+1] + '</y1>';
-                lines += '<x2>' + lines_array[i+2] + '</x2>';
-                lines += '<y2>' + lines_array[i+3] + '</y2>';
+                lines += '<x1>' + lines_array[i]/scale_factor_x + '</x1>';
+                lines += '<y1>' + lines_array[i+1]/scale_factor_y + '</y1>';
+                lines += '<x2>' + lines_array[i+2]/scale_factor_x + '</x2>';
+                lines += '<y2>' + lines_array[i+3]/scale_factor_y + '</y2>';
                 lines += '<label>' + lines_array[i+4] + '</label>';
                 lines += '</vp_line>';
         }

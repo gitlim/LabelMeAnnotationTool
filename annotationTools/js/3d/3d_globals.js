@@ -129,3 +129,5 @@ var IsHidingAllThreeD = false;
 var IsHidingAllButSelected = false;
 var separation = new Array();
 var plane_height_array = new Array();
+//var scale_factor_x = document.getElementById("im").width;
+//var scale_factor_y = document.getElementById("im").height;

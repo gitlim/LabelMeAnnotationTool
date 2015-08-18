@@ -297,9 +297,18 @@ function Initialize3dButtons(){
             stage.children[i].hide();
         }
         stage.draw();
+        for (var i = 0; i < object_list.length; i++){
+          if (object_list[i].cube && CheckIfSupportedByGroundplane(object_list[i]) == false){
+            if (window.select && object_list[i] == window.select) continue;
+            else object_list[i].cube.traverse( function ( object ) { object.visible = false; } );
+          }
+        }
       }else{
         nav_on = false; 
-        camera = old_camera; 
+        camera = old_camera;
+        for (var i = 0; i < object_list.length; i ++){
+          if (object_list[i].cube) object_list[i].cube.traverse( function ( object ) { object.visible = true; } );
+        }
         HighlightSelectedThreeDObject();
         render();};});
 

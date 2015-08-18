@@ -9,10 +9,10 @@ function HighlightSelectedThreeDObject() {//now really only highlighting
     if (window.select) {
         var idx = window.select.ID;
         var parent = LMgetObjectField(LM_xml, idx, 'ispartof');
-        while (!isNaN(parent) && main_canvas.GetAnnoByID(parent).GetType() != 0 && main_canvas.GetAnnoByID(parent).GetType() != 1){
+        /*while (!isNaN(parent) && main_canvas.GetAnnoByID(parent).GetType() != 0 && main_canvas.GetAnnoByID(parent).GetType() != 1){
             idx = LMgetObjectField(LM_xml, idx, 'ispartof');
             parent = LMgetObjectField(LM_xml, idx, 'ispartof');
-        }
+        }*/
         if(!isNaN(LMgetObjectField(LM_xml, idx, "ispartof"))){
             CreatePolygonClip(LMgetObjectField(LM_xml, idx, "ispartof"));
         }else{

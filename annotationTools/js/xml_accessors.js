@@ -133,6 +133,12 @@ function LMgetObjectField(xml,ind_object, name, frame) {
 		}
 		return f;
 	}
+	if (name == 'height_from_parent'){
+		if (obj.children('cube').children('height_from_parent').length > 0){
+			var height_from_parent = parseFloat(obj.children('cube').children('height_from_parent').text());
+		}
+		return height_from_parent;
+	}
 	if (name == 'op_points'){
 		if (obj.children('plane').children('op_points').length > 0){
 			var op_points = new Array(2);
@@ -217,6 +223,11 @@ function LMsetObjectField(xml, ind_object, name, value){
 		if (obj.children("cube").children(name).length > 0){
 			obj.children("cube").children(name).text(value);
 		}
+	}
+	if (name == 'height_from_parent'){
+		if (obj.children("cube").children(name).length > 0){
+			obj.children('cube').children(name).text(value);
+		}	
 	}
 }
 

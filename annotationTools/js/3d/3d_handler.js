@@ -6,6 +6,8 @@ function threed_handler(){
 		var nn; // this is the name
 		var anno;
 		edit_popup_open = 0;
+		scale_factor_x = stage.width()/stage.getScaleX();
+    	scale_factor_y = stage.height()/stage.getScaleY();
 		// If the attributes are active, read the fields.
 		if (use_attributes) {
 			// get attributes (is the field exists)
@@ -44,8 +46,8 @@ function threed_handler(){
 		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
 		var lines_array = LMgetObjectField(LM_xml, groundplane_id, 'lines');
 		var op_points = LMgetObjectField(LM_xml, groundplane_id, 'op_points');
-		op_x = op_points[0]*scale_factor;
-		op_y = op_points[1]*scale_factor;
+		op_x = op_points[0]*scale_factor_x;
+		op_y = op_points[1]*scale_factor_y;
 		console.log(op_x, op_y);
 		var html_str = '<object>';
 		html_str += '<name>' + new_name + '</name>';
@@ -68,15 +70,15 @@ function threed_handler(){
 			html_str += '<lines>';
 			for (var i = 0; i < lines_array.length; i+=5){
 				html_str += '<vp_line>';
-				html_str += '<x1>' + lines_array[i] + '</x1>';
-				html_str += '<y1>' + lines_array[i+1]+ '</y1>';
-				html_str += '<x2>' + lines_array[i+2] + '</x2>';
-				html_str += '<y2>' + lines_array[i+3] + '</y2>';
+				html_str += '<x1>' + lines_array[i]/scale_factor_x + '</x1>';
+				html_str += '<y1>' + lines_array[i+1]/scale_factor_y+ '</y1>';
+				html_str += '<x2>' + lines_array[i+2]/scale_factor_x + '</x2>';
+				html_str += '<y2>' + lines_array[i+3]/scale_factor_y + '</y2>';
 				html_str += '<label>' + lines_array[i+4] + '</label>';
 				html_str += '</vp_line>';
 			}
 			html_str += '</lines>';
-			html_str += '<op_points>' + op_points[0] + ' ' + op_points[1] + '</op_points>';
+			html_str += '<op_points>' + op_points[0]/scale_factor_x + ' ' + op_points[1]/scale_factor_y + '</op_points>';
 			html_str += '<plane_matrix>';
 			for (var i = 0; i < K.length; i++){
 				html_str += K[i] + ' ';
@@ -112,15 +114,15 @@ function threed_handler(){
 			html_str += '<lines>';
 			for (var i = 0; i < lines_array.length; i+=5){
 				html_str += '<vp_line>';
-				html_str += '<x1>' + lines_array[i] + '</x1>';
-				html_str += '<y1>' + lines_array[i+1] + '</y1>';
-				html_str += '<x2>' + lines_array[i+2] + '</x2>';
-				html_str += '<y2>' + lines_array[i+3] + '</y2>';
+				html_str += '<x1>' + lines_array[i]/scale_factor_x + '</x1>';
+				html_str += '<y1>' + lines_array[i+1]/scale_factor_y + '</y1>';
+				html_str += '<x2>' + lines_array[i+2]/scale_factor_x + '</x2>';
+				html_str += '<y2>' + lines_array[i+3]/scale_factor_y + '</y2>';
 				html_str += '<label>' + lines_array[i+4] + '</label>';
 				html_str += '</vp_line>';
 			}
 			html_str += '</lines>';
-			html_str += '<op_points>' + op_points[0] + ' ' + op_points[1] + '</op_points>';
+			html_str += '<op_points>' + op_points[0]/scale_factor_x + ' ' + op_points[1]/scale_factor_y + '</op_points>';
 			html_str += '<plane_matrix>';
 			for (var i = 0; i < window.select.cube.parent.matrixWorld.elements.length; i++){
 				html_str += window.select.cube.parent.matrixWorld.elements[i] + ' ';
@@ -154,10 +156,10 @@ function threed_handler(){
 		for (var i = 0; i < lines_array.length; i+=5){
 			var new_line = new VP_s();
 			vp_label.push(lines_array[i+4]);
-			new_line.x2d[0] = lines_array[i]*scale_factor;
-	        new_line.y2d[0] = lines_array[i+1]*scale_factor;
-	        new_line.x2d[1] = lines_array[i+2]*scale_factor;
-	        new_line.y2d[1] = lines_array[i+3]*scale_factor;
+			new_line.x2d[0] = lines_array[i]*scale_factor_x;
+	        new_line.y2d[0] = lines_array[i+1]*scale_factor_y;
+	        new_line.x2d[1] = lines_array[i+2]*scale_factor_x;
+	        new_line.y2d[1] = lines_array[i+3]*scale_factor_y;
 	        vp_s.push(new_line);
 		}
 		update_plane();
@@ -362,6 +364,8 @@ function threed_handler(){
 	};
 
 	this.SelectObject = function(idx){
+		scale_factor_x = stage.width()/stage.getScaleX();
+	    scale_factor_y = stage.height()/stage.getScaleY();
 		SetDrawingMode(2);
 		//HideAllPolygons();
 		//this.ThreeDToFore();
@@ -385,10 +389,10 @@ function threed_handler(){
 			for (var i = 0; i < lines_array.length; i+=5){
 				var new_line = new VP_s();
 				vp_label.push(lines_array[i+4]);
-				new_line.x2d[0] = lines_array[i]*scale_factor;
-		        new_line.y2d[0] = lines_array[i+1]*scale_factor;
-		        new_line.x2d[1] = lines_array[i+2]*scale_factor;
-		        new_line.y2d[1] = lines_array[i+3]*scale_factor;
+				new_line.x2d[0] = lines_array[i]/scale_factor_x;
+		        new_line.y2d[0] = lines_array[i+1]/scale_factor_y;
+		        new_line.x2d[1] = lines_array[i+2]/scale_factor_x;
+		        new_line.y2d[1] = lines_array[i+3]/scale_factor_y;
 		        vp_s.push(new_line);
 			}
 	    	//CalculateNewOp(L);
@@ -621,15 +625,15 @@ function threed_handler(){
 		html_str += '<lines>';
 		for (var i = 0; i < vp_s.length; i++){
 			html_str += '<vp_line>';
-			html_str += '<x1>' + vp_s[i].x2d[0]/scale_factor + '</x1>';
-			html_str += '<y1>' + vp_s[i].y2d[0]/scale_factor + '</y1>';
-			html_str += '<x2>' + vp_s[i].x2d[1]/scale_factor + '</x2>';
-			html_str += '<y2>' + vp_s[i].y2d[1]/scale_factor + '</y2>';
+			html_str += '<x1>' + vp_s[i].x2d[0] + '</x1>';
+			html_str += '<y1>' + vp_s[i].y2d[0] + '</y1>';
+			html_str += '<x2>' + vp_s[i].x2d[1] + '</x2>';
+			html_str += '<y2>' + vp_s[i].y2d[1] + '</y2>';
 			html_str += '<label>' + vp_label[i] + '</label>';
 			html_str += '</vp_line>';
 		}
 		html_str += '</lines>';
-		html_str += '<op_points>' + op_x/scale_factor + ' ' + op_y/scale_factor + '</op_points>';
+		html_str += '<op_points>' + op_x/scale_factor_x + ' ' + op_y/scale_factor_y + '</op_points>';
 		html_str += '<plane_matrix>';
 		for (var i = 0; i < window.select.plane.matrixWorld.elements.length; i++){
 			html_str += window.select.plane.matrixWorld.elements[i] + ' ';
@@ -667,21 +671,24 @@ function threed_handler(){
 		}else{
 			return;
 		}
+		if (vp_s.length < 4) return;
 		if (index == groundplane_id) var f = gp_f;
 		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+		scale_factor_x = stage.width()/stage.getScaleX();
+	    scale_factor_y = stage.height()/stage.getScaleY();
 		var lines = "";
 		for (var i = 0; i < vp_s.length; i++){
 				lines += '<vp_line>';
-				lines += '<x1>' + vp_s[i].x2d[0]/scale_factor + '</x1>';
-				lines += '<y1>' + vp_s[i].y2d[0]/scale_factor + '</y1>';
-				lines += '<x2>' + vp_s[i].x2d[1]/scale_factor + '</x2>';
-				lines += '<y2>' + vp_s[i].y2d[1]/scale_factor + '</y2>';
+				lines += '<x1>' + vp_s[i].x2d[0]/scale_factor_x + '</x1>';
+				lines += '<y1>' + vp_s[i].y2d[0]/scale_factor_y + '</y1>';
+				lines += '<x2>' + vp_s[i].x2d[1]/scale_factor_x + '</x2>';
+				lines += '<y2>' + vp_s[i].y2d[1]/scale_factor_y + '</y2>';
 				lines += '<label>' + vp_label[i] + '</label>';
 				lines += '</vp_line>';
 		}
 		LMsetObjectField(LM_xml, index, 'lines', lines);
 		var op_points = '';
-		op_points = op_x/scale_factor + ' ' + op_y/scale_factor;
+		op_points = op_x/scale_factor_x + ' ' + op_y/scale_factor_y;
 		LMsetObjectField(LM_xml, index, 'op_points', op_points);
 		var matrix = "";
 		for (var i = 0; i < ID_dict[index].plane.matrixWorld.elements.length; i++){
@@ -696,12 +703,14 @@ function threed_handler(){
 
 	this.LoadDifferentPlane = function(idx){
 		vp_layer.removeChildren(); // purges all previous lines
+		scale_factor_x = stage.width()/stage.getScaleX();
+	    scale_factor_y = stage.height()/stage.getScaleY();
 		K = LMgetObjectField(LM_xml, idx, 'plane_matrix');
 		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
 		lines_array = LMgetObjectField(LM_xml, idx, 'lines');
 		var op_points = LMgetObjectField(LM_xml, idx, 'op_points');
-		op_x = op_points[0]*scale_factor;
-		op_y = op_points[1]*scale_factor;
+		op_x = op_points[0]*scale_factor_x;
+		op_y = op_points[1]*scale_factor_y;
 		pt_layer.children[0].x(op_x);
 		pt_layer.children[0].y(op_y);
 		vp_label = [];
@@ -709,10 +718,10 @@ function threed_handler(){
 		for (var i = 0; i < lines_array.length; i+=5){
 			var new_line = new VP_s();
 			vp_label.push(lines_array[i+4]);
-			new_line.x2d[0] = lines_array[i]*scale_factor;
-	        new_line.y2d[0] = lines_array[i+1]*scale_factor;
-	        new_line.x2d[1] = lines_array[i+2]*scale_factor;
-	        new_line.y2d[1] = lines_array[i+3]*scale_factor;
+			new_line.x2d[0] = lines_array[i]*scale_factor_x;
+	        new_line.y2d[0] = lines_array[i+1]*scale_factor_y;
+	        new_line.x2d[1] = lines_array[i+2]*scale_factor_x;
+	        new_line.y2d[1] = lines_array[i+3]*scale_factor_y;
 	        vp_s.push(new_line);
 	        addVPline(vp_label.length-1, vp_layer);
 		}
@@ -738,17 +747,21 @@ function threed_handler(){
 		var cube_matrix = '';
 		var position = '';
 		var scale = '';
-		for (var i = 0; i < ID_dict[index].cube.parent.matrixWorld.elements.length; i++){
-			cube_matrix += ID_dict[index].cube.parent.matrixWorld.elements[i] + ' ';
+		for (var i = 0; i < ID_dict[index].plane.matrixWorld.elements.length; i++){
+			cube_matrix += ID_dict[index].plane.matrixWorld.elements[i] + ' ';
 		}
 		LMsetObjectField(LM_xml, index, "plane_matrix", cube_matrix);
-		var position_vector = new THREE.Vector3(0, 0, 0).applyMatrix4(ID_dict[index].cube.matrixWorld.clone());
+		LMsetObjectField(LM_xml, index, "cube_matrix", cube_matrix);
+		var position_vector = ID_dict[index].cube.position.clone().applyMatrix4(ID_dict[index].cube.parent.matrixWorld.clone());
 		var position = position_vector.x + ' ' + position_vector.y + ' ' + position_vector.z;
 		LMsetObjectField(LM_xml, index, 'cube_position', position);
 		var rotation = ID_dict[index].cube.rotation.z;
 		LMsetObjectField(LM_xml, index, 'cube_rotation', rotation);
 		var scale = ID_dict[index].cube.scale.x + ' ' + ID_dict[index].cube.scale.y + ' ' + ID_dict[index].cube.scale.z;
 		LMsetObjectField(LM_xml, index, 'cube_scale', scale);
+		console.log(ID_dict[index].height_from_parent_cube);
+		LMsetObjectField(LM_xml, index, 'height_from_parent', ID_dict[index].height_from_parent_cube);
+		console.log("box saved");
 		WriteXML(SubmitXmlUrl,LM_xml,function(){return;});
 		//this.PlaneAutoSave(idx);
 	};
@@ -849,6 +862,8 @@ function threed_handler(){
 			    var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 20, 20);
 			    var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
 			    new_plane.matrixWorld.elements = LMgetObjectField(LM_xml, i, 'plane_matrix');
+			    console.log(new_plane.matrixWorld.elements);
+			    console.log(new_plane.matrixWorld);
 			    new_plane.matrixAutoUpdate = false;
 			    new_plane.matrixWorldNeedsUpdate = false;
 			    new_plane.frustumCulled = false;
@@ -873,9 +888,11 @@ function threed_handler(){
 			    box_scene.add(box_scene_plane);
 			    var position = LMgetObjectField(LM_xml, i, "cube_position");
 			    var i_mat = new THREE.Matrix4().getInverse(new_box_object.cube.parent.matrixWorld.clone());
+			    console.log(position);
 			    position.applyMatrix4(i_mat);
 			    var rotation = LMgetObjectField(LM_xml, i, "cube_rotation");
 			    var scale = LMgetObjectField(LM_xml, i, "cube_scale");
+			    new_box_object.height_from_parent_cube = LMgetObjectField(LM_xml, i, "height_from_parent");
 			    new_box_object.cube.position.set(position.x, position.y, position.z);
 			    new_box_object.cube.rotation.set(0, 0, rotation);
 			    new_box_object.cube.scale.set(scale.x, scale.y, scale.z);
@@ -889,7 +906,7 @@ function threed_handler(){
 			    		object_list[i].cube.parent.matrixWorld = object_list[i].plane.matrixWorld.clone();
 			    	}
 			    }
-			  if (object_list[i].cube) CalculateObjectHeightDifference(object_list[i]);
+			  //if (object_list[i].cube) CalculateObjectHeightDifference(object_list[i]);
 
 			    /*if (!isNaN(LMgetObjectField(LM_xml, object_list[i].ID, "parts"))){
 			    	var child_ID_list = LMgetObjectField(LM_xml, object_list[i].ID, "parts");
@@ -900,9 +917,9 @@ function threed_handler(){
 			    	}
 			    }*/
   		}
-  		for (var i = 0; i < object_list.length; i++){
-  			if (object_list[i].cube) CalculateObjectHeightDifference(object_list[i]);
-  		}
+  		/*for (var i = 0; i < object_list.length; i++){
+  			if (object_list[i].cube && object_list[i].hparent != "unassigned") CalculateObjectHeightDifference(object_list[i]);
+  		}*/
   		render();
 	};
 

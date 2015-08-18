@@ -111,8 +111,8 @@
 #label_buttons_drawing{
     position:absolute;
     top:70px;
-    width:50px;
-	height:100%;
+    width:55px;
+	height: 90%;
     left:2px;
 	margin-bottom:5px;
 	overflow: auto;

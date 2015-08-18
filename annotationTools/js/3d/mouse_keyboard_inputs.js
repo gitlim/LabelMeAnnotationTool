@@ -128,7 +128,7 @@ function onDocumentMouseDown(event) {
             old_ray_cone_vector = old_arrow_cone_position.clone().sub(camera.position).projectOnPlane(normal_for_plane_for_projection);
             old_ray_length = old_ray_vector.length();
             /**********************************************/
-
+            break;
 
 
             /*if (vert_plane_ray.length){
@@ -646,8 +646,8 @@ function onDocumentMouseUp(event) {
         update_plane();
         if (!window.select.cube) main_threed_handler.PlaneAutoSave(window.select.ID);
         else {
-                main_threed_handler.BoxAutoSave(window.select.ID);
                 CalculateObjectHeightDifference(window.select);
+                main_threed_handler.BoxAutoSave(window.select.ID);
             }
     }
     current_mode = 0;
@@ -783,10 +783,10 @@ function CalculateChildrenHeightDifferences(object){
     for (var i = 0; i < object.hchildren.length; i++){
         if (!object.cube || !object.hchildren[i].cube) continue;
          var plane_normal = new THREE.Vector3(0, 0, 1).getPositionFromMatrix(object.plane.matrixWorld);
-         var cube_position = object.cube.position.clone().applyMatrix4(object.cube.parent.matrixWorld.clone());
+         var cube_plane_position = object.cube.position.clone().applyMatrix4(object.cube.parent.matrixWorld.clone());
         if (object.hchildren[i].cube){
-            var child_position = object.hchildren[i].cube.position.clone().sub(new THREE.Vector3(0, 0, object.hchildren[i].cube.scale.z*small_h*0.5)).applyMatrix4(object.hchildren[i].cube.parent.matrixWorld.clone());
-            var projected_distance = child_position.sub(cube_position).projectOnVector(new THREE.Vector3(0, 0, 1).applyMatrix4(object.cube.parent.matrixWorld.clone())).length();
+            var child_position = object.hchildren[i].cube.position.clone().sub(new THREE.Vector3(0, 0, object.hchildren[i].cube.scale.clone().z*small_h*0.5)).applyMatrix4(object.hchildren[i].cube.parent.matrixWorld.clone());
+            var projected_distance = child_position.sub(cube_plane_position).projectOnVector(new THREE.Vector3(0, 0, 1).applyMatrix4(object.cube.parent.matrixWorld.clone())).length();
             object.hchildren[i].height_from_parent_cube = projected_distance;
         }
         //CalculateChildrenHeightDifferences(object.hchildren[i]);
@@ -796,9 +796,9 @@ function CalculateChildrenHeightDifferences(object){
 function CalculateObjectHeightDifference(object){
 
     if (!object.cube || !object.hparent.cube) return;
-    var plane_normal = new THREE.Vector3(0, 0, 1).getPositionFromMatrix(object.hparent.plane.matrixWorld);
+    var plane_normal = new THREE.Vector3(0, 0, 1).getPositionFromMatrix(object.hparent.plane.matrixWorld.clone());
     var cube_position = object.hparent.cube.position.clone().applyMatrix4(object.hparent.cube.parent.matrixWorld.clone());
-    var child_position = object.cube.position.clone().sub(new THREE.Vector3(0, 0, object.cube.scale.z*small_h*0.5)).applyMatrix4(object.cube.parent.matrixWorld.clone());
+    var child_position = object.cube.position.clone().sub(new THREE.Vector3(0, 0, object.cube.scale.clone().z*small_h*0.5)).applyMatrix4(object.cube.parent.matrixWorld.clone());
     var projected_distance = child_position.sub(cube_position).projectOnVector(new THREE.Vector3(0, 0, 1).applyMatrix4(object.hparent.cube.parent.matrixWorld.clone())).length();
     object.height_from_parent_cube = projected_distance;
 }
@@ -811,10 +811,11 @@ function SynchronizeSupportPlanes(object, parentSyncOn){// if parentSyncOn is fa
     if (!object){
         object = window.select;
     }
+    if (CheckIfSupportedByGroundplane(object) == false) return;
     //CalculateChildrenHeightDifferences(object);
     if (object.plane == plane){
         if (current_mode == POINT_DRAG_MODE){
-             var lines_array = LMgetObjectField(LM_xml, object.ID, "lines");
+            var lines_array = LMgetObjectField(LM_xml, object.ID, "lines");
             var lines = '';
             for (var i = 0; i < lines_array.length; i+=5){
                 lines += '<vp_line>';
@@ -838,9 +839,15 @@ function SynchronizeSupportPlanes(object, parentSyncOn){// if parentSyncOn is fa
         if (!object.cube){
             object.hchildren[i].plane.matrixWorld = object.plane.matrixWorld.clone();
         }else{
-            //console.log(separation);
-            object.hchildren[i].plane.matrixWorld.multiplyMatrices(object.plane.matrixWorld.clone(), (new THREE.Matrix4()).makeTranslation(0, 0, object.hchildren[i].height_from_parent_cube + object.cube.scale.z*small_h*0.5));
+            if (object.hchildren[i].height_from_parent_cube == null){
+              //CalculateObjectHeightDifference(object.hchildren[i]);
+              continue;  
+            } 
+            var holder = object.hchildren[i].height_from_parent_cube;
             console.log( object.hchildren[i].height_from_parent_cube);
+             object.hchildren[i].plane.matrixWorld.multiplyMatrices(object.plane.matrixWorld.clone(), (new THREE.Matrix4()).makeTranslation(0, 0, holder + object.cube.scale.clone().z*small_h*0.5));
+            console.log( object.hchildren[i].height_from_parent_cube);
+           
         }
         if (object.hchildren[i].cube && object.hchildren[i].cube.parent != object.hchildren[i].plane){
             object.hchildren[i].cube.parent.matrixWorld = object.hchildren[i].plane.matrixWorld.clone();

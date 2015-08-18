@@ -156,7 +156,7 @@ function image(id) {
 
         // if the scale factor is bellow the original scale, then do nothing (do not make the image too small)
         if(this.im_ratio < this.browser_im_ratio) {this.im_ratio=this.browser_im_ratio; return;}
-
+       
         // New width and height of the rescaled picture
         this.width_curr = Math.round(this.im_ratio*this.width_orig);
         this.height_curr = Math.round(this.im_ratio*this.height_orig);
@@ -203,17 +203,23 @@ function image(id) {
         $("#boxCanvas").width(this.width_curr).height(this.height_curr);
         $("#clipCanvas").width(this.width_curr).height(this.height_curr);
         $("#container").width(this.width_curr).height(this.height_curr);
+        //var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
         stage.setWidth(this.width_curr);
         stage.setHeight(this.height_curr);
         if (amt != "fitted"){
             stage.setScaleX(amt*stage.getScaleX());
             stage.setScaleY(amt*stage.getScaleY());
-            console.log("scale");
+           
         }else{
             stage.setScaleX(1);
             stage.setScaleY(1);
         }
+        scale_factor_x = stage.width()/stage.getScaleX();
+        scale_factor_y = stage.height()/stage.getScaleY();
+        //op_x = pt_layer.children[0].x()*stage.getScaleX();
+        //op_y = pt_layer.children[0].y()*stage.getScaleY();
         stage.draw();
+        update_plane();
     }
 	/*************************************************************/
 	/*************************************************************/

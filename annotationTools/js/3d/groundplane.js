@@ -59,8 +59,8 @@ function init_kinetic_stage() {
 
     var circle = new Kinetic.Circle({//this is the draggable point
     name: "op_circle",
-    x: document.getElementById("im").width/2,
-    y: document.getElementById("im").height/2,
+    x: stage.width()/2,
+    y: stage.height()/2,
     radius: 8,
     stroke: 'blue',
     //fill: 'blue',
@@ -69,13 +69,14 @@ function init_kinetic_stage() {
     circle.on("dragmove", op_drag);
     pt_layer.add(circle);
 
-    op_x = document.getElementById("im").width/2;//both of these are in kineticjs canvas corodinates
-    op_y = document.getElementById("im").height/2;
+    op_x = stage.width()/2;//both of these are in kineticjs canvas corodinates
+    op_y = stage.height()/2;
     stage.add(pt_layer);
 
     last_update = -999999;
     load_vp();
-
+    scale_factor_x = stage.width()/stage.getScaleX();
+    scale_factor_y = stage.height()/stage.getScaleY();
     main_media.Zoom(1)
     stage.draw();
 
@@ -515,7 +516,7 @@ function update_plane() {
     K[11] = 0;
    // K[12] = -(axis_x[0]+axis_y[0]) + ;
     //K[13] = (axis_x[1]+axis_y[1]) - ;
-    K[12] = -(axis_x[0]+axis_y[0]) + (op_x - document.getElementById("im").width/2)/gp_f;//converting canvas to three js coordinates
+    K[12] = -(axis_x[0]+axis_y[0]) + (op_x*stage.getScaleX() - document.getElementById("im").width/2)/gp_f;//converting canvas to three js coordinates
     img_height = document.getElementById("im").height;
     bounding_top = 0;
     if (op_y > 0.95*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE) {
@@ -526,10 +527,10 @@ function update_plane() {
         op_y = 0.05*img_height;
         pt_layer.children[0].y(op_y);
     }   
-    K[13] = (axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f;
+    K[13] = (axis_x[1]+axis_y[1]) - (op_y*stage.getScaleY() - document.getElementById("im").height/2)/gp_f;
     //console.log((axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f);
     //console.log(K[13]);
-    K[14] = (axis_x[2]+axis_y[2]) - 1;
+    K[14] = (axis_x[2]+axis_y[2]) - 1*stage.getScaleX();
     //K[12] = 
     //K[13] = 0;//transform2;//
     //K[12] = horizontal_transform;
@@ -539,7 +540,6 @@ function update_plane() {
     K[15] = 1;
 
     rerender_plane(K);
-
     //console.log(op_x, op_y);
 
     setTimeout(function(){
@@ -560,8 +560,8 @@ function update_plane() {
 }
 
 function load_vp(vp_out){
-    scale_factor_x = document.getElementById('im').width / document.getElementById('im').naturalWidth;
-    scale_factor_y = document.getElementById("im").height / document.getElementById('im').naturalHeight;
+    var scale_factor_x = document.getElementById('im').width / document.getElementById('im').naturalWidth;
+    var scale_factor_y = document.getElementById("im").height / document.getElementById('im').naturalHeight;
     if ((!vp_out) || vp_out.split("\n").length < 5){
         for (var i = 0; i < 4; i++) {
             vp_s[i] = new VP_s();
@@ -619,10 +619,10 @@ function load_vp(vp_out){
         for (var i = 0; i < lines.length; i++){
             var coordinates = lines[i].split(" ");
             if (isNaN(coordinates[1]) == false){
-                vp_s[i].x2d[0] = coordinates[0]*scale_factor_x;
-                vp_s[i].y2d[0] = coordinates[1]*scale_factor_y;
-                vp_s[i].x2d[1] = coordinates[2]*scale_factor_x;
-                vp_s[i].y2d[1] = coordinates[3]*scale_factor_y;
+                vp_s[i].x2d[0] = coordinates[0];
+                vp_s[i].y2d[0] = coordinates[1];
+                vp_s[i].x2d[1] = coordinates[2];
+                vp_s[i].y2d[1] = coordinates[3];
                 addVPline(i, vp_layer);
             }
         }

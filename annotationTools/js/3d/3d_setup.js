@@ -92,7 +92,7 @@ function init(){
     createWorld();
     render();
     setup_model_list();
-    update_plane();
+    //update_plane();
     //ID_dict["GP"] = plane;
     render();
 }
