@@ -142,7 +142,7 @@ function onDocumentMouseDown(event) {
                 var scaling = projected_change_vector.length()/Math.sin(angle_a)*Math.sin(angle_b);
                 //console.log(scaling);
 
-
+;
                 test_normal_for_plane_for_projection = arrow_vector.clone().cross(proj_vector.clone());
                 test_old_ray_vector = arrow_position.clone().sub(camera.position).projectOnPlane(test_normal_for_plane_for_projection.clone());
                 console.log(arrow_position.clone());
@@ -164,7 +164,7 @@ function onDocumentMouseDown(event) {
         }
     }
     var cube_click = [];
-    if (window.select && window.select.cube && current_mode != RESIZE_MODE && (current_mode != VERTICAL_PLANE_MOVE_MODE)) {
+    if (window.select && window.select.cube && current_mode != RESIZE_MODE && (current_mode != VERTICAL_PLANE_MOVE_MODE) && (current_mode != POINT_DRAG_MODE)) {
         if (window.select.cube.parent == box_scene){
             cube_click = box_ray.intersectObject(window.select.cube, true);
         }else{        
@@ -194,7 +194,7 @@ function onDocumentMouseDown(event) {
             }
         }
     }
-    if ((!(window.select.cube) || (window.select.hparent != "unassigned")) && (current_mode != RESIZE_MODE) && (current_mode != VERTICAL_PLANE_MOVE_MODE) && (current_mode != BOX_MOVE_MODE)){
+    if ((!(window.select.cube) || (window.select.hparent != "unassigned")) && (current_mode != RESIZE_MODE) && (current_mode != VERTICAL_PLANE_MOVE_MODE) && (current_mode != BOX_MOVE_MODE) && (current_mode != POINT_DRAG_MODE)){
         a = ray.intersectObject(window.select.plane, false);
         if (a.length) {
             CalculateNewOp(window.select.plane.matrixWorld.elements);

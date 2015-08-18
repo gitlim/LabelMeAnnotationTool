@@ -69,8 +69,10 @@ function init_kinetic_stage() {
     circle.on("dragmove", op_drag);
     pt_layer.add(circle);
 
-    op_x = stage.width()/2;//both of these are in kineticjs canvas corodinates
-    op_y = stage.height()/2;
+    op_x = main_media.width_curr/2;//both of these are in kineticjs canvas corodinates
+    op_y = main_media.height_curr/2;
+    op_x_orig = op_x;
+    op_y_orig = op_y;
     stage.add(pt_layer);
 
     last_update = -999999;
@@ -167,6 +169,7 @@ function point_drag() {
         stage.get('.p' + (point_id)).each(function(dot){
             dot.setPosition(vp_s[line_id].x2d[1], vp_s[line_id].y2d[1]);
         });*/
+        stage.setPosition(vp_s[line_id].x2d[1], vp_s[line_id].y2d[1]);
     }
 
     layer.get('.l'+(line_id)).each(function(line,n) {
@@ -394,7 +397,7 @@ function update_plane() {
         for (var l = 1; l <= 3; l++) {
             vp[l-1] = new VP();
             var vp_cou = 0;
-            for (var i = 0; i < vp_s.length; i++) {
+            for (var i  = 0; i < vp_s.length; i++) {
                 if (vp_label[i] != l)
                 continue;
                 for (var j = i+1; j < vp_s.length; j++) {
@@ -402,15 +405,15 @@ function update_plane() {
                     continue;
 
                     // vanishing points
-                    var x1 = vp_s[i].x2d[0];//assigning vanishing point coordinates to variables for ease of calculation
-                    var x2 = vp_s[i].x2d[1];
-                    var x3 = vp_s[j].x2d[0];
-                    var x4 = vp_s[j].x2d[1];
+                    var x1 = vp_s[i].x2d[0];//*stage.getScaleX();//assigning vanishing point coordinates to variables for ease of calculation
+                    var x2 = vp_s[i].x2d[1];//*stage.getScaleX();
+                    var x3 = vp_s[j].x2d[0];//*stage.getScaleX();
+                    var x4 = vp_s[j].x2d[1];//*stage.getScaleX();
 
-                    var y1 = vp_s[i].y2d[0];
-                    var y2 = vp_s[i].y2d[1];
-                    var y3 = vp_s[j].y2d[0];
-                    var y4 = vp_s[j].y2d[1];
+                    var y1 = vp_s[i].y2d[0];//*stage.getScaleY();
+                    var y2 = vp_s[i].y2d[1];//*stage.getScaleY();
+                    var y3 = vp_s[j].y2d[0];//*stage.getScaleY();
+                    var y4 = vp_s[j].y2d[1];//*stage.getScaleY();
 
                     vp[l-1].x2d += ((x1*y2-y1*x2)*(x3-x4) - (x1-x2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));//x coordinate of first vanishing point
                     vp[l-1].y2d += ((x1*y2-y1*x2)*(y3-y4) - (y1-y2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));//y coordinate of first vanishing point
@@ -516,7 +519,7 @@ function update_plane() {
     K[11] = 0;
    // K[12] = -(axis_x[0]+axis_y[0]) + ;
     //K[13] = (axis_x[1]+axis_y[1]) - ;
-    K[12] = -(axis_x[0]+axis_y[0]) + (op_x*stage.getScaleX() - document.getElementById("im").width/2)/gp_f;//converting canvas to three js coordinates
+    K[12] = -(axis_x[0]+axis_y[0]) + (op_x - op_x_orig)/gp_f;//converting canvas to three js coordinates
     img_height = document.getElementById("im").height;
     bounding_top = 0;
     if (op_y > 0.95*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE) {
@@ -527,10 +530,10 @@ function update_plane() {
         op_y = 0.05*img_height;
         pt_layer.children[0].y(op_y);
     }   
-    K[13] = (axis_x[1]+axis_y[1]) - (op_y*stage.getScaleY() - document.getElementById("im").height/2)/gp_f;
+    K[13] = (axis_x[1]+axis_y[1]) - (op_y - op_y_orig)/gp_f;
     //console.log((axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f);
     //console.log(K[13]);
-    K[14] = (axis_x[2]+axis_y[2]) - 1*stage.getScaleX();
+    K[14] = (axis_x[2]+axis_y[2]) - 1;
     //K[12] = 
     //K[13] = 0;//transform2;//
     //K[12] = horizontal_transform;
@@ -902,8 +905,8 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
 
 function CalculateNewOp(L){
     gp_f = LMgetObjectField(LM_xml, groundplane_id, 'focal_length');
-    op_y = ((axis_x[1]+axis_y[1]) - L[13])*gp_f + document.getElementById("im").height/2;
-    op_x = (L[12] + (axis_x[0] + axis_y[0]))*gp_f + document.getElementById("im").width/2;
+    op_y = ((axis_x[1]+axis_y[1]) - L[13])*gp_f + op_y_orig;
+    op_x = (L[12] + (axis_x[0] + axis_y[0]))*gp_f + op_x_orig;
     console.log(op_x, op_y);
 }
 

@@ -70,15 +70,15 @@ function threed_handler(){
 			html_str += '<lines>';
 			for (var i = 0; i < lines_array.length; i+=5){
 				html_str += '<vp_line>';
-				html_str += '<x1>' + lines_array[i]/scale_factor_x + '</x1>';
-				html_str += '<y1>' + lines_array[i+1]/scale_factor_y+ '</y1>';
-				html_str += '<x2>' + lines_array[i+2]/scale_factor_x + '</x2>';
-				html_str += '<y2>' + lines_array[i+3]/scale_factor_y + '</y2>';
+				html_str += '<x1>' + lines_array[i] + '</x1>';
+				html_str += '<y1>' + lines_array[i+1] + '</y1>';
+				html_str += '<x2>' + lines_array[i+2] + '</x2>';
+				html_str += '<y2>' + lines_array[i+3] + '</y2>';
 				html_str += '<label>' + lines_array[i+4] + '</label>';
 				html_str += '</vp_line>';
 			}
 			html_str += '</lines>';
-			html_str += '<op_points>' + op_points[0]/scale_factor_x + ' ' + op_points[1]/scale_factor_y + '</op_points>';
+			html_str += '<op_points>' + op_points[0] + ' ' + op_points[1] + '</op_points>';
 			html_str += '<plane_matrix>';
 			for (var i = 0; i < K.length; i++){
 				html_str += K[i] + ' ';
@@ -114,15 +114,15 @@ function threed_handler(){
 			html_str += '<lines>';
 			for (var i = 0; i < lines_array.length; i+=5){
 				html_str += '<vp_line>';
-				html_str += '<x1>' + lines_array[i]/scale_factor_x + '</x1>';
-				html_str += '<y1>' + lines_array[i+1]/scale_factor_y + '</y1>';
-				html_str += '<x2>' + lines_array[i+2]/scale_factor_x + '</x2>';
-				html_str += '<y2>' + lines_array[i+3]/scale_factor_y + '</y2>';
+				html_str += '<x1>' + lines_array[i] + '</x1>';
+				html_str += '<y1>' + lines_array[i+1] + '</y1>';
+				html_str += '<x2>' + lines_array[i+2] + '</x2>';
+				html_str += '<y2>' + lines_array[i+3]+ '</y2>';
 				html_str += '<label>' + lines_array[i+4] + '</label>';
 				html_str += '</vp_line>';
 			}
 			html_str += '</lines>';
-			html_str += '<op_points>' + op_points[0]/scale_factor_x + ' ' + op_points[1]/scale_factor_y + '</op_points>';
+			html_str += '<op_points>' + op_points[0] + ' ' + op_points[1] + '</op_points>';
 			html_str += '<plane_matrix>';
 			for (var i = 0; i < window.select.cube.parent.matrixWorld.elements.length; i++){
 				html_str += window.select.cube.parent.matrixWorld.elements[i] + ' ';
@@ -584,6 +584,8 @@ function threed_handler(){
 		console.log("create groundplane");
 		var numItems = $(LM_xml).children('annotation').children('object').length;
 		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+		scale_factor_x = stage.width()/stage.getScaleX();
+	    scale_factor_y = stage.height()/stage.getScaleY();
 		console.log(scale_factor);
 		console.log($(LM_xml));
 	    threed_anno = new annotation(numItems);
@@ -625,10 +627,10 @@ function threed_handler(){
 		html_str += '<lines>';
 		for (var i = 0; i < vp_s.length; i++){
 			html_str += '<vp_line>';
-			html_str += '<x1>' + vp_s[i].x2d[0] + '</x1>';
-			html_str += '<y1>' + vp_s[i].y2d[0] + '</y1>';
-			html_str += '<x2>' + vp_s[i].x2d[1] + '</x2>';
-			html_str += '<y2>' + vp_s[i].y2d[1] + '</y2>';
+			html_str += '<x1>' + vp_s[i].x2d[0]/scale_factor_x + '</x1>';
+			html_str += '<y1>' + vp_s[i].y2d[0]/scale_factor_y + '</y1>';
+			html_str += '<x2>' + vp_s[i].x2d[1]/scale_factor_x + '</x2>';
+			html_str += '<y2>' + vp_s[i].y2d[1]/scale_factor_y + '</y2>';
 			html_str += '<label>' + vp_label[i] + '</label>';
 			html_str += '</vp_line>';
 		}
