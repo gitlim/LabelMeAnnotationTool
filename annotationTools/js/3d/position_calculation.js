@@ -50,10 +50,10 @@ function calculate_box_location(cube_object, support_object){ // make it the bot
     var lines = '';
     for (var i = 0; i < lines_array.length; i+=5){
                 lines += '<vp_line>';
-                lines += '<x1>' + lines_array[i]/scale_factor_x + '</x1>';
-                lines += '<y1>' + lines_array[i+1]/scale_factor_y + '</y1>';
-                lines += '<x2>' + lines_array[i+2]/scale_factor_x + '</x2>';
-                lines += '<y2>' + lines_array[i+3]/scale_factor_y + '</y2>';
+                lines += '<x1>' + lines_array[i] + '</x1>';
+                lines += '<y1>' + lines_array[i+1] + '</y1>';
+                lines += '<x2>' + lines_array[i+2] + '</x2>';
+                lines += '<y2>' + lines_array[i+3] + '</y2>';
                 lines += '<label>' + lines_array[i+4] + '</label>';
                 lines += '</vp_line>';
         }
@@ -123,10 +123,10 @@ function calculate_children_box_locations(object, parent_scale){
     var lines = '';
     for (var i = 0; i < lines_array.length; i+=5){
                 lines += '<vp_line>';
-                lines += '<x1>' + lines_array[i]/scale_factor_x + '</x1>';
-                lines += '<y1>' + lines_array[i+1]/scale_factor_y + '</y1>';
-                lines += '<x2>' + lines_array[i+2]/scale_factor_x + '</x2>';
-                lines += '<y2>' + lines_array[i+3]/scale_factor_y + '</y2>';
+                lines += '<x1>' + lines_array[i] + '</x1>';
+                lines += '<y1>' + lines_array[i+1] + '</y1>';
+                lines += '<x2>' + lines_array[i+2] + '</x2>';
+                lines += '<y2>' + lines_array[i+3] + '</y2>';
                 lines += '<label>' + lines_array[i+4] + '</label>';
                 lines += '</vp_line>';
         }

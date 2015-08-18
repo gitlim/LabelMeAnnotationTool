@@ -197,7 +197,7 @@ function onDocumentMouseDown(event) {
     if ((!(window.select.cube) || (window.select.hparent != "unassigned")) && (current_mode != RESIZE_MODE) && (current_mode != VERTICAL_PLANE_MOVE_MODE) && (current_mode != BOX_MOVE_MODE) && (current_mode != POINT_DRAG_MODE)){
         a = ray.intersectObject(window.select.plane, false);
         if (a.length) {
-            CalculateNewOp(window.select.plane.matrixWorld.elements);
+            //CalculateNewOp(window.select.plane.matrixWorld.elements);
             prev_event_x = event.clientX;
             prev_event_y = event.clientY;
             var i_mat = new THREE.Matrix4().getInverse(window.select.plane.matrixWorld.clone());

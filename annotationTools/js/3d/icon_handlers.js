@@ -262,8 +262,8 @@ function ThreeDHoverHighlight(object){// need third options for planes
                 toggle_cube_resize_arrows(true);
                 toggle_cube_move_indicators(true);
                 toggle_cube_rotate_indicators(true);
-                var L = LMgetObjectField(LM_xml, window.select.ID, 'cube_matrix');
-                CalculateNewOp(L);
+                //var L = LMgetObjectField(LM_xml, window.select.ID, 'cube_matrix');
+                //CalculateNewOp(L);
             }else{
                 console.log("display");
                 if (IsHidingAllPlanes == false){

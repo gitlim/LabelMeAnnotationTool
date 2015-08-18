@@ -107,7 +107,7 @@ function threed_handler(){
 			var position = position_vector.x + ' ' + position_vector.y + ' ' + position_vector.z;
 			html_str += position + '</cube_position>';
 			html_str += '<cube_rotation>' + window.select.cube.rotation.z + '</cube_rotation>';
-			var scale = window.select.cube.scale.x*small_w + ' ' + window.select.cube.scale.y*small_w + ' ' + window.select.cube.scale.z*small_w;
+			var scale = window.select.cube.scale.x + ' ' + window.select.cube.scale.y + ' ' + window.select.cube.scale.z;
 			html_str += '<cube_scale>' + scale + '</cube_scale>';
 			html_str += '</cube>';
 			html_str += '<plane>';
@@ -389,14 +389,17 @@ function threed_handler(){
 			for (var i = 0; i < lines_array.length; i+=5){
 				var new_line = new VP_s();
 				vp_label.push(lines_array[i+4]);
-				new_line.x2d[0] = lines_array[i]/scale_factor_x;
-		        new_line.y2d[0] = lines_array[i+1]/scale_factor_y;
-		        new_line.x2d[1] = lines_array[i+2]/scale_factor_x;
-		        new_line.y2d[1] = lines_array[i+3]/scale_factor_y;
+				new_line.x2d[0] = lines_array[i]*scale_factor_x;
+		        new_line.y2d[0] = lines_array[i+1]*scale_factor_y;
+		        new_line.x2d[1] = lines_array[i+2]*scale_factor_x;
+		        new_line.y2d[1] = lines_array[i+3]*scale_factor_y;
 		        vp_s.push(new_line);
 			}
 	    	//CalculateNewOp(L);
-	    	CalculateNewOp(L);
+	    	//CalculateNewOp(L);
+	    	var op_points = LMgetObjectField(LM_xml, idx, 'op_points');
+			op_x = op_points[0]*scale_factor_x;
+			op_y = op_points[1]*scale_factor_y;
 			console.log(op_x, op_y);
 			pt_layer.children[0].x(op_x);
 			pt_layer.children[0].y(op_y);
@@ -746,12 +749,17 @@ function threed_handler(){
 		}else{
 			var index = window.select.ID;
 		}
+		var scale_factor_x = stage.width()/stage.getScaleX();
+	    var scale_factor_y = stage.height()/stage.getScaleY();
 		var cube_matrix = '';
 		var position = '';
 		var scale = '';
 		for (var i = 0; i < ID_dict[index].plane.matrixWorld.elements.length; i++){
 			cube_matrix += ID_dict[index].plane.matrixWorld.elements[i] + ' ';
 		}
+		var op_points = '';
+		op_points = op_x/scale_factor_x + ' ' + op_y/scale_factor_y;
+		LMsetObjectField(LM_xml, index, 'op_points', op_points);
 		LMsetObjectField(LM_xml, index, "plane_matrix", cube_matrix);
 		LMsetObjectField(LM_xml, index, "cube_matrix", cube_matrix);
 		var position_vector = ID_dict[index].cube.position.clone().applyMatrix4(ID_dict[index].cube.parent.matrixWorld.clone());
