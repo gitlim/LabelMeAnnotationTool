@@ -59,14 +59,15 @@ function init_kinetic_stage() {
 
     var circle = new Kinetic.Circle({//this is the draggable point
     name: "op_circle",
-    x: stage.width()/2,
-    y: stage.height()/2,
+    x: main_media.width_curr/2,
+    y: main_media.height_curr/2,
     radius: 8,
     stroke: 'blue',
     //fill: 'blue',
     draggable: true,
     });
     circle.on("dragmove", op_drag);
+    circle.on("mouseup", function(){main_threed_handler.PlaneAutoSave(window.select.ID);});
     pt_layer.add(circle);
 
     op_x = main_media.width_curr/2;//both of these are in kineticjs canvas corodinates
@@ -134,10 +135,9 @@ function op_drag(e) {
     //reassigning circle coordinates after it is moved
     op_x = e.targetNode.x();
     op_y = e.targetNode.y();
-    console.log(op_x, op_y);
-    main_threed_handler.PlaneAutoSave();
+    //main_threed_handler.PlaneAutoSave();
     check_plane_box_collision();
-    update_plane().done(main_threed_handler.PlaneAutoSave);
+    update_plane();
 }
 
 function point_drag() {
@@ -177,7 +177,6 @@ function point_drag() {
     });
     update_plane();
     check_plane_box_collision();
-    main_threed_handler.PlaneAutoSave();
 }
 
 /*function highlight_line(){
@@ -367,7 +366,6 @@ function changeLineType(){
 
 
 function update_plane() {
-    console.log("selected_plane updated");
      if (hover_object && !(hover_object.cube)){//when hovering ofer a link is going on;
         selected_plane = hover_object.plane;
     }else if (window.select){
@@ -503,8 +501,7 @@ function update_plane() {
     if ((selected_plane) && selected_plane == plane) gp_f = f;
     K = mat4.create();//transformation matrix
 
-    //var transform = selected_plane.position.applyMatrix4
-    console.log(op_y);
+    
     K[0] = axis_x[0];
     K[1] = -axis_x[1];
     K[2] = -axis_x[2];
@@ -563,43 +560,42 @@ function update_plane() {
 }
 
 function load_vp(vp_out){
-    var scale_factor_x = document.getElementById('im').width / document.getElementById('im').naturalWidth;
-    var scale_factor_y = document.getElementById("im").height / document.getElementById('im').naturalHeight;
+    var scale_factor_x = document.getElementById('im').width;
+    var scale_factor_y = document.getElementById("im").height;
     if ((!vp_out) || vp_out.split("\n").length < 5){
         for (var i = 0; i < 4; i++) {
             vp_s[i] = new VP_s();
         }
-        vp_s[0].x2d[0] = vp_s[0].x2d[0] - 100*3*scale_factor_x;//constants are arbitrary for initial lines.
-        vp_s[0].x2d[1] = vp_s[0].x2d[1] - 50*3*scale_factor_x;
-        vp_s[0].y2d[0] = vp_s[0].y2d[0] - 60*3*scale_factor_x;
-        vp_s[0].y2d[1] = vp_s[0].y2d[1] - 50*3*scale_factor_x;
+        vp_s[0].x2d[0] = vp_s[0].x2d[0] - 0.25*scale_factor_x;//constants are arbitrary for initial lines.
+        vp_s[0].x2d[1] = vp_s[0].x2d[1] - 0.1*scale_factor_x;
+        vp_s[0].y2d[0] = vp_s[0].y2d[0] - 0.1*scale_factor_y;
+        vp_s[0].y2d[1] = vp_s[0].y2d[1] - 0.07*scale_factor_y;
         vp_label[0] = 1;
         addVPline(0, vp_layer);
 
-        vp_s[1].x2d[0] = vp_s[1].x2d[0] - 100*3*scale_factor_x;
-        vp_s[1].x2d[1] = vp_s[1].x2d[1] - 50*3*scale_factor_x;
-        vp_s[1].y2d[0] = vp_s[1].y2d[0] + 50*1*scale_factor_x;
-        vp_s[1].y2d[1] = vp_s[1].y2d[1] + 50*1*scale_factor_x;
+        vp_s[1].x2d[0] = vp_s[1].x2d[0] - 0.25*scale_factor_x;
+        vp_s[1].x2d[1] = vp_s[1].x2d[1] - 0.1*scale_factor_x;
+        vp_s[1].y2d[0] = vp_s[1].y2d[0] + 0.1*scale_factor_y;
+        vp_s[1].y2d[1] = vp_s[1].y2d[1] + 0.05*scale_factor_y;
         vp_label[1] = 1;
         addVPline(1, vp_layer);
 
-        vp_s[2].x2d[0] = vp_s[2].x2d[0] + 100*3*scale_factor_x;
-        vp_s[2].x2d[1] = vp_s[2].x2d[1] + 50*3*scale_factor_x;
-        vp_s[2].y2d[0] = vp_s[2].y2d[0] - 60*3*scale_factor_x;
-        vp_s[2].y2d[1] = vp_s[2].y2d[1] - 50*3*scale_factor_x;
+        vp_s[2].x2d[0] = vp_s[2].x2d[0] + 0.25*scale_factor_x;
+        vp_s[2].x2d[1] = vp_s[2].x2d[1] + 0.1*scale_factor_x;
+        vp_s[2].y2d[0] = vp_s[2].y2d[0] - 0.1*scale_factor_y;
+        vp_s[2].y2d[1] = vp_s[2].y2d[1] - 0.07*scale_factor_y;
         vp_label[2] = 2;
         addVPline(2, vp_layer);
 
-        vp_s[3].x2d[0] = vp_s[3].x2d[0] + 100*3*scale_factor_x;
-        vp_s[3].x2d[1] = vp_s[3].x2d[1] + 50*3*scale_factor_x;
-        vp_s[3].y2d[0] = vp_s[3].y2d[0] + 50*1*scale_factor_x;
-        vp_s[3].y2d[1] = vp_s[3].y2d[1] + 50*1*scale_factor_x;
+        vp_s[3].x2d[0] = vp_s[3].x2d[0] + 0.25*scale_factor_x;
+        vp_s[3].x2d[1] = vp_s[3].x2d[1] + 0.1*scale_factor_x;
+        vp_s[3].y2d[0] = vp_s[3].y2d[0] + 0.1*scale_factor_y;
+        vp_s[3].y2d[1] = vp_s[3].y2d[1] + 0.05 *1*scale_factor_y;
         vp_label[3] = 2;
         addVPline(3, vp_layer);
     }else{
         var lines = vp_out.split("\n");
         lines.shift();
-        console.log(lines);
         var red = lines.shift().split(" ");
         var green = lines.shift().split(" ");
         var orange = lines.shift().split(" ");
@@ -652,7 +648,7 @@ function addVPline(id, layer) {
     if (vp_label[id] != 0){
         addVPCircles(id, layer);
     }
-    if (window.select) main_threed_handler.PlaneAutoSave();
+    if (window.select && vp_s.length > 4) main_threed_handler.PlaneAutoSave(); // the vp_s.length > 4 is to prevent automatically saving during initial loading
 }
 
 function addVPCircles(id, layer){
@@ -686,6 +682,7 @@ function addVPCircles(id, layer){
     circle.on("click", changeLineType);
     circle.on("mouseover", onMouseOver);
     circle.on("mouseout", onMouseOut);
+    circle.on("mouseup", function(){main_threed_handler.PlaneAutoSave(window.select.ID);});
     dot.on("click", changeLineType);
     dot.on("mouseover", onMouseOver);
     dot.on("mouseout", onMouseOut);
@@ -722,6 +719,7 @@ function addVPCircles(id, layer){
     circle.on("click", changeLineType);
     circle.on("mouseover", onMouseOver);
     circle.on("mouseleave", onMouseOut);
+    circle.on("mouseup", function(){main_threed_handler.PlaneAutoSave(window.select.ID);});
     dot.on("click", changeLineType);
     dot.on("mouseover", onMouseOver);
     dot.on("mouseout", onMouseOut);
@@ -798,14 +796,12 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
     var v2 = new THREE.Vector4(0,0,1,1).applyMatrix4(selected_plane.matrixWorld);
     if (v1.y > v2.y) {
         console.log('flip selected_plane');
-        console.log(selected_plane.matrixWorld);
         var a = new THREE.Matrix4().makeRotationX(Math.PI);
         var c = new THREE.Matrix4().makeRotationZ(Math.PI/2*3);
         selected_plane.matrixWorld.multiplyMatrices(selected_plane.matrixWorld,a);
         selected_plane.matrixWorld.multiplyMatrices(selected_plane.matrixWorld,c);
         //gp_plane.matrixWorld.multiplyMatrices(gp_plane.matrixWorld,a);
         //gp_plane.matrixWorld.multiplyMatrices(gp_plane.matrixWorld,c);
-        console.log(selected_plane.matrixWorld);
     }
 
     var theCanvas = document.getElementById("cnvs"); //setting up the camera so that it is using the canvas parameters
@@ -835,7 +831,6 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
             counter = counter + 1;
         }
     }
-    console.log(counter);
     if (counter > 2){
         return true;
     }
@@ -905,9 +900,10 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
 
 function CalculateNewOp(L){
     gp_f = LMgetObjectField(LM_xml, groundplane_id, 'focal_length');
-    op_y = ((axis_x[1]+axis_y[1]) - L[13])*gp_f + op_y_orig;
-    op_x = (L[12] + (axis_x[0] + axis_y[0]))*gp_f + op_x_orig;
+    var op_y = ((axis_x[1]+axis_y[1]) - L[13])*gp_f + op_y_orig;
+    var op_x = (L[12] + (axis_x[0] + axis_y[0]))*gp_f + op_x_orig;
     console.log(op_x, op_y);
+    return [op_x, op_y];
 }
 
 function CalculateAxis(idx){

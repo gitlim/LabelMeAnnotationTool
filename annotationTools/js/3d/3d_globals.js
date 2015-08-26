@@ -129,5 +129,7 @@ var IsHidingAllThreeD = false;
 var IsHidingAllButSelected = false;
 var separation = new Array();
 var plane_height_array = new Array();
+var threed_mt_mode; // this is for the different modes for 3D AMT such as groundplane, cuboids, etc.
 //var scale_factor_x = document.getElementById("im").width;
 //var scale_factor_y = document.getElementById("im").height;
+var image_list_number = 0;

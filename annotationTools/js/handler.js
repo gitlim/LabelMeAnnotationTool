@@ -377,7 +377,7 @@ function handler() {
 	document.getElementById('object_name').value=new_name;
 	document.getElementById('number_objects').value=global_count;
 	document.getElementById('LMurl').value = LMbaseurl + '?collection=LabelMe&mode=i&folder=' + main_media.GetFileInfo().GetDirName() + '&image=' + main_media.GetFileInfo().GetImName();
-	if(global_count >= mt_N) document.getElementById('mt_submit').disabled=false;
+	if(global_count >= mt_N || threed_mode == true) document.getElementById('mt_submit').disabled=false;
 			}
 		};
 		

@@ -131,7 +131,9 @@ function calculate_children_box_locations(object, parent_scale){
                 lines += '</vp_line>';
         }
     LMsetObjectField(LM_xml, object.ID, 'lines', lines);
-    CalculateNewOp(object.plane.matrixWorld.elements);
+    var op_points = CalculateNewOp(object.plane.matrixWorld.elements);
+    op_x = op_points[0];
+    op_y = op_points[1];
     //LMsetObjectField(LM_xml, index, 'op_points', op_points);
     if (object.hchildren){
         for (var i = 0; i < object.hchildren.length; i++){

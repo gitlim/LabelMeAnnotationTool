@@ -20,20 +20,23 @@ function mkThreeDEditPopup(left, top, anno){
 
 function GetThreeDPopupFormDraw(){
 	wait_for_input = 1;
-  html_str = "<b>Enter name object or plane</b><br />";
-  html_str += HTMLobjectBox("");
-  
-  if(use_attributes) {
-    html_str += HTMLoccludedBox("");
-    html_str += "<b>Enter attributes</b><br />";
-    html_str += HTMLattributesBox("");
-  }
-  if(use_parts) {
-    html_str += HTMLpartsBox("");
-  }
-  html_str += "<br />";
-  
-  // Done button:
+	if (threed_mt_mode != 'box_label'){ 
+		html_str = "<b>Enter the name of the object or plane</b><br />";
+		html_str += HTMLobjectBox("");
+	}else{ 
+		html_str = "<b>Enter the name of the object </b><br />";
+		html_str += HTMLobjectBox(""); 
+		html_str += "<br />";
+  	}
+	if(use_attributes) {
+		html_str += HTMLoccludedBox("");
+		html_str += "<b>Enter attributes</b><br />";
+		html_str += HTMLattributesBox("");
+	  }
+	if(use_parts) {
+		html_str += HTMLpartsBox("");
+	}
+// Done button:
   html_str += '<input type="button" value="Done" title="Press this button after you have provided all the information you want about the object." onclick="main_threed_handler.SubmitQuery(); " tabindex="0" />';
   
   // Delete button:

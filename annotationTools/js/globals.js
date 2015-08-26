@@ -50,6 +50,7 @@ var drawing_mode = 0;
 // Scribble mode:
 var scribble_mode = true;
 var threed_mode = false;
+var view_only = false;
 var video_mode = false;
 var bounding_box = false;
 var bbox_mode = false;

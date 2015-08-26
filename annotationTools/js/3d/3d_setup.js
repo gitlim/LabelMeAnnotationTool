@@ -343,3 +343,16 @@ function render_plane_object(object){
         renderer.render(object.plane, camera)
     }
 }
+
+function open_instr() {
+	console.log("Instructions opened");
+	$('#instr_full').colorbox({iframe:true,width:1100,height:700,transition:"none",closeButton:true});
+}
+
+
+function AMTLoadNextImage(){
+    var current_url = window.location.href;
+    var new_count = parseInt(image_count) + 1;
+    var new_url = current_url.replace("image=" + image_count, "image=" + new_count);
+    window.location.assign(new_url);
+}

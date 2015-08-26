@@ -1,5 +1,4 @@
-/** @file Contains the file_info class, which parses the URL and
- * sets global variables based on the URL.  */
+/** @file Contains the file_info class, which parses the URL and sets global variables based on the URL.  */
 
 // file_info class - only works for still images at the moment
 
@@ -52,8 +51,24 @@ function file_info() {
                     if(this.mode=='im' || this.mode=='mt') view_ObjList = false;
                     if(this.mode=='mt') isMT = true;
                 }
+				if (par_field == 'view_only' && par_value == 'true'){
+					view_only = true;
+				}
                 if(par_field=='username') {
                     username = par_value;
+                }
+                if((par_field=='threed')&&(par_value=='true')) {
+                		threed_mode = true;
+                }
+								if (par_field == 'tester' && par_value == 'true'){
+		     						test_mode = true;
+								}
+                if(par_field=='threed_mt_mode') {
+                    threed_mt_mode = par_value;
+					if (par_value == 'box_label'){
+						use_attributes = false;
+						use_parts = false;
+					}
                 }
                 if(par_field=='collection') {
                     this.collection = par_value;
@@ -61,10 +76,35 @@ function file_info() {
                 if(par_field=='folder') {
                     this.dir_name = par_value;
                 }
+                if(par_field=='image_list') {
+                    image_list_number = par_value;
+                }
                 if(par_field=='image') {
-                    this.im_name = par_value;
-                    if(this.im_name.indexOf('.jpg')==-1 && this.im_name.indexOf('.png')==-1) {
-                        this.im_name = this.im_name + '.jpg';
+                    if (threed_mode == true && this.mode=='mt'){
+                        /*getDataArray();
+                        image_list = loadImageList(image_list_number);
+                        address = image_list[par_value];*/
+                        CCC = $.ajax({
+                             type: "POST",
+                             url: "../LabelMeAnnotationTool/annotationTools/php/3d/imageList.php",
+                             data: {
+                             "task": "get_list",
+                             "file_list_number": image_list_number,
+                             },
+                             async: false,
+                             dataType: "html",
+                         });
+                        image_count = par_value;
+                        image_list = CCC.responseText;
+                        image_list = image_list.split("\n");
+                        address = image_list[par_value];
+                        filename = (parseInt(image_list_number)*10 + parseInt(par_value));
+                        this.im_name = filename;
+                    }else{
+                        this.im_name = par_value;
+                            if(this.im_name.indexOf('.jpg')==-1 && this.im_name.indexOf('.png')==-1) {
+                            this.im_name = this.im_name + '.jpg';
+                        }
                     }
                 }
                 if(par_field=='hitId') {
@@ -158,30 +198,37 @@ function file_info() {
 		             video_mode = true;
                      bbox_mode = true;
 		        }
-                if((par_field=='threed')&&(par_value=='true')) {
-                     threed_mode = true;
-                }
                 if((par_field=='bbox')&&(par_value=='true')) {
                   bbox_mode = true;
                 }
                 par_str = par_str.substring(idx+1,par_str.length);
             } while(idx != -1);
             if (video_mode) return 1;
-            if((!this.dir_name) || (!this.im_name)) return this.SetURL(labelme_url);
+            if((this.dir_name === null) || (this.im_name === null)) return this.SetURL(labelme_url);
             
             if(isMT) {
                 this.mode='mt'; // Ensure that we are in MT mode
-                view_ObjList = default_view_ObjList;
-            }
+				if (threed_mt_mode == "box_label"){
+					default_view_ObjList = true;
+				}
+				view_ObjList = default_view_ObjList;
+			}
             
             if((this.mode=='i') || (this.mode=='c') || (this.mode=='f')) {
                 document.getElementById('body').style.visibility = 'visible';
             }
             else if((this.mode=='im') || (this.mode=='mt')) {
-                var p = document.getElementById('header');
-                p.parentNode.removeChild(p);
-                var p = document.getElementById('tool_buttons');
-                p.parentNode.removeChild(p);
+                if (threed_mode != true){
+                    var p = document.getElementById('header');
+                    p.parentNode.removeChild(p);
+                    var p = document.getElementById('tool_buttons');
+                    p.parentNode.removeChild(p);
+                }else{
+                    var a = document.getElementById("header");
+                    a.parentNode.removeChild(a);
+                    var b = document.getElementById("label_buttons_navigation");
+                    b.parentNode.removeChild(b);
+                }
                 document.getElementById('body').style.visibility = 'visible';
             }
             else {
@@ -189,7 +236,7 @@ function file_info() {
                 document.getElementById('body').style.visibility = 'visible';
             }
             
-            if(!view_ObjList) {
+            if(!view_ObjList && threed_mt_mode != "box_label") {
                 var p = document.getElementById('anno_anchor');
                 p.parentNode.removeChild(p);
             }
@@ -198,22 +245,39 @@ function file_info() {
                 window.location = MThelpPage;
                 return false;
             }
-            if(this.mode=='mt') {
+            if(this.mode=='mt') { 
                 if(!this.mt_instructions) {
-                    if(mt_N=='inf') this.mt_instructions = 'Please label as many objects as you want in this image.';
+                    if (threed_mode == true) this.mt_instructions = 'Please label the groundplane in this image.';
+                    else if(mt_N=='inf') this.mt_instructions = 'Please label as many objects as you want in this image.';
                     else if(mt_N==1) this.mt_instructions = 'Please label at least ' + mt_N + ' object in this image.';
                     else this.mt_instructions = 'Please label at least ' + mt_N + ' objects in this image.';
                 }
                 if(mt_N=='inf') mt_N = 1;
-                
-                var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  Scroll down to see the entire image. &#160;&#160;&#160; </b></font></td><td><form action="' + externalSubmitURL + '"><input type="hidden" id="assignmentId" name="assignmentId" value="'+ this.assignmentId +'" /><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" /><input disabled="true" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript:document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value;" /></form></td></tr></table>';
-                
-		$('#mt_submit_form').append(html_str);
-                
-                var html_str2 = '<font size="4"><b>Scroll up to see the entire image</b></font>&#160;&#160;&#160;<font size="3">(Optional) Do you wish to provide any feedback on this HIT?</font><br /><textarea id="mt_comments_textbox" name="mt_comments_texbox" cols="94" nrows="5" />';
-		$('#mt_feedback').append(html_str2);
-                
-                if(global_count >= mt_N) document.getElementById('mt_submit').disabled=false;
+                var image_number = parseInt(image_count) + parseInt(1);
+                if (threed_mt_mode == 'gp' && threed_mode == true){
+                    if (image_count == 9){ var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td><form><input type="hidden" id="assignmentId" name="assignmentId" value="'+ this.assignmentId +'" /><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" /><input disabled="false" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript: window.parent.document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value; window.parent.submit_AMT();" /></form></td></tr></table>';
+                       	html_str += 'You are at image number '+ image_number + ' out of 10<br/>';
+			 $('#mt_submit_form').append(html_str);
+                        var html_str2 = '<font size="3">(Optional) Do you wish to provide any feedback on this HIT?</font><br /><textarea id="mt_comments_textbox" name="mt_comments_texbox" cols="94" nrows="5" />';
+                        $('#mt_feedback').append(html_str2);
+                        document.getElementById('mt_submit').disabled=false;
+                    }else{ var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td><input type="submit" id="mt_submit" name="Submit" value="Submit Image" onmousedown="javascript:AMTLoadNextImage();" /></td></tr></table>';
+                       	html_str += 'You are at image number '+ image_number  + ' out of 10<br/>';
+			 $('#mt_submit_form').append(html_str);
+                      
+                    }
+                    var html_str3 = '<a href="gp_instr_new/instr.htm" id="instr_full"  style = "text-decoration: none; color:#000000;" class="button2">Instructions</a>';
+    		      $('#mt_submit_form').append(html_str3);
+				  $('#instr_full').click(function(){ $('#instr_full').colorbox({iframe:true,width:1100,height:700,transition:"none",closeButton:true});
+});
+
+                  }
+                else{ var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  Scroll down to see the entire image. &#160;&#160;&#160; </b></font></td><td><form action="' + externalSubmitURL + '"><input type="hidden" id="assignmentId" name="assignmentId" value="'+ this.assignmentId +'" /><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" /><input disabled="true" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript:document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value;" /></form></td></tr></table>';                
+                    $('#mt_submit_form').append(html_str);
+                    var html_str2 = '<font size="4"><b>Scroll up to see the entire image</b></font>&#160;&#160;&#160;<font size="3">(Optional) Do you wish to provide any feedback on this HIT?</font><br /><textarea id="mt_comments_textbox" name="mt_comments_texbox" cols="94" nrows="5" />';
+            		  $('#mt_feedback').append(html_str2);
+                    if(global_count >= mt_N || threed_mode == true) document.getElementById('mt_submit').disabled=false;
+                }
             }
         }
         else {
@@ -250,7 +314,8 @@ function file_info() {
     
     /** Gets image path */
     this.GetImagePath = function () {
-        if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return 'Images/' + this.dir_name + '/' + this.im_name;
+        if (threed_mode ==true && this.mode== 'mt') return address;
+        else if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return 'Images/' + this.dir_name + '/' + this.im_name;
     };
     
     /** Gets annotation path */
@@ -260,7 +325,8 @@ function file_info() {
     
     /** Gets full image name */
     this.GetFullName = function () {
-        if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return this.dir_name + '/' + this.im_name;
+        if (threed_mode ==true && this.mode== 'mt') return this.dir_name + '/' + parseInt(filename);
+        else if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return this.dir_name + '/' + this.im_name;
     };
     
     /** Gets template path */

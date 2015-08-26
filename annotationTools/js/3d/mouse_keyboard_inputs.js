@@ -806,7 +806,7 @@ function CalculateObjectHeightDifference(object){
 
 
 
-
+// this function updates the matrixworlds of the children in accordance to changes made to the parent; called whenever the parent plane is updated
 function SynchronizeSupportPlanes(object, parentSyncOn){// if parentSyncOn is false, don't sync parent plane (because of recursion, so no loop)
     if (!object){
         object = window.select;
@@ -814,7 +814,7 @@ function SynchronizeSupportPlanes(object, parentSyncOn){// if parentSyncOn is fa
     if (CheckIfSupportedByGroundplane(object) == false) return;
     //CalculateChildrenHeightDifferences(object);
     if (object.plane == plane){
-        if (current_mode == POINT_DRAG_MODE){
+        /*if (current_mode == POINT_DRAG_MODE){
             var lines_array = LMgetObjectField(LM_xml, object.ID, "lines");
             var lines = '';
             for (var i = 0; i < lines_array.length; i+=5){
@@ -831,9 +831,7 @@ function SynchronizeSupportPlanes(object, parentSyncOn){// if parentSyncOn is fa
                     LMsetObjectField(LM_xml, object_list[j].ID, 'lines', lines);
                 }
             }
-
-        }
-       
+        }*/
     }
     for (var i = 0; i < object.hchildren.length; i++){
         if (!object.cube){
@@ -855,7 +853,7 @@ function SynchronizeSupportPlanes(object, parentSyncOn){// if parentSyncOn is fa
         if (object.hchildren[i].cube){
             var lines_array = LMgetObjectField(LM_xml, object.ID, "lines");
             console.log(lines_array);
-            if (current_mode == POINT_DRAG_MODE){
+            /*if (current_mode == POINT_DRAG_MODE){
                 var lines = '';
                 for (var j = 0; j < lines_array.length; j+=5){
                         lines += '<vp_line>';
@@ -865,14 +863,14 @@ function SynchronizeSupportPlanes(object, parentSyncOn){// if parentSyncOn is fa
                         lines += '<y2>' + lines_array[j+3] + '</y2>';
                         lines += '<label>' + lines_array[j+4] + '</label>';
                         lines += '</vp_line>';
-            }
+                }
             console.log(lines);
             LMsetObjectField(LM_xml, object.hchildren[i].ID, 'lines', lines);
-            }
+            }*/
             
             //LMsetObjectField(LM_xml, index, 'op_points', op_points);
             //proportion_array[cube_object.ID] = arrowHelper.arrow_box.scale.x;
-            main_threed_handler.PlaneAutoSave(object.hchildren[i].ID);
+            //main_threed_handler.PlaneAutoSave(object.hchildren[i].ID);
             render_box_object(object.hchildren[i]);
         }
         SynchronizeSupportPlanes(object.hchildren[i], false);
@@ -890,6 +888,54 @@ function SynchronizeSupportPlanes(object, parentSyncOn){// if parentSyncOn is fa
         console.log("saving parent");
     }
 }
+
+/*function SynchronizeChildrenVPs(idx){//saves vp information and matrixworlds to children of object when the object is updated, meant to be called upon mouse release
+    var lines_array = LMgetObjectField(LM_xml, idx, "lines");
+    var lines = '';
+    var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+    for (var i = 0; i < lines_array.length; i+=5){
+        lines += '<vp_line>';
+        lines += '<x1>' + lines_array[i] + '</x1>';
+        lines += '<y1>' + lines_array[i+1] + '</y1>';
+        lines += '<x2>' + lines_array[i+2] + '</x2>';
+        lines += '<y2>' + lines_array[i+3] + '</y2>';
+        lines += '<label>' + lines_array[i+4] + '</label>';
+        lines += '</vp_line>';
+    }
+    if (ID_dict[idx].plane == plane){
+        for (var i = 0 ; i < object_list.length; i++){
+            if (object_list[i].cube && object_list[i].hparent == "unassigned"){
+                main_threed_handler.PlaneAutoSave(object_list[i].ID);
+                var ops = CalculateNewOp(object_list[i].plane.matrixWorld.elements); //calculate specific op because current one is not correct for children
+                var plane_matrix = '';
+                for (var j = 0; j < object_list[i].plane.matrixWorld.elements.length; j++){
+                    plane += object_list[j].plane.matrixWorld.elements[j] + ' ';
+                }
+                LMsetObjectField(LM_xml, object_list[i].ID, "plane_matrix", plane_matrix);
+                var op_points = '';
+                op_points = ops[0]/scale_factor + ' ' + ops[1]/scale_factor;
+                LMsetObjectField(LM_xml, object_list[i].ID, 'op_points', op_points);
+                SynchronizeChildrenVPs(object_list[i].ID);// make sure to update matrixworlds, opx as well - make sure to recalculate for each child
+            }// also make sure to propogate to peers as well
+        }
+    }else{
+        for (var i = 0; i < ID_dict[idx].hchildren.length; i++){
+            main_threed_handler.PlaneAutoSave(ID_dict[idx].hchildren[i].ID);
+            var ops = CalculateNewOp(ID_dict[idx].hchildren[i].plane.matrixWorld.elements); //calculate specific op because current one is not correct for children
+            var plane_matrix = '';
+            for (var j = 0; j < ID_dict[idx].hchildren[i].plane.matrixWorld.elements.length; j++){
+                plane += ID_dict[idx].hchildren[i].plane.matrixWorld.elements[j] + ' ';
+            }
+            LMsetObjectField(LM_xml, ID_dict[idx].hchildren[i].ID, "plane_matrix", plane_matrix);
+            var op_points = '';
+            op_points = ops[0]/scale_factor + ' ' + ops[1]/scale_factor;
+            LMsetObjectField(LM_xml, ID_dict[idx].hchildren[i].ID, 'op_points', op_points);
+            SynchronizeChildrenVPs(ID_dict[idx].hchildren[i]);
+        }
+    }
+
+}*/
+
 function update(camera) {
     var position = camera.position;
     var offset = position.clone().sub( target );// so the problem is the target

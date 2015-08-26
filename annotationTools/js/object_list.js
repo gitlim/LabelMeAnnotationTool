@@ -30,7 +30,7 @@ function RenderObjectList() {
   
   // Get parts tree
   var tree = getPartsTree();
-  
+ if (threed_mt_mode != "box_label") {
   // Create DIV
   html_str += '<b>Polygons in this image ('+ NundeletedPolygons +')</b>';
 
@@ -61,12 +61,14 @@ function RenderObjectList() {
   if(use_parts) {
     html_str += '<p style="font-size:10px;line-height:100%" ondrop="drop(event, -1)" ondragenter="return dragEnter(event)" ondragover="return dragOver(event)">Drag a tag on top of another one to create a part-of relationship.</p>';
   }
+}
   html_str += '<ol>';
   
   // Show list (of non-deleted objects)
   for(var i=0; i < Npolygons; i++) {
     // get part level and read objects in the order given by the parts tree
-    if(use_parts) {
+    if (threed_mt_mode == 'box_label' && main_canvas.GetAnnoByID(i) && main_canvas.GetAnnoByID(i).GetType() != 3) continue;
+	if(use_parts) {
       var ii = tree[0][i];
       var level = tree[1][i];
     }
@@ -81,7 +83,7 @@ function RenderObjectList() {
     if(is_currently_shown && (((ii<num_orig_anno)&&((view_Existing&&!isDeleted)||(isDeleted&&view_Deleted))) || ((ii>=num_orig_anno)&&(!isDeleted||(isDeleted&&view_Deleted))))) {
       // change the left margin as a function of part level
       
-      html_str += '<div class="objectListLink" id="LinkAnchor' + ii + '" style="z-index:1; margin-left:'+ (level*1.5) +'em" ';
+	  html_str += '<div class="objectListLink" id="LinkAnchor' + ii + '" style="z-index:1; margin-left:'+ (level*1.5) +'em" ';
       
       if (use_parts) {
 	// define drag events (but only if the tool is allowed to use parts)
@@ -92,6 +94,7 @@ function RenderObjectList() {
 	  'ondragenter="return dragEnter(event)" '+
 	  'ondragover="return dragOver(event)">';
       }
+	else html_str += '>'
       
       // change the icon for parts
       if(level==0) {
@@ -102,7 +105,6 @@ function RenderObjectList() {
 	// if it is a part, use part style
 	html_str += '<li class="children_tree">';
       }
-      console.log(ii);
       if ($(LM_xml).children("annotation").children("object").eq(ii).children("plane").length > 0 || $(LM_xml).children("annotation").children("object").eq(ii).children("cube").length > 0){
         html_str += '<a class="objectListLink"  id="Link' + ii + '" '+
       'href="javascript:main_threed_handler.AnnotationLinkClick('+ii+');" '+
@@ -153,8 +155,9 @@ function RenderObjectList() {
   html_str += '</ol><p><br/></p></div>';
   
   // Attach annotation list to 'anno_anchor' DIV element:
-  $('#anno_anchor').append(html_str);
-
+// document.getElementById("anno_anchor").innerHTML = html_str;
+ $('#anno_anchor').append(html_str);
+//	$(html_str).appendTo('#anno_anchor');
   /*for (var j = 0; j < Npolygons; j++){
      $(function() {
         $( "#Link" + j).draggable({

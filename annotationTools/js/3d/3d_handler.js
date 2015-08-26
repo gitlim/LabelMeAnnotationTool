@@ -415,7 +415,7 @@ function threed_handler(){
 	    	this.LoadDifferentPlane(idx);
 	    }
        	HighlightSelectedThreeDObject();
-	  	document.getElementById('Link'+idx).style.color = '#FF0000';
+	  	if (document.getElementById('Link'+idx)) document.getElementById('Link'+idx).style.color = '#FF0000';
 	  	if (object_list.length && ((window.select.hparent != "unassigned") || (!window.select.cube))) {
         	for (var i = 0; i < intersect_box.children.length; i++){
             	intersect_box.children[i].material.visible = true;
@@ -579,7 +579,7 @@ function threed_handler(){
 		selected_poly = -1;
 		unselectObjects(); // Perhaps this should go elsewhere...
 		this.StopEditEvent();
-		document.getElementById('Link'+0).style.color = '#FF0000';
+		if (document.getElementById('Link'+ 0)) document.getElementById('Link'+0).style.color = '#FF0000';
 
 	};
 
@@ -652,23 +652,24 @@ function threed_handler(){
 		main_canvas.AttachAnnotation(anno);
 
 		// Write XML to server:
-		WriteXML(SubmitXmlUrl,LM_xml,function(){return;});
+		//WriteXML(SubmitXmlUrl,LM_xml,function(){return;});
 			
 		if(view_ObjList) RenderObjectList();
 
 		var m = main_media.GetFileInfo().GetMode();
-		if(m=='mt') {
+		/*if(m=='mt') {
 			document.getElementById('object_name').value=new_name;
 			document.getElementById('number_objects').value=global_count;
 			document.getElementById('LMurl').value = LMbaseurl + '?collection=LabelMe&mode=i&folder=' + main_media.GetFileInfo().GetDirName() + '&image=' + main_media.GetFileInfo().GetImName();
 		if(global_count >= mt_N) document.getElementById('mt_submit').disabled=false;
-		}
-		this.PlaneAutoSave(window.select.ID);
+		}*/
+		//this.PlaneAutoSave(window.select.ID);
 		this.SelectObject(window.select.ID);
 		render();
 	};
 
 	this.PlaneAutoSave = function(index){
+		console.trace();
 		if (!(hover_object)){
 			if (index == null){
 				var index = window.select.ID;
@@ -730,7 +731,7 @@ function threed_handler(){
 	        vp_s.push(new_line);
 	        addVPline(vp_label.length-1, vp_layer);
 		}
-		f = LMgetObjectField(LM_xml, idx, 'focal_length');
+		//f = LMgetObjectField(LM_xml, idx, 'focal_length');
 		//CalculateAxis(idx);
 		//CalculateNewOpY(L);
 		update_plane();
@@ -872,13 +873,13 @@ function threed_handler(){
 			    var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 20, 20);
 			    var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
 			    new_plane.matrixWorld.elements = LMgetObjectField(LM_xml, i, 'plane_matrix');
-			    console.log(new_plane.matrixWorld.elements);
-			    console.log(new_plane.matrixWorld);
+			    //console.log(new_plane.matrixWorld.elements);
+			    //console.log(new_plane.matrixWorld);
 			    new_plane.matrixAutoUpdate = false;
 			    new_plane.matrixWorldNeedsUpdate = false;
 			    new_plane.frustumCulled = false;
-			    console.log(plane.matrixWorld.elements);
-			    console.log(new_plane.matrixWorld.elements);
+			    //console.log(plane.matrixWorld.elements);
+			    //console.log(new_plane.matrixWorld.elements);
 			    new_plane.material.visible = false;
 			    new_box_object.plane = new_plane;
 			    var cubeGeometry = new THREE.CubeGeometry(small_w, small_h, small_d);
@@ -935,9 +936,6 @@ function threed_handler(){
 
 	this.StopEditEvent = function(){
 
-	  var anno = main_canvas.GetAnnoByID(window.select.ID);
-	  select_anno = null;
-
 	  // Write logfile message:
 	  WriteLogMsg('*Closed_Edit_Popup');
 
@@ -948,16 +946,6 @@ function threed_handler(){
 
 	  // If the annotation is not deleted or we are in "view deleted" mode, 
 	  // then attach the annotation to the main_canvas:
-	  if(!LMgetObjectField(LM_xml, anno.anno_id, 'deleted') || view_Deleted) {
-	    
-	    main_canvas.AttachAnnotation(anno);
-	    if(!anno.hidden) {
-	      anno.RenderAnnotation('rest');
-	    }
-	    if (video_mode){
-	      oVP.DisplayFrame(oVP.getcurrentFrame());
-	    }
-	  }
 
 	  // Render the object list:
 	  if(view_ObjList) {

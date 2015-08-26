@@ -39,6 +39,17 @@ canvas {
   -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
 }
 
+#mt_submit{
+width:100px;
+height:20px;
+
+}
+
+#instr_full{
+width:100px;
+height:20px;
+}
+
 #threed_mode_buttons{
   background-color:#fff;
   border: 2px solid #000;
@@ -204,3 +215,18 @@ height:100%; z-index:0;}
     border-style:solid;
     border-color:#666666;
 }
+
+.button2 {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    top: 20px;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:arial;
+    font-size:15px;
+    text-decoration: none;
+    text-align: center;
+    color: initial;
+    display: inline-block;
+    }

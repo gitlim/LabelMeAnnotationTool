@@ -21,6 +21,7 @@ function StartupLabelMe() {
     // annotation folder or image filename.  If false is returned, the
     // function fetches a new image and sets the URL to reflect the
     // fetched image.
+    
     if(!main_media.GetFileInfo().ParseURL()) return;
 
     if(video_mode) {
@@ -46,6 +47,7 @@ function StartupLabelMe() {
 
           // Read the XML annotation file: this needs to be replaced with something that reads the gp data
           var anno_file = main_media.GetFileInfo().GetFullName();
+      	  if (main_media.GetFileInfo().GetMode() == 'mt') anno_file = anno_file + '.xml' + '?' + Math.random();
           anno_file = 'Annotations/' + anno_file.substr(0,anno_file.length-4) + '.xml' + '?' + Math.random();
           ReadXML(anno_file,LoadAnnotationSuccess,LoadAnnotation404);
       };
@@ -54,7 +56,7 @@ function StartupLabelMe() {
 
         //document.getElementById("icon_wrapper").style.display = "block";
         //CreateModelList();
-        FinishStartup();
+        //FinishStartup();
     }else{
       // This function gets run after image is loaded:
       console.log("else");
@@ -64,8 +66,8 @@ function StartupLabelMe() {
 
       // Read the XML annotation file:
       var anno_file = main_media.GetFileInfo().GetFullName();
-      anno_file = 'Annotations/' + anno_file.substr(0,anno_file.length-4) + '.xml' + '?' + Math.random();
-      ReadXML(anno_file,LoadAnnotationSuccess,LoadAnnotation404);
+	  anno_file = 'Annotations/' + anno_file + '.xml' + '?' + Math.random();
+	  ReadXML(anno_file,LoadAnnotationSuccess,LoadAnnotation404);
           };
 
       // Get the image:
@@ -257,11 +259,18 @@ function FinishStartup() {
         main_threed_handler.CreateGroundplane();
         main_threed_handler.PlaneAutoSave(groundplane_id);
       }
-      window.select = object_list[0];
-      HighlightSelectedThreeDObject();
-      document.getElementById('Link'+groundplane_id).style.color = '#FF0000';
-      main_threed_handler.LoadDifferentPlane(groundplane_id);
-      render();
+		if (threed_mt_mode == 'box_label'){
+			add_box_internal();
+			HideAllPolygons();
+			ClearCanvas();
+			RenderObjectList();
+		}else{
+			window.select = object_list[0];
+			HighlightSelectedThreeDObject();
+			document.getElementById('Link'+groundplane_id).style.color = '#FF0000';
+			main_threed_handler.LoadDifferentPlane(groundplane_id);
+			render();
+		}
   }
   // Set action when the user presses a key:
   document.onkeyup = main_handler.KeyPress;
@@ -277,6 +286,7 @@ function FinishStartup() {
 }
 
 function Initialize3dButtons(){
+  if (threed_mt_mode == 'gp') return;
     var html_str = '<!--BUTTONS FOR 3D--> \
     <div id = "threed_mode_buttons"> \
         <button id="add_box" type="button" name="add" value="Add" onclick = "SetDrawingMode(2);">Add Box</button> \
@@ -290,34 +300,40 @@ function Initialize3dButtons(){
     $( "#add_plane" ).on("click", function() { update_plane().done(add_plane);} );
     $( "#remove" ).on("click", function() { main_threed_handler.EditBubbleDeleteButton();});
     $( "#navigation" ).on("click", function() { 
-      if (nav_on == false){
-        nav_on = true; 
-        copy_camera();
-        for (var i = 0; i < stage.children.length; i++) {
+    if (nav_on == false){
+		nav_on = true; 
+    copy_camera();
+		for (var i = 0; i < stage.children.length; i++) {
             stage.children[i].hide();
-        }
-        stage.draw();
-        for (var i = 0; i < object_list.length; i++){
-          if (object_list[i].cube && CheckIfSupportedByGroundplane(object_list[i]) == false){
+		}
+    stage.draw();
+  	for (var i = 0; i < object_list.length; i++){
+        if (object_list[i].cube && CheckIfSupportedByGroundplane(object_list[i]) == false){
             if (window.select && object_list[i] == window.select) continue;
             else object_list[i].cube.traverse( function ( object ) { object.visible = false; } );
-          }
+         		}	
         }
-      }else{
-        nav_on = false; 
-        camera = old_camera;
-        for (var i = 0; i < object_list.length; i ++){
-          if (object_list[i].cube) object_list[i].cube.traverse( function ( object ) { object.visible = true; } );
-        }
-        HighlightSelectedThreeDObject();
-        render();};});
-
+     		}else{
+        	nav_on = false; 
+        	camera = old_camera;
+        	for (var i = 0; i < object_list.length; i ++){
+         		if (object_list[i].cube) object_list[i].cube.traverse( function ( object ) { object.visible = true; } );
+        	}
+        	HighlightSelectedThreeDObject();
+        	render();
+      };});
+		if (threed_mt_mode == "box_label"){
+			var myNode = document.getElementById("add_plane");
+			console.log(myNode);
+			myNode.parentNode.removeChild(myNode);
+   		}	
 }
 
 // Initialize the segmentation tool. This function is called when the field
 // scribble of the url is true
 function InitializeAnnotationTools(tag_button, tag_canvas){
     if (scribble_mode) scribble_canvas = new scribble_canvas(tag_canvas);
+    if (threed_mode == true && main_media.GetFileInfo().GetMode() == 'mt') return;
     var html_str = '<div id= "polygonDiv" class="annotatemenu">Polygon<br></br>Tool \
         <button id="polygon" class="labelBtnDraw" type="button" title="Start Polygon" onclick="SetPolygonDrawingMode(false)" > \
         <img id="polygonModeImg" src="Icons/polygon.png"  width="28" height="38" /> \

@@ -11,6 +11,10 @@ function ReadXML(xml_file,SuccessFunction,ErrorFunction) {
 }
 
 function WriteXML(url,xml_data,SuccessFunction,ErrorFunction) {
+	if (view_only == true){
+		console.log("View only mode... not saving");
+		return;
+	}
     oXmlSerializer =  new XMLSerializer();
     sXmlString = oXmlSerializer.serializeToString(xml_data);
         
