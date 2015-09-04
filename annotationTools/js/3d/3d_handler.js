@@ -84,7 +84,7 @@ function threed_handler(){
 				html_str += K[i] + ' ';
 			}
 			html_str += '</plane_matrix>';
-			html_str += '<focal_length>' + f + '</focal_length>';
+			html_str += '<focal_length>' + f/scale_factor + '</focal_length>';
 			html_str += '</plane>';
 			html_str += '</object>';
 			$(LM_xml).children("annotation").append($(html_str));
@@ -124,11 +124,11 @@ function threed_handler(){
 			html_str += '</lines>';
 			html_str += '<op_points>' + op_points[0] + ' ' + op_points[1] + '</op_points>';
 			html_str += '<plane_matrix>';
-			for (var i = 0; i < window.select.cube.parent.matrixWorld.elements.length; i++){
-				html_str += window.select.cube.parent.matrixWorld.elements[i] + ' ';
+			for (var i = 0; i < window.select.plane.matrixWorld.elements.length; i++){
+				html_str += window.select.plane.matrixWorld.elements[i] + ' ';
 			}
 			html_str += '</plane_matrix>';
-			html_str += '<focal_length>' + f + '</focal_length>';
+			html_str += '<focal_length>' + f/scale_factor + '</focal_length>';
 			html_str += '</plane>';
 			html_str += '</object>';
 
@@ -145,12 +145,12 @@ function threed_handler(){
 		if(view_ObjList) RenderObjectList();
 
 		var m = main_media.GetFileInfo().GetMode();
-		if(m=='mt') {
+		/*if(m=='mt') {
 			document.getElementById('object_name').value=new_name;
 			document.getElementById('number_objects').value=global_count;
 			document.getElementById('LMurl').value = LMbaseurl + '?collection=LabelMe&mode=i&folder=' + main_media.GetFileInfo().GetDirName() + '&image=' + main_media.GetFileInfo().GetImName();
-		if(global_count >= mt_N) document.getElementById('mt_submit').disabled=false;
-		}
+		if(global_count >= mt_N) document.getElementById('mt_submit').disabled=false ;
+		}*/
 		vp_label = [];
 		vp_s = [];
 		for (var i = 0; i < lines_array.length; i+=5){
@@ -183,6 +183,7 @@ function threed_handler(){
 	};
 
 	this.GotoFirstAnnoObject = function(){
+		if (threed_mt_mode == "box_label") return;
 		var anno_type = main_canvas.annotations[0].GetType();
 		if (anno_type == 2 || anno_type == 3){
 			this.SelectObject(0);
@@ -644,7 +645,7 @@ function threed_handler(){
 			html_str += window.select.plane.matrixWorld.elements[i] + ' ';
 		}
 		html_str += '</plane_matrix>';
-		html_str += '<focal_length>' + f + '</focal_length>';
+		html_str += '<focal_length>' + f/scale_factor_x + '</focal_length>';
 		html_str += '</plane>';
 		html_str += '</object>';
 		$(LM_xml).children("annotation").append($(html_str));
@@ -701,7 +702,7 @@ function threed_handler(){
 				matrix += ID_dict[index].plane.matrixWorld.elements[i] + ' ';
 			}
 		LMsetObjectField(LM_xml, index, 'plane_matrix', matrix);
-		LMsetObjectField(LM_xml, index, 'focal_length', f);
+		LMsetObjectField(LM_xml, index, 'focal_length', f/scale_factor);
 
 	    WriteXML(SubmitXmlUrl,LM_xml,function(){return;});
 	    console.log("done saving");
@@ -840,6 +841,7 @@ function threed_handler(){
 	this.LoadThreeDObjectsOnStartup = function(){
 		var obj_elts = LM_xml.getElementsByTagName("object");
   		var num_obj = obj_elts.length;
+		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
   		for (var i = 0; i < num_obj; i++){
   			if (LMgetObjectField(LM_xml, i, 'deleted') != 0){
   				continue;
@@ -856,6 +858,13 @@ function threed_handler(){
 			    if (i == 0){
   					ID_dict[i].plane = plane;
   					groundplane_id = ID_dict[i].ID;
+					gp_f = LMgetObjectField(LM_xml, groundplane_id, "focal_length")*scale_factor;
+					op_points = LMgetObjectField(LM_xml, groundplane_id, "op_points");
+					op_x = op_points[0]*scale_factor_x;
+					op_y = op_points[1]*scale_factor_y;
+					window.select = ID_dict[i];
+					this.LoadDifferentPlane(i);
+					window.select = null;
   				}else{
   					new_plane_object.plane = new_plane;
   					scene.add(new_plane);

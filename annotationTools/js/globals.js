@@ -86,4 +86,7 @@ var externalSubmitURLsandbox = 'http://workersandbox.mturk.com/mturk/externalSub
 var mt_N = 'inf';
 
 var object_choices = '...';
-
+var new_attributes = '';
+var new_occluded = '';
+var test_mode = false;
+var image_list_number = 0;

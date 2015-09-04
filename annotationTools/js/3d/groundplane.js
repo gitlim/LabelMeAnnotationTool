@@ -365,7 +365,7 @@ function changeLineType(){
 }
 
 
-function update_plane() {
+function update_plane(noRender) {
      if (hover_object && !(hover_object.cube)){//when hovering ofer a link is going on;
         selected_plane = hover_object.plane;
     }else if (window.select){
@@ -539,7 +539,7 @@ function update_plane() {
     //K[14] = vertical_transform;
     K[15] = 1;
 
-    rerender_plane(K);
+    if (noRender != true) rerender_plane(K);
     //console.log(op_x, op_y);
 
     setTimeout(function(){

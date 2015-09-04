@@ -46,7 +46,6 @@ function onDocumentMouseDown(event) {
     var x = GetEventPosX(event);
     var y = GetEventPosY(event);
     var point = new Point(x, y);
-    console.log(x,y);
     if (nav_on == true){
         rotateStart.set( event.clientX, event.clientY );
         console.log('mouse down rotate');
@@ -68,13 +67,14 @@ function onDocumentMouseDown(event) {
             arrowHelper.arrow_list[i].cone.material.color.setHex(0x0000ff);
             resize_x0 = event.clientX;
             resize_y0 = event.clientY;
-            var vector1 = new THREE.Vector3(0, 0, 0).applyMatrix4(arrowHelper.arrow_list[i].matrixWorld);
-            var vector2 = new THREE.Vector3(0, 1, 0).applyMatrix4(arrowHelper.arrow_list[i].matrixWorld);
+			var arrow_length = Math.abs(arrowHelper.arrow_list[i].cone.position.clone().y);
+            var vector1 = new THREE.Vector3(0, 0, 0).applyMatrix4(arrowHelper.arrow_list[i].matrixWorld.clone());
+            var vector2 = new THREE.Vector3(0, 0.05, 0).applyMatrix4(arrowHelper.arrow_list[i].matrixWorld.clone());
             var proj2 = new THREE.Projector();
-            var vector3 = new THREE.Vector3();
+            /*var vector3 = new THREE.Vector3();
             vector3.subVectors(vector2, vector1);
             resize_vx = (vector3.x)*renderer.domElement.width/2;
-            resize_vy = (-1*vector3.y)*renderer.domElement.height/2;
+            resize_vy = (-1*vector3.y)*renderer.domElement.height/2;*/
             old_arrow_position = window.select.cube.position.clone();
             old_arrow_position.z = old_arrow_position.z + window.select.cube.scale.z*0.5*small_h;
             old_arrow_position.applyMatrix4(window.select.cube.parent.matrixWorld.clone());
@@ -84,7 +84,7 @@ function onDocumentMouseDown(event) {
             var mouse3D = projector.unprojectVector(new THREE.Vector3(  0, 0, 1 ), camera );
             var direction = mouse3D.sub(camera.position).normalize();
             var normal = direction.clone().normalize();
-            old_arrow_position = window.select.cube.position.clone();
+            iold_arrow_position = window.select.cube.position.clone();
             old_arrow_position.z = old_arrow_position.z + window.select.cube.scale.z*0.5*small_h;
             old_arrow_position.applyMatrix4(window.select.cube.parent.matrixWorld.clone());
             arrow_vector = arrowHelper.arrow_list[i].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[i].cone.parent.matrixWorld.clone());
@@ -93,13 +93,15 @@ function onDocumentMouseDown(event) {
             old_scale = window.select.cube.scale.clone();
             var vector1 = new THREE.Vector3(0, 0, 0).applyMatrix4(resize_arrowhead_intersect[0].object.matrixWorld);
             var vector2 = new THREE.Vector3(0, 1, 0).applyMatrix4(resize_arrowhead_intersect[0].object.matrixWorld);
-            var proj2 = new THREE.Projector();
+            var proj2 = new THREE.Projector();*/
             var M = arrowHelper.arrow_list[i].matrixWorld.clone();
-            proj2.projectVector(vector1, camera);
+			proj2.projectVector(vector1, camera);
             proj2.projectVector(vector2, camera);
+			console.log(vector1);
+			console.log(vector2);
             resize_vx = (vector2.x-vector1.x)* renderer.domElement.width/2;
             resize_vy = (-vector2.y+vector1.y)*renderer.domElement.height/2;
-            //console.log(vector1, vector2);*/
+            console.log(resize_vx, resize_vy);
             var resize_norm = Math.sqrt(resize_vx*resize_vx+resize_vy*resize_vy);
             resize_vx = resize_vx / resize_norm;
             resize_vy = resize_vy / resize_norm;
@@ -117,7 +119,8 @@ function onDocumentMouseDown(event) {
             arrow_vector = arrowHelper.arrow_list[arrow_index].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[arrow_index].cone.parent.matrixWorld.clone());
             arrow_vector = arrow_vector.sub(arrow_position.clone());
             proj_vector = arrow_vector.clone().projectOnPlane(normal).normalize();
-            resize_scale0 = window.select.cube.scale.clone();
+            console.log(proj_vector);
+			resize_scale0 = window.select.cube.scale.clone();
 
 
             /*********************************************/
@@ -187,7 +190,6 @@ function onDocumentMouseDown(event) {
                             current_mode = BOX_MOVE_MODE;
                             click_original = plane_click[0].point; // everything in world coordinates
                             //click_original = plane_click[0].point;
-                            console.log(click_original);
                     }
                 //click_offset.copy(cube_click[i].point.sub( window.select.cube.position.clone()));
                 cube_original.copy(window.select.cube.position.clone().applyMatrix4(window.select.cube.parent.matrixWorld.clone()));
@@ -201,8 +203,6 @@ function onDocumentMouseDown(event) {
             prev_event_x = event.clientX;
             prev_event_y = event.clientY;
             var i_mat = new THREE.Matrix4().getInverse(window.select.plane.matrixWorld.clone());
-            console.log(a[0].point);
-            console.log(a[0].point.applyMatrix4(i_mat));
             resize_x0 = event.clientX;
             resize_y0 = event.clientY;
             plane_vector1 = new THREE.Vector3();
@@ -269,7 +269,6 @@ function onDocumentMouseDown(event) {
         event.preventDefault();
         current_mode = ROTATE_MODE;
     }
-    console.log(current_mode);
     return;
 }
 
@@ -315,16 +314,13 @@ function onDocumentMouseMove(event) {
             toggle_cube_rotate_indicators(false);
             toggle_cube_move_indicators(false);
             //op_x = op_x + event.clientX - prev_event_x;
-            console.log(op_y);
             op_y = op_y + event.clientY - prev_event_y;
             prev_event_x = event.clientX;
             prev_event_y = event.clientY;
 
-            console.log(op_x, op_y);
             vert_plane_intersect = ray.intersectObject(vert_plane, false);
             if (vert_plane_intersect[0]){
                 var change_vector = vert_plane_intersect[0].point.clone().sub(old_vert_plane_intersect_point);
-                console.log(change_vector);
                 change_vector.projectOnVector(projected_normal);
                 var plane_scaling = change_vector.projectOnVector(plane_vector2.clone().sub(plane_vector1.clone())).length();
                 old_vert_plane_intersect_point = vert_plane_intersect[0].point.clone();
@@ -332,12 +328,9 @@ function onDocumentMouseMove(event) {
             var resize_x1 = event.clientX;
             var resize_y1 = event.clientY;
             var resize_dot = (-1*resize_y1 + resize_y0)*Math.abs(resize_vy);
-            console.log(resize_vy);
-            console.log(resize_y1 - resize_y0);
             resize_x0 = resize_x1;
             resize_y0 = resize_y1;
             resize_dir = new THREE.Vector3(0, 0, 1);
-            console.log(plane_scaling);
             //window.select.plane.matrixWorld.multiplyMatrices(window.select.plane.matrixWorld, (new THREE.Matrix4()).makeTranslation(0, 0, (2*Math.sign(resize_dot)*plane_scaling*resize_dir.z)));
             /*if (window.select.hparent != "unassigned"){
                 calculate_box_location(window.select, window.select);
@@ -365,8 +358,11 @@ function onDocumentMouseMove(event) {
             //console.log(resize_vx, resize_vy);
             //console.log((resize_x1 - resize_x0), (resize_y1 - resize_y0));
             var resize_dot = ((resize_x1 - resize_x0)*resize_vx + (resize_y1 - resize_y0)*resize_vy)*0.3;
-            resize_x0 = resize_x1;
-            resize_y0 = resize_y1;
+           console.log(resize_vx);
+			console.log(resize_vy);
+			console.log(resize_y1 - resize_y0);
+			// resize_x0 = resize_x1;
+           //resize_y0 = resize_y1;
             //resize_dot = resize_dot/resize_mag;
             //window.select.cube.scale.set(window.select.cube.scale.x-resize_dot*small_w*Math.abs(resize_dir.x), window.select.cube.scale.y-resize_dot*small_h*Math.abs(resize_dir.y), window.select.cube.scale.z-resize_dot*small_d*resize_dir.z);
              //console.log(resize_dot);
@@ -380,26 +376,15 @@ function onDocumentMouseMove(event) {
             var normal = direction.clone().normalize();
             //arrow_vector = arrowHelper.arrow_list[arrow_index].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[arrow_index].cone.parent.matrixWorld.clone());
             //arrow_vector = arrow_vector.sub(arrow_position.clone());
-            //console.log(arrow_vector.length());
 
             //old_arrow_cone_position = arrowHelper.arrow_list[arrow_index].cone.position.clone().applyMatrix4(arrowHelper.arrow_list[arrow_index].cone.parent.matrixWorld.clone());
             //old_ray_cone_vector = old_arrow_cone_position.clone().sub(camera.position).projectOnPlane(normal_for_plane_for_projection);
             //console.log(arrow_vector.clone().normalize());
             if (vert_plane_ray[0]){
-                console.log(vert_plane_ray[0].point);
                 var change_vector = vert_plane_ray[0].point.clone().sub(old_arrow_cone_position.clone());
-                console.log(old_arrow_cone_position.clone());
-                //console.log(change_vector);
                 change_vector.projectOnPlane(normal);
-                console.log("change vector");
-                console.log(change_vector);
-                sign = Math.sign(change_vector.clone().normalize().dot(proj_vector.clone().normalize())); // see if projection of change vector on proj vector is positive or negative
-                console.log(change_vector.clone().normalize().dot(proj_vector.clone().normalize()));
-                //console.log(sign);
+                sign = Math.sign(resize_dot); // see if projection of change vector on proj vector is positive or negative
                 //if (vert_plane_ray[0].point.clone().sub(arrow_position.clone()).projectOnPlane(normal).length() > proj_vector.length()) return;
-                //console.log(change_vector);
-                //console.log(change_vector.clone().normalize().add(proj_vector.clone().normalize()).length());
-                //console.log(change_vector.clone().length());
                 projected_new_vector = vert_plane_ray[0].point.clone().sub(camera.position).projectOnPlane(normal_for_plane_for_projection);
                 var projector = new THREE.Projector();
                 ray_vector0 = old_arrow_cone_position.clone().sub(camera.position).projectOnPlane(normal_for_plane_for_projection);
@@ -444,7 +429,6 @@ function onDocumentMouseMove(event) {
                 console.log(Math.sin(angle_d));
                 console.log(Math.sin(angle_d)/Math.sin(angle_c));*/
                 var resize_amount = old_ray_vector.length()/Math.sin(angle_c)*Math.sin(angle_d);
-                console.log(resize_amount);
                 /**********************************************************************************/
                 //console.log(projected_change_vector.length())
                 //console.log(scaling);
@@ -453,7 +437,6 @@ function onDocumentMouseMove(event) {
                 var resize_constant_a = 20;
                 var resize_constant_b = 20;
                 var difference_factor = window.select.cube.position.clone().distanceTo(resize_pos0)/small_w;
-                console.log(resize_pos0);
                 if (resize_dir.x){
                     window.select.cube.scale.setX(original_scale.x + sign_constant*resize_amount/small_w);
                     if (window.select.cube.scale.x > 200){
@@ -760,22 +743,15 @@ function calculateResizeMagnitude(resize_x0, resize_y0){
     console.log(resize_x0, resize_y0);
     var original_mouse3D = projector.unprojectVector(new THREE.Vector3( ( (resize_x0 -rect.left)*scale_factor/ renderer.domElement.width ) * 2 - 1, - ( (resize_y0-rect.top)*scale_factor / renderer.domElement.height ) * 2 + 1, 1 ), camera ); // 3d coordinates of original screen point
     var x_scale = (original_mouse3D.x - camera.position.x)/original_arrowhead_point.x;
-    console.log(original_mouse3D.x);
-    console.log(camera.position.x);
-    console.log(original_arrowhead_point.x);
-    console.log(x_scale);
     var new_mouse3D = projector.unprojectVector(new THREE.Vector3( ( (event.clientX -rect.left)*scale_factor/ renderer.domElement.width ) * 2 - 1, - ( (event.clientY-rect.top)*scale_factor / renderer.domElement.height ) * 2 + 1, 1 ), camera ); // 3d coordinates of original screen point
     var resize_x0 = event.clientX;
     var resize_y0 = event.clientY;
     var new_x = (new_mouse3D.x - camera.position.x)/x_scale; // calculate x coordinate of new point based on scale
-    console.log(new_x);
     var vector2 = new THREE.Vector3(0, 1, 0).applyMatrix4(arrowhead_object.matrixWorld).normalize();
     var new_scale = (new_x - original_arrowhead_point.x)/vector2.x;
-    console.log(new_scale);
     var new_point = original_arrowhead_point.add(vector2.multiplyScalar(new_scale));
     var magnitude = original_arrowhead_point.distanceTo(new_point);
     original_arrowhead_point = new_point;
-    console.log(magnitude);
     return magnitude;
 }
 
@@ -842,7 +818,6 @@ function SynchronizeSupportPlanes(object, parentSyncOn){// if parentSyncOn is fa
               continue;  
             } 
             var holder = object.hchildren[i].height_from_parent_cube;
-            console.log( object.hchildren[i].height_from_parent_cube);
              object.hchildren[i].plane.matrixWorld.multiplyMatrices(object.plane.matrixWorld.clone(), (new THREE.Matrix4()).makeTranslation(0, 0, holder + object.cube.scale.clone().z*small_h*0.5));
             console.log( object.hchildren[i].height_from_parent_cube);
            
@@ -852,7 +827,6 @@ function SynchronizeSupportPlanes(object, parentSyncOn){// if parentSyncOn is fa
         }
         if (object.hchildren[i].cube){
             var lines_array = LMgetObjectField(LM_xml, object.ID, "lines");
-            console.log(lines_array);
             /*if (current_mode == POINT_DRAG_MODE){
                 var lines = '';
                 for (var j = 0; j < lines_array.length; j+=5){
@@ -884,7 +858,6 @@ function SynchronizeSupportPlanes(object, parentSyncOn){// if parentSyncOn is fa
             }
         }
         main_threed_handler.PlaneAutoSave(object.hparent.ID);
-        console.log(object.hparent.ID);
         console.log("saving parent");
     }
 }

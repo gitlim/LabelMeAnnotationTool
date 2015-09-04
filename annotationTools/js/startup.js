@@ -249,21 +249,23 @@ function FinishStartup() {
       Initialize3dButtons(); //create tool buttons and icon container
   }
   if (threed_mode){
+	  start_time = Date.now();
       init_kinetic_stage();
       init();
       SetDrawingMode(2);
       render();
       main_threed_handler.LoadThreeDObjectsOnStartup();
-      render();
       if (object_list.length < 1){
         main_threed_handler.CreateGroundplane();
         main_threed_handler.PlaneAutoSave(groundplane_id);
       }
-		if (threed_mt_mode == 'box_label'){
+		if (threed_mt_mode == 'box_label'){;
 			add_box_internal();
 			HideAllPolygons();
 			ClearCanvas();
 			RenderObjectList();
+			update_plane();
+			render();
 		}else{
 			window.select = object_list[0];
 			HighlightSelectedThreeDObject();

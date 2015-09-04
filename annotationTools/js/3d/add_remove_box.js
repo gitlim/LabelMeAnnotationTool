@@ -47,7 +47,9 @@ function add_box_internal() {
     var projector = new THREE.Projector();
     var mouse3D = projector.unprojectVector(new THREE.Vector3(  0, 0, 1 ), camera );
     var direction = mouse3D.sub(camera.position).normalize();
-    var position = direction.clone();
+   // var position = direction.clone();
+	var position = new THREE.Vector3(0, 0, -1);
+	console.log(position);
     //position = position.applyMatrix4(plane.matrixWorld);
     var i_mat = new THREE.Matrix4().getInverse(window.select.cube.parent.matrixWorld.clone());
     position = position.applyMatrix4(i_mat);

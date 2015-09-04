@@ -165,6 +165,9 @@ function RenderObjectList() {
         });
     });
   }*/
+	if (threed_mode == true && window.select){
+		if (document.getElementById('Link' + window.select.ID)) document.getElementById('Link' + window.select.ID).style.color = '#FF0000';
+	}
 }
 
 
@@ -266,6 +269,7 @@ function ShowAllPolygons() {
 
 function drag(event, part_id) {
   // stores the object id in the data that is being dragged.
+  if (threed_mt_mode == "box_label") return;
   console.log(event);
   event.dataTransfer.effectAllowed = "all";
   event.dataTransfer.setData("Text", part_id);
@@ -289,6 +293,7 @@ function dragOver(event) {
 }
 
 function drop(event, object_id) {
+  if (threed_mt_mode == "box_label") return;
   event.preventDefault();
   var part_id=event.dataTransfer.getData("Text");
   event.stopPropagation();

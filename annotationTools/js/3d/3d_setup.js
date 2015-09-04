@@ -350,9 +350,27 @@ function open_instr() {
 }
 
 
-function AMTLoadNextImage(){
+function AMTLoadNextImage(gp_incorrect){
+	if (wait_for_input == 1){
+		alert("You must close the popup window before you submit.");
+		return;
+	}
+	if (object_list.length < 11 && gp_incorrect != true){
+		var answer = confirm("You labeled less than 10 objects. Are you sure that there are no more objects in the image to label?");
+		if (answer == false) return; 		
+	}
+	var time = (Date.now() - start_time)/1000;
+	window.parent.time_string += time + ' ';
     var current_url = window.location.href;
     var new_count = parseInt(image_count) + 1;
-    var new_url = current_url.replace("image=" + image_count, "image=" + new_count);
+	//var new_url = window.location.href;
+	/*if (fix_mode == true && image_count == 9){
+		new_count = 0;
+		var new_list_count = parseInt(image_list_number) + 1;
+		new_url = current_url.replace("image_list=" + image_list_number, "image_list=" + new_list_count).replace("image=" + image_count, "image=0");
+		image_count = 0;
+	}*/
+	console.log(new_count);
+   	new_url = current_url.replace("image=" + image_count, "image=" + new_count);
     window.location.assign(new_url);
 }
