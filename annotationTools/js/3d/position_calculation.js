@@ -58,16 +58,18 @@ function calculate_box_location(cube_object, support_object){ // make it the bot
                 lines += '</vp_line>';
         }
     LMsetObjectField(LM_xml, cube_object.ID, 'lines', lines);
-    //op_points = op_x/scale_factor + ' ' + op_y/scale_factor;
-    //LMsetObjectField(LM_xml, index, 'op_points', op_points);
+	op_x =  CalculateNewOp(cube_object.plane.matrixWorld.clone().elements)[0];
+	op_y = CalculateNewOp(cube_object.plane.matrixWorld.clone().elements)[1];
+    op_points = op_x/scale_factor_x + ' ' + op_y/scale_factor_y;
+    LMsetObjectField(LM_xml, cube_object.ID, 'op_points', op_points);
     //proportion_array[cube_object.ID] = arrowHelper.arrow_box.scale.x;
     //CalculateChildrenHeightDifferences(support_object, proportion_scale);
+    main_threed_handler.BoxAutoSave(cube_object.ID);
     if (cube_object.hchildren.length > 0){
         for (var i = 0; i < cube_object.hchildren.length; i++){
             calculate_children_box_locations(cube_object.hchildren[i], proportion_scale);
         }
     }
-    main_threed_handler.BoxAutoSave(cube_object.ID);
     if (window.select) check_plane_box_collision();
     arrow_box_position = null;
     indicator_box_position = null;
@@ -131,18 +133,18 @@ function calculate_children_box_locations(object, parent_scale){
                 lines += '</vp_line>';
         }
     LMsetObjectField(LM_xml, object.ID, 'lines', lines);
-    var op_points = CalculateNewOp(object.plane.matrixWorld.elements);
-    op_x = op_points[0];
-    op_y = op_points[1];
-    //LMsetObjectField(LM_xml, index, 'op_points', op_points);
+    op_x =  CalculateNewOp(object.plane.matrixWorld.elements)[0];
+	op_y = CalculateNewOp(object.plane.matrixWorld.elements)[1];
+    op_points = op_x/scale_factor_x + ' ' + op_y/scale_factor_y;
+    LMsetObjectField(LM_xml, object.ID, 'op_points', op_points);
+	main_threed_handler.BoxAutoSave(object.ID);
     if (object.hchildren){
         for (var i = 0; i < object.hchildren.length; i++){
             calculate_children_box_locations(object.hchildren[i], proportion_scale)
         }
     }
     //CalculateChildrenHeightDifferences(object);
-    main_threed_handler.BoxAutoSave(object.ID);
-    render();
+        render();
 }
 
 

@@ -373,7 +373,7 @@ function update_plane(noRender) {
     }
     if (window.select){
         //CalculateChildrenHeightDifferences(window.select);
-        SynchronizeSupportPlanes();
+       SynchronizeSupportPlanes();
     }
 
     var r = $.Deferred();
@@ -899,7 +899,8 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
 }*/
 
 function CalculateNewOp(L){
-    gp_f = LMgetObjectField(LM_xml, groundplane_id, 'focal_length');
+    var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+    gp_f = LMgetObjectField(LM_xml, groundplane_id, 'focal_length')*scale_factor;
     var op_y = ((axis_x[1]+axis_y[1]) - L[13])*gp_f + op_y_orig;
     var op_x = (L[12] + (axis_x[0] + axis_y[0]))*gp_f + op_x_orig;
     console.log(op_x, op_y);

@@ -116,7 +116,7 @@ function createWorld() {// split into different parts for 3d and gp later
     //gp_plane_geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 10, -10, 0 ) );
     //plane_geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 10, -10, 0 ) );
     var vert_plane_geometry = new THREE.PlaneGeometry(200, 200, 400, 400);
-    var vert_plane_material = new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide, wireframe: false});
+    var vert_plane_material = new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide, wireframe: true});
     var collision_plane_geometry = new THREE.PlaneGeometry(50, 50, 25, 25);
     var collision_plane_material = new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide, wireframe: true});; 
     var plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});

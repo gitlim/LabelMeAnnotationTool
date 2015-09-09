@@ -70,7 +70,7 @@ function file_info() {
 						image_list_length = 5;
 						use_attributes = false;
 						use_parts = false;
-					}else if (par_value == 'gp'){
+					}else if (par_value == 'gp' || par_value == 'support_object'){
 						image_list_length = 10;
 					}
                 }
@@ -281,14 +281,14 @@ on_CreatePolygon = 1;
 								name_array[2] = ["nightstand", "bench"];
 								name_array[3] = ["rocking chair", "lamp"];
 								name_array[4] = ["nightstand", "lamp"];
-								name_array[5] = ["left nightstand", "right nightstand"];
+								name_array[5] = ["nightstand", "nightstand"];
 								name_array[6] = ["bed", "nightstand"]; 
 								name_array[7] = ["nightstand", "lamp"];
 								name_array[8] = ["bed", "drawers"];
 								name_array[9] = ["bed", "wardrobe"];
-								this.mt_instructions = 'Please label the two indicated objects and enter their names exactly as they are given: <font color = "blue"><u>' + name_array[image_count][0] + ', ' + name_array[image_count][1] + '</u></font>. <font color = "red"><b><u>Remember, you will have to label not only two objects, but 10 per image for the real HIT!</u></b></font>';
+								this.mt_instructions = 'Please label the two indicated objects and enter their names exactly as they are given: <u>' + name_array[image_count][0] + ', ' + name_array[image_count][1] + '</u>. <font color = "red"><b>Remember, you will have to label not only two objects, but 10 per image for the real HIT!</b></font><br></br>';
 						}
-							else this.mt_instructions = 'Please label <font color = "red">the <u>10</u> largest objects</font> in this image. If there are less than 10 objects, label as many as possible.';
+							else this.mt_instructions = 'Please label <font color = "red">the <u>10</u> largest objects</font> in this image. If there are less than 10 objects, label as many as possible.<br></br>';
 						}
 					else if(mt_N=='inf') this.mt_instructions = 'Please label as many objects as you want in this image.';
                     else if(mt_N==1) this.mt_instructions = 'Please label at least ' + mt_N + ' object in this image.';

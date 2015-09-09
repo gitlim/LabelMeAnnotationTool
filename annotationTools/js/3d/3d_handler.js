@@ -821,7 +821,6 @@ function threed_handler(){
            		}
            	}
            	render();
-	        this.BoxAutoSave(part_id);
 	    }else if (main_canvas.GetAnnoByID(part_id).GetType() == 2 && (main_canvas.GetAnnoByID(object_id).GetType() == 1 || main_canvas.GetAnnoByID(object_id).GetType() == 0)){
 	    	CreatePolygonClip(object_id);
 	    	ID_dict[part_id].lock_inside_clip_area = false;
