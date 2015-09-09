@@ -70,7 +70,7 @@ function file_info() {
 						image_list_length = 5;
 						use_attributes = false;
 						use_parts = false;
-					}else if (par_value == 'gp' || par_value == 'support_object'){
+					}else if (par_value == 'gp' || par_value == 'support_label'){
 						image_list_length = 10;
 					}
                 }
@@ -233,7 +233,7 @@ on_CreatePolygon = 1;
             
             if(isMT) {
                 this.mode='mt'; // Ensure that we are in MT mode
-				if (threed_mt_mode == "box_label"){
+				if (threed_mt_mode == "box_label" || threed_mt_mode == 'support_label'){
 					default_view_ObjList = true;
 				}
 				view_ObjList = default_view_ObjList;
@@ -261,7 +261,7 @@ on_CreatePolygon = 1;
                 document.getElementById('body').style.visibility = 'visible';
             }
             
-            if(!view_ObjList && threed_mt_mode != "box_label") {
+            if(!view_ObjList && threed_mt_mode == "gp") {
                 var p = document.getElementById('anno_anchor');
                 p.parentNode.removeChild(p);
             }

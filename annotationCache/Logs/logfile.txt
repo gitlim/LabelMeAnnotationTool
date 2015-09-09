@@ -34795,3 +34795,54 @@
 09-Sep-2015 17:10:36 128.31.34.129 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
 09-Sep-2015 17:10:36 128.31.34.129 *start_loading
 09-Sep-2015 17:10:39 128.31.34.129 *done_loading_imageList/static_test_0.png
+09-Sep-2015 17:21:25 128.31.34.129 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 17:21:25 128.31.34.129 *start_loading
+09-Sep-2015 17:21:27 128.31.34.129 *done_loading_imageList/static_test_0.png
+09-Sep-2015 17:37:47 128.31.34.129 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 17:37:47 128.31.34.129 *start_loading
+09-Sep-2015 17:37:49 128.31.34.129 *done_loading_imageList/static_test_0.png
+09-Sep-2015 17:38:03 128.31.34.129 *Deleting_object
+09-Sep-2015 17:38:11 128.31.34.129 *Deleting_object
+09-Sep-2015 18:21:11 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 18:21:11 18.111.111.74 *start_loading
+09-Sep-2015 18:21:13 18.111.111.74 *done_loading_imageList/static_test_0.png
+09-Sep-2015 18:44:44 18.111.111.74 *start_loading
+09-Sep-2015 18:44:44 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 18:44:46 18.111.111.74 *done_loading_imageList/static_test_0.png
+09-Sep-2015 18:44:55 18.111.111.74 *start_loading
+09-Sep-2015 18:44:55 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 18:44:57 18.111.111.74 *done_loading_http://ikea.csail.mit.edu/data/img/ir1024000554.jpg
+09-Sep-2015 18:45:07 example_folder 0 4 5 18.111.111.74  a 1 anonymous cpts_not_modified 0 0
+09-Sep-2015 18:45:57 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 18:45:57 18.111.111.74 *start_loading
+09-Sep-2015 18:45:58 18.111.111.74 *done_loading_http://ikea.csail.mit.edu/data/img/ir1024559047.jpg
+09-Sep-2015 18:46:02 example_folder 1 1 1 18.111.111.74  *empty*    0 0
+09-Sep-2015 18:46:39 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 18:46:39 18.111.111.74 *start_loading
+09-Sep-2015 18:46:42 18.111.111.74 *done_loading_http://ikea.csail.mit.edu/data/img/ir1024000554.jpg
+09-Sep-2015 18:46:43 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 18:46:43 18.111.111.74 *start_loading
+09-Sep-2015 18:46:45 18.111.111.74 *done_loading_imageList/static_test_0.png
+09-Sep-2015 18:46:45 18.111.111.74 *start_loading
+09-Sep-2015 18:46:45 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 18:46:47 18.111.111.74 *done_loading_imageList/static_test_0.png
+09-Sep-2015 18:47:01 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 18:47:01 18.111.111.74 *start_loading
+09-Sep-2015 18:47:02 18.111.111.74 *done_loading_imageList/static_test_1.png
+09-Sep-2015 18:47:03 18.111.111.74 *start_loading
+09-Sep-2015 18:47:03 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 18:47:05 18.111.111.74 *done_loading_imageList/static_test_6.png
+09-Sep-2015 18:47:07 18.111.111.74 *start_loading
+09-Sep-2015 18:47:07 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 18:47:10 18.111.111.74 *done_loading_imageList/static_test_3.png
+09-Sep-2015 18:47:12 18.111.111.74 *start_loading
+09-Sep-2015 18:47:12 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 18:47:15 18.111.111.74 *done_loading_imageList/static_test_4.png
+09-Sep-2015 18:47:18 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 18:47:18 18.111.111.74 *start_loading
+09-Sep-2015 18:47:19 18.111.111.74 *done_loading_imageList/static_test_5.png
+09-Sep-2015 19:01:18 18.111.111.74 *start_loading
+09-Sep-2015 19:01:18 18.111.111.74 *Browser_Information Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.130 Chrome/43.0.2357.130 Safari/537.36
+09-Sep-2015 19:01:22 18.111.111.74 *done_loading_http://ikea.csail.mit.edu/data/img/ir1024000554.jpg
+09-Sep-2015 19:01:24 18.111.111.74 *Deleting_object
+09-Sep-2015 19:01:24 example_folder 0 5 5 18.111.111.74  *empty* -1 anonymous cpts_not_modified 0 0

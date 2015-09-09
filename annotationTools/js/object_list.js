@@ -30,7 +30,7 @@ function RenderObjectList() {
   
   // Get parts tree
   var tree = getPartsTree();
- if (threed_mt_mode != "box_label") {
+ if (threed_mt_mode != "box_label") {//only has show selected object link
   // Create DIV
   html_str += '<b>Polygons in this image ('+ NundeletedPolygons +')</b>';
 
@@ -51,6 +51,7 @@ function RenderObjectList() {
   }else{
     html_str += '<p style="font-size:10px;line-height:100%"><a id="hide_threed_button" href="javascript:HideThreeD();">Hide 3D scene</a></p>';
   }
+}
   if (IsHidingAllButSelected){
           html_str += '<p style="font-size:10px;line-height:100%"><a id="show_all_cubes_button" href="javascript:ShowOtherObjects();">Show all 3D objects</a></p>';
   }else{
@@ -61,7 +62,7 @@ function RenderObjectList() {
   if(use_parts) {
     html_str += '<p style="font-size:10px;line-height:100%" ondrop="drop(event, -1)" ondragenter="return dragEnter(event)" ondragover="return dragOver(event)">Drag a tag on top of another one to create a part-of relationship.</p>';
   }
-}
+
   html_str += '<ol>';
   
   // Show list (of non-deleted objects)
