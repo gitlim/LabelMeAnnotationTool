@@ -128,20 +128,21 @@ function check_plane_box_collision(object) {
 
     if (object_list.length) {
         for (var i = 0; i < object_list.length; i++) {
-            if (((object_list[i].plane == object.plane || (object_list[i].cube && object_list[i].cube.visible == false)  || (object_list[i].hparent == "unassigned"))) || !(object_list[i].cube)){
-                continue;
+            if ((((object_list[i].plane == object.plane || (object_list[i].cube && object_list[i].cube.visible == false)  || (object_list[i].hparent == "unassigned"))) && object_list[i] != object.hparent) || !(object_list[i].cube)){
+				continue;
             }
             var distance_from_origin = object_list[i].cube.position.clone().applyMatrix4(object_list[i].cube.parent.matrixWorld.clone()).distanceTo(camera.position);
-            if (object_list[i].cube && object_list[i].cube.hparent != "unassigned"){
+            if (object_list[i].cube){
                 vert = object_list[i].cube.children[0].geometry.vertices;
                 for (var j = 0; j < pts0.length; j++) {
-                    var vert0 = vert[pts0[j]].clone().applyMatrix4(object_list[i].cube.matrixWorld);
-                    var vert1 = vert[pts1[j]].clone().applyMatrix4(object_list[i].cube.matrixWorld);
+                    var vert0 = vert[pts0[j]].clone().applyMatrix4(object_list[i].cube.matrixWorld.clone());
+                    var vert1 = vert[pts1[j]].clone().applyMatrix4(object_list[i].cube.matrixWorld.clone());
                     var direction = new THREE.Vector3().subVectors(vert1, vert0);
                     var direction_len = direction.length();
                     raycaster.set(vert0.clone(), direction);
-                    intersects = raycaster.intersectObject(object.plane, false);
-                    if (intersects.length) {
+                    if (object.cube) intersects = raycaster.intersectObject(object.cube.parent, false);
+                    else intersects = raycaster.intersectObject(object.plane, false);
+					if (intersects.length) {
                         for (var k = 0; k < intersects.length; k++) {
                             var vec_len = new THREE.Vector3().subVectors(intersects[k].point, vert0).length();
                             if (vec_len > direction_len + eps){

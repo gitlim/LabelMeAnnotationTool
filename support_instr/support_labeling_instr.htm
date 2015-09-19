@@ -1,0 +1,155 @@
+<html>
+
+<head>
+  <style>
+    .stage {margin: 20px 0 30px; width:1000px; padding: 20px; text-align: left; }
+    .stage_title {font-size:20px; margin:0px;}
+    .stage_img {width:800px; margin-left: auto; margin-right: auto; display: block; }
+
+    .step {border: 2px solid; border-radius: 25px; margin: 20px 0 100px; width: 980px; padding: 20px; text-align: left; }
+    .substep {border: 2px solid; border-radius: 25px; margin: 20px; width: 800px; padding: 10px;}
+    .step_title {font-size:20px; margin:0px 0px 10px;}
+    .step_img {width:750px; margin-left: auto; margin-right: auto; display: block; }
+    .step_instr {}
+  </style>
+</head>
+
+<body>
+  <center>
+
+    <div class="stage">
+ In this task, your job is to assign the support object for every object listed <b>EXCEPT</b> for the groundplane.<br><br> 
+      <center>
+	<table>
+	  <tr>
+	    <td>
+	      <img src = "1_support_answers.png" width = "380px"/>
+	      </td>
+	    <td width=10px>
+	    </td>
+	    <td>
+	      <img src = "2_support_answers.png" width = "380px"/>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><center>(a) Initial view of tool</center></td>
+	    <td></td>
+	    <td><center>(b) Result example</center></td>
+	  </tr>
+	</table>
+      </center>
+
+      <br>
+      <center>
+	<p style="font-size:16px">
+	The instructions below describe how to assign the correct support object and height for an object. 	
+	  <font color="red">WARNING:</font> Assigning the proper support object and height should take about 10 seconds per box - PLEASE DO NOT RUSH.<br></center>
+
+	</p>
+     <br>
+      There are two main steps for each box: assigning the proper support object and adjusting the height.<br>
+
+
+      <div class="step">
+	<p class="step_title">(1) Labeling the Support Object</p>
+	The goal for this step is to assign the object in the image to the object that it is resting on. For example, chair or piece of furniture that is resting on the ground would be assigned to the groundplane, and a lamp resting on a desk would be assigned to the desk.<br>
+	<!--<center><br>
+	<img src = "9.png" width = "600px" /><br>
+	  Figure: Alignment example
+	</center>-->
+	<br>
+	<b>Labeling the Support Object</b>
+	<ol>
+		<li>On the right hand side are a list of links. If you place your mouse over a link, the corresponding box will turn <font color = 'red'>red</font></li>
+		<li>Find the link corresponding to the support object of the object that you want to assign.</li>
+		<li>Click and drag the link of the object that you want to assign and drop it on the link for the support object.</li>
+		<li>The list should update and show that the assigned object is now a child of the support object.</li>
+	</ol>
+	Note: If the object is hanging "in the air" (attached to a wall, hanging from the ceiling, etc), please <b> do NOT assign it to a support object</b>.<br><br>
+	<center>
+	<img src = "3_support_answers.png" width = "600px" /><br>
+	</center><br>
+		The cup in this image has been assigned to the coffee table that it is on. For this image, if there were a box around the TV, you would <b>NOT</b> assign it to anything because it is hanging on the wall and not resting on an object.
+
+    </div>
+
+      <div class="step">
+	<p class="step_title">(2) Adjusting the Object Height</p>
+	The goal of the object is to adjust the height of the object's position so that it is correct. You will only have to do this for some objects - objects that: </br>
+	<ol>
+		<li>Are supported by another object that is not the ground.</li>
+		<li>Have a position that is below the top of the box of the support object.</li>
+	</ol>
+		For example, an object might be resting on the seat of a sofa. The box for the sofa would include the entire sofa, including the sofa's back. The object lying on the seat of the sofa would then be below the top of the box for the sofa.</br></br>
+	<b>Adjusting the object's height</b></br>
+	<ol>
+		<li> Make sure that the object has already been assigned to a support object.</li>
+		<li> Click on the link for the object to select it. The link will then stay <font color = 'red'>red</font> and the corresponding box will turn <font color = 'yellow'>yellow</font> </li>
+		<li>You will now see a <font color = 'cyan'>plane</font> grid that represents the support plane for that object. Click and drag the plane to move adjust its height.</li>
+		<li>You will see blue cubes appear where the plane intersects the boxes of other objects, including the selected object's support object. Use these indicators to determine the proper height for the object's position</li>
+	</ol></br>
+	Note: While adjusting the height of the box's position, you will not see the box move. This is because the code automatically calculates the new position and scale of the cube so that it looks the same regardless of the height. If you don't understand what this means, don't worry about it - it's not important.<br><br>
+	<center>
+		<table>
+	  <tr>
+	    <td>
+	      <img src = "4_support_answers.png" width = "380px"/>
+	      </td>
+	    <td width=10px>
+	    </td>
+	    <td>
+	      <img src = "5_support_answers.png" width = "380px"/>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><center>(a) The pillow is resting below the top of the box surrounding the bed.</center></td>
+	    <td></td>
+	    <td><center>(b) The height of the pillow has been adjusted so that it is the height of the bed's mattress.</center></td>
+	  </tr>
+	</table>
+	</center>
+	<!--<center>
+		<table>
+	  <tr>
+	    <td>
+	      <center><img src = "32.png" width = "380px"/></center>
+	    </td>
+	  </tr>
+	  <tr>
+	  	 <td><center> A case where the groundplane is incorrect. The 3D box is "slanted" upwards compared to the floor.</center></td>
+	  </tr>
+	</table>
+	</center>-->
+
+      </div>
+    <div class="stage">
+      <p class="step_title">Examples of labeled objects</p>
+    </div>
+    <div class="step">
+    	  <center>
+	<img class="step_img" src="7_support_answers.png"><br>
+		The pillow has been assigned to the bed and its position's height adjusted so that it rests on top of the bed's mattress.
+      </center><br><br>
+	  <center>
+	<img class="step_img" src="8_support_answers.png"><br>
+		The lamp has been assigned to the desk.
+      </center><br><br>
+	  <center>
+	<img class="step_img" src="9_support_answers.png"><br>
+		The bed has been assigned to the groundplane.
+      </center><br><br>
+         </div>   
+ <hr>
+    <div class="stage">
+      <p class="step_title">Examples of entirely completed images:</p>
+    </div>
+    <div class="step">
+    	  <center>
+	<img class="step_img" src="2_support_answers.png"><br>
+      </center><br><br>
+	  <center>
+	<img class="step_img" src="6_support_answers.png"><br>
+      </center><br><br>
+	         </div>
+</body>
+</html>

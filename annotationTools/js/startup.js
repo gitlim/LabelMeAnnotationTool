@@ -258,8 +258,18 @@ function FinishStartup() {
       if (object_list.length < 1){
         main_threed_handler.CreateGroundplane();
         main_threed_handler.PlaneAutoSave(groundplane_id);
+		render();
       }
-		if (threed_mt_mode == 'box_label'){;
+		if (threed_mt_mode == 'support_label'){
+			window.select = null;
+			for (var i = 0; i < stage.children.length; i++){
+				stage.children[i].hide();
+			}	
+		}else if (threed_mt_mode == 'box_label'){
+			/*if (screenshot_mode == true){
+				AMTLoadNextImage();
+				return;
+			}*/
 			add_box_internal();
 			HideAllPolygons();
 			ClearCanvas();
@@ -326,9 +336,16 @@ function Initialize3dButtons(){
       };});
 		if (threed_mt_mode == "box_label"){
 			var myNode = document.getElementById("add_plane");
-			console.log(myNode);
 			myNode.parentNode.removeChild(myNode);
-   		}	
+   		}
+		if (threed_mt_mode == "support_label"){
+			var threed_button_parent = document.getElementById("threed_mode_buttons");
+			for (var i = 0; i < threed_button_parent.children.length; i++){
+				if (threed_button_parent.children[i] != document.getElementById("navigation"))threed_button_parent.removeChild(threed_button_parent.children[i]);
+			}
+			var myNode = document.getElementById("add_plane");
+			myNode.parentNode.removeChild(myNode);
+		}	
 }
 
 // Initialize the segmentation tool. This function is called when the field

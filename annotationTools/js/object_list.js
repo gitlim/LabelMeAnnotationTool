@@ -30,7 +30,7 @@ function RenderObjectList() {
   
   // Get parts tree
   var tree = getPartsTree();
- if (threed_mt_mode != "box_label") {//only has show selected object link
+ if (threed_mt_mode != "box_label" && threed_mt_mode != "support_label") {//only has show selected object link
   // Create DIV
   html_str += '<b>Polygons in this image ('+ NundeletedPolygons +')</b>';
 
@@ -52,11 +52,20 @@ function RenderObjectList() {
     html_str += '<p style="font-size:10px;line-height:100%"><a id="hide_threed_button" href="javascript:HideThreeD();">Hide 3D scene</a></p>';
   }
 }
+if (threed_mt_mode != "support_label"){
   if (IsHidingAllButSelected){
           html_str += '<p style="font-size:10px;line-height:100%"><a id="show_all_cubes_button" href="javascript:ShowOtherObjects();">Show all 3D objects</a></p>';
   }else{
           html_str += '<p style="font-size:10px;line-height:100%"><a id="hide_all_but_selected_button" href="javascript:HideAllButSelected();">Hide all 3D objects but selected</a></p>';
   }
+}
+if (threed_mt_mode == "support_label"){
+  if (IsHidingAllThreeD){
+      html_str += '<p style="font-size:10px;line-height:100%"><a id="show_threed_button" href="javascript:ShowThreeD();">Show 3D scene</a></p>';
+  }else{
+    html_str += '<p style="font-size:10px;line-height:100%"><a id="hide_threed_button" href="javascript:HideThreeD();">Hide 3D scene</a></p>';
+  }
+}
 
   // Add parts-of drag-and-drop functionality:
   if(use_parts) {
@@ -297,6 +306,7 @@ function drop(event, object_id) {
   if (threed_mt_mode == "box_label") return;
   event.preventDefault();
   var part_id=event.dataTransfer.getData("Text");
+console.log(part_id);
   event.stopPropagation();
   var threed_is_position_possible = true;
   
@@ -323,14 +333,14 @@ function drop(event, object_id) {
         SetDrawingMode(2);
         main_threed_handler.AssignSupportPlane(part_id, object_id);
         console.log(part_id);
-        window.select = ID_dict[part_id];
-        HighlightSelectedThreeDObject();
+		window.select = ID_dict[part_id];
+		HighlightSelectedThreeDObject();
       }
     }
     if (threed_is_position_possible){
     addPart(object_id, part_id);
     RenderObjectList();
-      if (threed_mode) document.getElementById('Link'+ part_id).style.color = '#FF0000';
+      if (threed_mode && !threed_mt_mode) document.getElementById('Link'+ part_id).style.color = '#FF0000';
     }else{
       alert("You cannot assign the box to that plane because it is impossible.")
     }

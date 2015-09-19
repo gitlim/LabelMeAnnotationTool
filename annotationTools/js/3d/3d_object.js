@@ -7,6 +7,8 @@ function object_instance(){
     this.holder; //for the parent ID in the load function
 
     this.plane;
+	this.op_x;
+	this.op_y;
     //this.plane = empty_plane.clone();
     //this.plane.material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     //this.plane.matrixAutoUpdate=false;

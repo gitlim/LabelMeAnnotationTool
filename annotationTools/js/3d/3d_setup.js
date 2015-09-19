@@ -51,6 +51,7 @@ function init(){
         try {  // try to create a WebGLRenderer
             if (window.WebGLRenderingContext) {
                 box_renderer = new THREE.WebGLRenderer( {
+							preserveDrawingBuffer: false,
                             canvas: boxCanvas,
                             antialias: true
                             });
@@ -235,7 +236,7 @@ function render() {
         /*indicator_box.scale.x = proportion_array[window.select.ID];
         indicator_box.scale.y = proportion_array[window.select.ID];
         indicator_box.scale.z = proportion_array[window.select.ID];*/
-        if (window.select.cube){
+        if (window.select.cube && current_mode != RESIZE_MODE){
             plane_object.position.setX(plane_object_position.x);
             plane_object.position.setY(plane_object_position.y);
             plane_object.position.setZ(plane_object_position.z);
@@ -248,7 +249,7 @@ function render() {
         toggle_cube_move_indicators(false);
         toggle_cube_rotate_indicators(false);
     }
-    if (nav_on){
+    if (nav_on || threed_mt_mode == 'support_label'){
         toggle_cube_resize_arrows(false);
         toggle_cube_move_indicators(false);
         toggle_cube_rotate_indicators(false);
@@ -317,10 +318,17 @@ function render_box_object(object){
         arrowHelper.arrow_list[4].setLength(object.cube.scale.x*small_w/2/proportion_array[object.ID], arrowhead_scale_array[4], arrowhead_scale_array[4]);
         arrowHelper.arrow_list[0].setLength(indicator_box.scale.x*0.1, arrowhead_scale_array[0], arrowhead_scale_array[0]);
         indicator_box.position.set(indicator_box_position.x,indicator_box_position.y,indicator_box_position.z + small_h*0.5*object.cube.scale.z);
-        plane_object.position.setX(plane_object_position.x);
-        plane_object.position.setY(plane_object_position.y);
-        plane_object.position.setZ(plane_object_position.z);
-    }
+		if (current_mode != RESIZE_MODE){
+			plane_object.position.setX(plane_object_position.x);
+			plane_object.position.setY(plane_object_position.y);
+			plane_object.position.setZ(plane_object_position.z);
+    	}
+	}
+	if (threed_mt_mode == 'support_label'){
+		toggle_cube_resize_arrows(false);
+        toggle_cube_move_indicators(false);
+        toggle_cube_rotate_indicators(false);
+	}
     if (renderer.context){
         renderer.render(scene, camera);
         box_renderer.render(box_scene, camera);
@@ -351,11 +359,11 @@ function open_instr() {
 
 
 function AMTLoadNextImage(gp_incorrect){
-	if (wait_for_input == 1){
+	if (wait_for_input == 1 && gp_incorrect != true){
 		alert("You must close the popup window before you submit.");
 		return;
 	}
-	if (object_list.length < 11 && gp_incorrect != true){
+	if (object_list.length < 11 && gp_incorrect != true && threed_mt_mode != "support_label"){
 		var answer = confirm("You labeled less than 10 objects. Are you sure that there are no more objects in the image to label?");
 		if (answer == false) return; 		
 	}
@@ -363,14 +371,22 @@ function AMTLoadNextImage(gp_incorrect){
 	window.parent.time_string += time + ' ';
     var current_url = window.location.href;
     var new_count = parseInt(image_count) + 1;
-	//var new_url = window.location.href;
-	/*if (fix_mode == true && image_count == 9){
+	var new_url = window.location.href;
+	if (screenshot_mode == true && image_count == 4){
 		new_count = 0;
 		var new_list_count = parseInt(image_list_number) + 1;
 		new_url = current_url.replace("image_list=" + image_list_number, "image_list=" + new_list_count).replace("image=" + image_count, "image=0");
 		image_count = 0;
-	}*/
+	}
 	console.log(new_count);
    	new_url = current_url.replace("image=" + image_count, "image=" + new_count);
     window.location.assign(new_url);
 }
+function getAnswers(){
+	for (var i = 0; i < object_list.length; i++){
+		console.log("ID " + object_list[i].ID);
+		if (object_list[i].hparent != "unassigned") console.log("Parent " + object_list[i].hparent.ID);
+		console.log("Height " + object_list[i].plane.matrixWorld.elements[13]);
+	}	
+}
+

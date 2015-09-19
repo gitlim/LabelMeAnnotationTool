@@ -1,0 +1,224 @@
+<html>
+
+<head>
+  <style>
+    .stage {margin: 20px 0 30px; width:1000px; padding: 20px; text-align: left; }
+    .stage_title {font-size:20px; margin:0px;}
+    .stage_img {width:800px; margin-left: auto; margin-right: auto; display: block; }
+
+    .step {border: 2px solid; border-radius: 25px; margin: 20px 0 100px; width: 980px; padding: 20px; text-align: left; }
+    .substep {border: 2px solid; border-radius: 25px; margin: 20px; width: 800px; padding: 10px;}
+    .step_title {font-size:20px; margin:0px 0px 10px;}
+    .step_img {width:750px; margin-left: auto; margin-right: auto; display: block; }
+    .step_instr {}
+  </style>
+</head>
+
+<body>
+  <center>
+	<font color = 'red'>Note: This tool works best on Chrome and is significantly slower on Firefox. Please try to use Chrome when working on this HIT.</font>
+    <div class="stage">
+ In this task, your job is to place 3D bounding boxes around the <b>10 largest objects in the image</b>. If there are less than 10 objects in the image, just label as many as you can.<br><br> 
+      <center>
+	<table>
+	  <tr>
+	    <td>
+	      <img src = "30.png" width = "380px"/>
+	      </td>
+	    <td width=10px>
+	    </td>
+	    <td>
+	      <img src = "31.png" width = "380px"/>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><center>(a) Initial view of tool</center></td>
+	    <td></td>
+	    <td><center>(b) Result example</center></td>
+	  </tr>
+	</table>
+      </center>
+
+      <br>
+      <center>
+	<p style="font-size:16px">
+	The instructions below tell you how to add and place a box around an object in the image. <b>Remember, your goal is not to label only one object, but the 10 largest in the image, or at least as many as possible.</b>	
+	  <font color="red">WARNING:</font> The placement of the bounding box needs to be precise. It should take around 20 seconds per object - PLEASE DO NOT RUSH.<br></center>
+
+<b>Adding, selecting, and removing boxes:</b>
+<ul>
+	<li>Click the "Add" button on the upper left</li>
+	<li>Enter the name of the object - it should be short, preferably one to three words</li>
+	<li>After you enter the name, a <font color = "red">red</font> link should appear in the upper right corner. <font color = "red"> Red</font> indicates that the object is selected for editing. You can click a <font color = 'blue'>blue</font> link to select that object for editing</li>
+	<li>If an object is selected, you can click the "Remove" button on the upper left of the screen to delete it.</li>
+	<li>You can double click a link to edit the object's name</li>
+</ul>
+
+	</p>
+     <br>
+      Below are three main steps to go through for editing a 3D box. Please read the following instructions very carefully.<br>
+      <center>
+	<p style="font-size:20px">
+	  <font color="blue">
+	    The goal is to place the box around the object so that it as similar as possible to the object's location, orientation, and dimensions.<br>
+	  </font>
+	</p>
+      </center>
+
+      <div class="step">
+	<p class="step_title">(1) Object Position and Rotation</p>
+	The goal for this step is to place the box so that its position and rotation are the same as that of the indicated object.<br>
+	<!--<center><br>
+	<img src = "9.png" width = "600px" /><br>
+	  Figure: Alignment example
+	</center>-->
+	<br>
+	<b>Object Position</b>
+	<ol>
+		<li>Place your mouse over the yellow 3D bounding box.</li>
+		<li>Click and drag it to where the object is in the image.</li>
+		<li>Position the box so that the center of its bottom is the same as the location of where the object is resting.</li>
+	</ol>
+	Note: Please only label objects that are on another object or the floor. Don't label objects without support objects (for example, a light hanging from the ceiling).
+	<center>
+	<img src = "5.png" width = "600px" /><br>
+	  Placing the box in its initial location
+	</center><br>
+	<b>Object Rotation</b>
+	<ul>
+		<li>Click and drag anywhere on the image that is not the selected box to rotate the box.</li>
+		<li>If the object is rectangular, you can tell if the rotation is correct by making sure that the sides of the 3D box are parallel to the sides of the object.</li>
+	</ul>
+	<br>
+    </div>
+
+      <div class="step">
+	<p class="step_title">(2) Editing Bounding Box Dimensions</p>
+	The goal of the step is to edit the dimensions of the bounding box so that they match the width, length, and height of the object exactly.
+	<ol>
+		<li> Place your mouse over one of the red knobs on the 3D box. The sphere should turn blue.</li>
+		<li> Then, click and drag the knob to change the dimensions of the box in that direction. </li>
+		<li> <b>Note: If it looks like the 3D box is distorted compared to the other objects in the image and it is impossible to accurately label an object, click the "orientation is incorrect" button. You will then be directed to the next image.</b>
+	</ol>
+	<center>
+		<table>
+	  <tr>
+	    <td>
+	      <img src = "4.png" width = "380px"/>
+	      </td>
+	    <td width=10px>
+	    </td>
+	    <td>
+	      <img src = "2.png" width = "380px"/>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><center>(a) Before matching object dimensions</center></td>
+	    <td></td>
+	    <td><center>(b) After matching object dimensions.</center></td>
+	  </tr>
+	</table>
+	</center>
+	<center>
+		<table>
+	  <tr>
+	    <td>
+	      <center><img src = "32.png" width = "380px"/></center>
+	    </td>
+	  </tr>
+	  <tr>
+	  	 <td><center> A case where the groundplane is incorrect. The 3D box is "slanted" upwards compared to the floor.</center></td>
+	  </tr>
+	</table>
+	</center>
+
+      </div>
+
+     <div class="step">
+	<p class="step_title">(3) Refinement</p>
+	This is the final and most important step - refinement of everything that was covered in the first two steps. Make adjustments in the same way you did in the previous steps (by moving the box, rotating the box, or by changing its scale). Below are some tips for places to look to see if the box has been placed and scaled correctly. <br><br>
+	<b>Tips:</b>
+	<ul>
+		<li>Navigation: There is a "nav" (short for "navigation") button on the upper left of the screen. Click it to turn on navigation mode. You can then click and drag anywhere on the screen to see the 3D box from a different angle. Use this tool to judge whether or not the dimension of the 3D box seem correct compared to the actual object. <b>This is important because sometimes the box may look correct from one angle, but actually have the wrong dimensions.</b> Click the button again to return to the normal mode.</li><br>
+		<li> Rectangular objects: Make sure the edges of the bounding box are aligned with the edges of the object and that the corners match the corners of the object.</li><br>
+		<li> Irregular objects: Do the best you can by first making sure that the position of the box is correct. Then, try to enclose the object with the smallest box possible. However, all of the object should look like it's inside the box. Use the navigation mode to help you.</li><br>
+	</ul>
+		  <table>
+	    <tr>
+	      <td><center>Bad labeling</center></td>
+	      <td width=10px></td>
+	      <td><center>Good labeling</center></td>
+	    </tr>
+	    <tr>
+	      <td>
+			<center>
+		  <img src = "25.png" width = "490px">
+		</center>
+	      </td>
+	      <td>
+	      </td>
+	      <td>
+		<center>
+
+		  <img src = "20.png" width = "490px">
+		</center>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>
+		<br>
+	      </td>
+	    </tr>
+	    <tr>
+		 <tr>
+	      <td><center>Bad labeling</center></td>
+	      <td width=10px></td>
+	      <td><center>Good labeling</center></td>
+	    </tr>
+
+	      <td>
+			<center>
+		  <img src = "26.png" width = "490px" />
+		</center>
+	      </td>
+	      <td>
+	      </td>
+	      <td>
+			<center>
+		  <img src = "24.png" width = "490px"/>
+		</center>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>
+		<br>
+	      </td>
+	    </tr>
+	    <tr>
+	    </tr>
+	   	  </table>
+    </div>
+
+    <hr>
+    <div class="stage">
+      <p class="step_title">Examples of the final result:</p>
+    </div>
+    <div class="step">
+    	  <center>
+	<img class="step_img" src="31.png"><br>
+		Ten objects labeled in the image.
+      </center><br><br>
+	  <center>
+	<img class="step_img" src="35.png"><br>
+		Ten objects labeled in the image.
+      </center><br><br>
+	  <center>
+	<img class="step_img" src="33.png"><br>
+		An image with less than 10 objects.
+      </center><br><br>
+
+	
+      <p class="step_instr"><b>Remember to label the 10 largest objects per image, or if there are less than 10 objects in the image, as many as possible.</b></p>
+    </div>
+</body>
+</html>

@@ -2,6 +2,7 @@ function HighlightSelectedThreeDObject() {//now really only highlighting
     //if (!LMgetObjectField(LM_xml, window.select.ID, "ispartof")){
 
     //}
+	if (threed_mt_mode == 'support_label') return;
     for (var i = 0; i < object_list.length; i++) {
         if (object_list[i].cube) changeColor(object_list[i].cube, 0xffffff);
         object_list[i].plane.material.visible = false;
@@ -59,6 +60,7 @@ function HighlightSelectedThreeDObject() {//now really only highlighting
 }
 
 function DisplayVPTools(){
+	if (threed_mt_mode == "support_label") return;
     for (var i = 0; i < stage.children.length; i++) {// shows GP tools
             stage.children[i].show();
         }
@@ -70,6 +72,7 @@ function DisplayVPTools(){
 
 
 function changeColor(container, color) {
+	console.trace();
     for (var i = 0; i < container.children.length; i++) {
         if (container.children[i].material) {
             if (container.children[i].material.color) {

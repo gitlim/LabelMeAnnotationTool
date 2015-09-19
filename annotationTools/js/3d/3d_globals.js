@@ -133,3 +133,7 @@ var threed_mt_mode; // this is for the different modes for 3D AMT such as ground
 //var scale_factor_x = document.getElementById("im").width;
 //var scale_factor_y = document.getElementById("im").height;
 var image_list_number = 0;
+var mousemove_last = -999999;
+var screenshot_mode = false;
+var image_list_length;
+var image_count = 0;

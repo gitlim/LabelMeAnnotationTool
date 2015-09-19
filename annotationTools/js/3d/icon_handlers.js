@@ -298,9 +298,10 @@ function ThreeDHoverHighlight(object){// need third options for planes
         if (object != window.select) changeColor(object.cube, 0xff0000);//makes cube that is hovered over red
         else changeColor(object.cube, 0xffff00);
     }else{//for plane
-        for (var i = 0; i < stage.children.length; i++) {// shows GP tools
+        /*for (var i = 0; i < stage.children.length; i++) {// shows GP tools
             stage.children[i].show();
-        }
+        }*/
+		DisplayVPTools();
         for (var i = intersect_box.children.length - 1; i > -1; i--){
             if ((typeof plane_cube != "undefined") && (intersect_box.children[i] != plane_cube)){
                 intersect_box.remove(intersect_box.children[i]);

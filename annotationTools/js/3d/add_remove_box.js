@@ -37,11 +37,13 @@ function add_box_internal() {
     window.select.cube.add(cube);
     scene.add(window.select.plane);
     //new_box_object.plane.add(new_box_object.cube);
-    var box_scene_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
+	var box_plane_geometry = new THREE.PlaneGeometry(10, 10, 20, 20);
+    var box_scene_plane = new THREE.Mesh(box_plane_geometry, new_plane_material.clone());
     box_scene_plane.matrixWorld = new_plane.matrixWorld.clone();
     box_scene_plane.matrixAutoUpdate = false;
     box_scene_plane.material.visible = false;
     box_scene_plane.add(window.select.cube);
+	window.select.cube.frustumCulled = false;
     box_scene.add(box_scene_plane);
     box_scene_plane.matrixWorldNeedsUpdate = false;
     var projector = new THREE.Projector();

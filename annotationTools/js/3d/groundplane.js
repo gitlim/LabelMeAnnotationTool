@@ -133,8 +133,8 @@ function dist2(a, b) {//distances squared between two vp_s
 
 function op_drag(e) {
     //reassigning circle coordinates after it is moved
-    op_x = e.targetNode.x();
-    op_y = e.targetNode.y();
+    window.select.op_x = e.targetNode.x();
+    window.select.op_y = e.targetNode.y();
     //main_threed_handler.PlaneAutoSave();
     check_plane_box_collision();
     update_plane();
@@ -367,13 +367,15 @@ function changeLineType(){
 
 function update_plane(noRender) {
      if (hover_object && !(hover_object.cube)){//when hovering ofer a link is going on;
+		selected_object = hover_object;
         selected_plane = hover_object.plane;
     }else if (window.select){
+		selected_object = window.select;
         selected_plane = window.select.plane;
     }
     if (window.select){
         //CalculateChildrenHeightDifferences(window.select);
-       SynchronizeSupportPlanes();
+       //SynchronizeSupportPlanes();
     }
 
     var r = $.Deferred();
@@ -499,8 +501,9 @@ function update_plane(noRender) {
         vec3.normalize(axis_z, axis_z);
     }
     if ((selected_plane) && selected_plane == plane) gp_f = f;
-    K = mat4.create();//transformation matrix
 
+	K = mat4.create();//transformation matrix
+	
     
     K[0] = axis_x[0];
     K[1] = -axis_x[1];
@@ -516,7 +519,7 @@ function update_plane(noRender) {
     K[11] = 0;
    // K[12] = -(axis_x[0]+axis_y[0]) + ;
     //K[13] = (axis_x[1]+axis_y[1]) - ;
-    K[12] = -(axis_x[0]+axis_y[0]) + (op_x - op_x_orig)/gp_f;//converting canvas to three js coordinates
+    K[12] = -(axis_x[0]+axis_y[0]) + (selected_object.op_x - op_x_orig)/gp_f;//converting canvas to three js coordinates
     img_height = document.getElementById("im").height;
     bounding_top = 0;
     if (op_y > 0.95*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE) {
@@ -527,7 +530,7 @@ function update_plane(noRender) {
         op_y = 0.05*img_height;
         pt_layer.children[0].y(op_y);
     }   
-    K[13] = (axis_x[1]+axis_y[1]) - (op_y - op_y_orig)/gp_f;
+    K[13] = (axis_x[1]+axis_y[1]) - (selected_object.op_y - op_y_orig)/gp_f;
     //console.log((axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f);
     //console.log(K[13]);
     K[14] = (axis_x[2]+axis_y[2]) - 1;
@@ -538,6 +541,15 @@ function update_plane(noRender) {
     //K[13] = height_transform;
     //K[14] = vertical_transform;
     K[15] = 1;
+	
+	if (current_mode == VERTICAL_PLANE_MOVE_MODE && selected_object.hparent != "unassigned"){
+		var threshold = selected_object.hparent.plane.matrixWorld.elements[13] + selected_object.hparent.cube.position.z - selected_object.hparent.cube.scale.z*small_h*0.5;
+		if (K[13] < threshold + 0.001){
+			K[13] = threshold;
+		}else if (K[13] > threshold + selected_object.hparent.cube.scale.z*small_h - 0.001){
+			K[13] = threshold + selected_object.hparent.cube.scale.z*small_h;
+		}
+	} 	
 
     if (noRender != true) rerender_plane(K);
     //console.log(op_x, op_y);
@@ -810,7 +822,7 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
 
     //selected_plane.material.visible = true;
 
-    if (selected_plane == window.select.plane){
+    if (window.select && selected_plane == window.select.plane){
         collision_plane.matrixWorld = window.select.plane.matrixWorld.clone();
     }
 

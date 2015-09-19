@@ -46,9 +46,8 @@ function threed_handler(){
 		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
 		var lines_array = LMgetObjectField(LM_xml, groundplane_id, 'lines');
 		var op_points = LMgetObjectField(LM_xml, groundplane_id, 'op_points');
-		op_x = op_points[0]*scale_factor_x;
-		op_y = op_points[1]*scale_factor_y;
-		console.log(op_x, op_y);
+		ID_dict[groundplane_id].op_x = op_points[0]*scale_factor_x;
+		ID_dict[groundplane_id].op_y = op_points[1]*scale_factor_y;
 		var html_str = '<object>';
 		html_str += '<name>' + new_name + '</name>';
 		html_str += '<deleted>0</deleted>';
@@ -162,7 +161,7 @@ function threed_handler(){
 	        new_line.y2d[1] = lines_array[i+3]*scale_factor_y;
 	        vp_s.push(new_line);
 		}
-		update_plane();
+		//update_plane();
 		this.SelectObject(threed_anno.anno_id);
 		render();
 	};
@@ -183,7 +182,7 @@ function threed_handler(){
 	};
 
 	this.GotoFirstAnnoObject = function(){
-		if (threed_mt_mode == "box_label") return;
+		if (threed_mt_mode == "box_label" || threed_mt_mode == "support_label") return;
 		var anno_type = main_canvas.annotations[0].GetType();
 		if (anno_type == 2 || anno_type == 3){
 			this.SelectObject(0);
@@ -238,6 +237,7 @@ function threed_handler(){
 			return;
 		}
 		if ((window.select) && idx == window.select.ID){
+			if (threed_mt_mode == "support_label") return;
 			select_anno = main_canvas.GetAnnoByID(idx);
 			this.ThreeDAnnotationEdit(idx);
 		}else{
@@ -327,6 +327,7 @@ function threed_handler(){
 				ClearCanvas();
 			}*/
 		}
+		//if (threed_mt_mode == 'support_label') return;
 		if (hover_object == window.select){
 			hover_object = null;
 			return;
@@ -399,11 +400,10 @@ function threed_handler(){
 	    	//CalculateNewOp(L);
 	    	//CalculateNewOp(L);
 	    	var op_points = LMgetObjectField(LM_xml, idx, 'op_points');
-			op_x = op_points[0]*scale_factor_x;
-			op_y = op_points[1]*scale_factor_y;
-			console.log(op_x, op_y);
-			pt_layer.children[0].x(op_x);
-			pt_layer.children[0].y(op_y);
+			window.select.op_x = op_points[0]*scale_factor_x;
+			window.select.op_y = op_points[1]*scale_factor_y;
+			pt_layer.children[0].x(window.select.op_x);
+			pt_layer.children[0].y(window.select.op_y);
 	    	update_plane();
 	    	if (window.select.hparent != "unassigned"){
 	    		check_plane_box_collision();
@@ -639,7 +639,7 @@ function threed_handler(){
 			html_str += '</vp_line>';
 		}
 		html_str += '</lines>';
-		html_str += '<op_points>' + op_x/scale_factor_x + ' ' + op_y/scale_factor_y + '</op_points>';
+		html_str += '<op_points>' + op_x_orig/scale_factor_x + ' ' + op_y_orig/scale_factor_y + '</op_points>';
 		html_str += '<plane_matrix>';
 		for (var i = 0; i < window.select.plane.matrixWorld.elements.length; i++){
 			html_str += window.select.plane.matrixWorld.elements[i] + ' ';
@@ -695,7 +695,7 @@ function threed_handler(){
 		}
 		LMsetObjectField(LM_xml, index, 'lines', lines);
 		var op_points = '';
-		op_points = op_x/scale_factor_x + ' ' + op_y/scale_factor_y;
+		op_points = ID_dict[index].op_x/scale_factor_x + ' ' + ID_dict[index].op_y/scale_factor_y;
 		LMsetObjectField(LM_xml, index, 'op_points', op_points);
 		var matrix = "";
 		for (var i = 0; i < ID_dict[index].plane.matrixWorld.elements.length; i++){
@@ -716,10 +716,10 @@ function threed_handler(){
 		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
 		lines_array = LMgetObjectField(LM_xml, idx, 'lines');
 		var op_points = LMgetObjectField(LM_xml, idx, 'op_points');
-		op_x = op_points[0]*scale_factor_x;
-		op_y = op_points[1]*scale_factor_y;
-		pt_layer.children[0].x(op_x);
-		pt_layer.children[0].y(op_y);
+		ID_dict[idx].op_x = op_points[0]*scale_factor_x;
+		ID_dict[idx].op_y = op_points[1]*scale_factor_y;
+		pt_layer.children[0].x(ID_dict[idx].op_x);
+		pt_layer.children[0].y(ID_dict[idx].op_y);
 		vp_label = [];
 		vp_s = [];
 		for (var i = 0; i < lines_array.length; i+=5){
@@ -760,7 +760,7 @@ function threed_handler(){
 			cube_matrix += ID_dict[index].plane.matrixWorld.elements[i] + ' ';
 		}
 		var op_points = '';
-		op_points = op_x/scale_factor_x + ' ' + op_y/scale_factor_y;
+		op_points = ID_dict[index].op_x/scale_factor_x + ' ' + ID_dict[index].op_y/scale_factor_y;
 		LMsetObjectField(LM_xml, index, 'op_points', op_points);
 		LMsetObjectField(LM_xml, index, "plane_matrix", cube_matrix);
 		LMsetObjectField(LM_xml, index, "cube_matrix", cube_matrix);
@@ -820,6 +820,7 @@ function threed_handler(){
            			}
            		}
            	}
+			window.select = null;
            	render();
 	    }else if (main_canvas.GetAnnoByID(part_id).GetType() == 2 && (main_canvas.GetAnnoByID(object_id).GetType() == 1 || main_canvas.GetAnnoByID(object_id).GetType() == 0)){
 	    	CreatePolygonClip(object_id);
@@ -858,9 +859,10 @@ function threed_handler(){
   					ID_dict[i].plane = plane;
   					groundplane_id = ID_dict[i].ID;
 					gp_f = LMgetObjectField(LM_xml, groundplane_id, "focal_length")*scale_factor;
+					console.log(gp_f);
 					op_points = LMgetObjectField(LM_xml, groundplane_id, "op_points");
-					op_x = op_points[0]*scale_factor_x;
-					op_y = op_points[1]*scale_factor_y;
+					ID_dict[groundplane_id].op_x = op_points[0]*scale_factor_x;
+					ID_dict[groundplane_id].op_y = op_points[1]*scale_factor_y;
 					window.select = ID_dict[i];
 					this.LoadDifferentPlane(i);
 					window.select = null;
@@ -898,12 +900,14 @@ function threed_handler(){
 			    new_box_object.cube.add(cube);
 			    scene.add(new_box_object.plane);
 			    //new_box_object.plane.add(new_box_object.cube);
-			    var box_scene_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
+				var box_plane_geometry = new THREE.PlaneGeometry(10, 10, 20, 20);
+			    var box_scene_plane = new THREE.Mesh(box_plane_geometry, new_plane_material.clone());
 			    box_scene_plane.matrixWorld = new_plane.matrixWorld.clone();
 			    box_scene_plane.matrixAutoUpdate = false;
 			    box_scene_plane.matrixWorldNeedsUpdate = false;
 			    box_scene_plane.material.visible = false;
 			    box_scene_plane.add(new_box_object.cube);
+				new_box_object.cube.frustumCulled = false;
 			    box_scene.add(box_scene_plane);
 			    var position = LMgetObjectField(LM_xml, i, "cube_position");
 			    var i_mat = new THREE.Matrix4().getInverse(new_box_object.cube.parent.matrixWorld.clone());

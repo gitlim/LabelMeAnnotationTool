@@ -72,6 +72,7 @@ function file_info() {
 						use_parts = false;
 					}else if (par_value == 'gp' || par_value == 'support_label'){
 						image_list_length = 10;
+						use_parts = true;
 					}
                 }
                 if(par_field=='collection') {
@@ -89,6 +90,8 @@ function file_info() {
                         image_list = loadImageList(image_list_number);
                         address = image_list[par_value];*/
 						if (test_mode == true){
+							if (threed_mt_mode == "box_label") var list_name = "test_img.list";
+							else if (threed_mt_mode == "support_label") var list_name = "support_test_img.list"
 							CCC = $.ajax({
 								 type: "POST",
 								 url: "../LabelMeAnnotationTool/annotationTools/php/3d/imageList.php",
@@ -96,7 +99,7 @@ function file_info() {
 								 "list_length": 10,
 								 "task": "get_list",
 								 "file_list_number": image_list_number,
-								 "list_name": "test_img.list"
+								 "list_name": list_name
 								 },
 								 async: false,
 								 dataType: "html",
@@ -128,9 +131,10 @@ function file_info() {
                         }
                     }
                 }
-                /*if(par_field=='fix_mode'){
-					fix_mode = true;
-				}*/
+                if(par_field=='screenshot_mode'){
+					if (par_value == 'true') screenshot_mode == true;
+					else screenshot_mode == false;
+				}
 				if(par_field=='hitId') {
                     this.hitId = par_value;
                     isMT = true;
@@ -286,10 +290,12 @@ on_CreatePolygon = 1;
 								name_array[7] = ["nightstand", "lamp"];
 								name_array[8] = ["bed", "drawers"];
 								name_array[9] = ["bed", "wardrobe"];
-								this.mt_instructions = 'Please label the two indicated objects and enter their names exactly as they are given: <u>' + name_array[image_count][0] + ', ' + name_array[image_count][1] + '</u>. <font color = "red"><b>Remember, you will have to label not only two objects, but 10 per image for the real HIT!</b></font><br></br>';
+								this.mt_instructions = 'Please label the two indicated objects and enter their names exactly as they are given: <u>' + name_array[image_count][0] + ', ' + name_array[image_count][1] + '</u>. <br></br>';
 						}
 							else this.mt_instructions = 'Please label <font color = "red">the <u>10</u> largest objects</font> in this image. If there are less than 10 objects, label as many as possible.<br></br>';
-						}
+					}else if (threed_mt_mode == 'support_label'){
+						this.mt_instructions = ' <font size = "3">Please label the support object and height of all objects given. If the box is "floating" and has no support object, leave it  unlabeled.</font>'	
+					}
 					else if(mt_N=='inf') this.mt_instructions = 'Please label as many objects as you want in this image.';
                     else if(mt_N==1) this.mt_instructions = 'Please label at least ' + mt_N + ' object in this image.';
                     else this.mt_instructions = 'Please label at least ' + mt_N + ' objects in this image.';
@@ -312,7 +318,7 @@ on_CreatePolygon = 1;
 					$('#instr_full').click(function(){ $('#instr_full').colorbox({iframe:true,width:1100,height:700,transition:"none",closeButton:true});
 });
                   }
-				if (threed_mt_mode == 'box_label' && threed_mode == true){
+				else if (threed_mt_mode == 'box_label' && threed_mode == true){
 					if (test_mode == true){
 							var html_str = '<table><tr><td><font size="2"><b>' + this.mt_instructions + '  </b></font></td></tr></table>';
 					html_str += '<input disabled="false" type="button" id="mt_submit" name="Submit" value="Submit" onmousedown="javascript: window.parent.test_submitted();" />'
@@ -321,17 +327,19 @@ on_CreatePolygon = 1;
 					if (window.parent.test_status[window.parent.img_id]) document.getElementById("skip").style.display = "none";
 					}else{
 						if (image_count == 4){
-							var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td><form><input type="hidden" id="assignmentId" name="assignmentId" value="'+ this.assignmentId +'" /><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" /><input disabled="false" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript: window.parent.document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value; window.parent.submit_AMT();" /></form></td></tr></table>';
+							var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td><form><input type="hidden" id="assignmentId" name="assignmentId" value="'+ this.assignmentId +'" /><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" /></form></td></tr></table>';
 							html_str += 'You are at image number '+ image_number  + ' out of 5<br/>';
-							html_str += '<input type="submit" id="plane_mislabled" name="plane_mislabeled" value="Groundplane is incorrect" onmousedown="javascript: window.parent.gp_incorrect();"/>'
+							html_str += '<input disabled="false" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript: window.parent.document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value; window.parent.submit_AMT();" />';
+							html_str += '<input type="submit" id="plane_mislabled" name="plane_mislabeled" value="Orientation is incorrect" onmousedown="javascript: window.parent.gp_incorrect();"/>'
 							$('#mt_submit_form').append(html_str);
 							var html_str2 = '<font size="3">(Optional) Do you wish to provide any feedback on this HIT?</font><br /><textarea id="mt_comments_textbox" name="mt_comments_texbox" cols="94" nrows="5" />';
 							$('#mt_feedback').append(html_str2);
 							document.getElementById('mt_submit').disabled=false;
 						}else{
-							 var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td><input type="submit" id="mt_submit" name="Submit" value="Submit Image" onmousedown="javascript:AMTLoadNextImage();" /></td></tr></table>';
+							 var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td></td></tr></table>';
 							html_str += 'You are at image number '+ image_number  + ' out of 5<br/>';
-							html_str += '<input type="submit" id="plane_mislabled" name="plane_mislabeled" value="Groundplane is incorrect" onmousedown="javascript: window.parent.gp_incorrect();"/>'
+							html_str += '<input type="submit" id="mt_submit" name="Submit" value="Submit Image" onmousedown="javascript:AMTLoadNextImage();" />';
+							html_str += '<input type="submit" id="plane_mislabled" name="plane_mislabeled" value="Orientation is incorrect" onmousedown="javascript: window.parent.gp_incorrect();"/>'
 							$('#mt_submit_form').append(html_str);
 						}
 					}
@@ -342,7 +350,41 @@ on_CreatePolygon = 1;
 					$("#mt_submit_form").css('z-index', '3');
 					$("#mt_submit").css('z-index', '3');
 				document.getElementById('mt_submit').disabled=false;
-               }else{ var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  Scroll down to see the entire image. &#160;&#160;&#160; </b></font></td><td><form action="' + externalSubmitURL + '"><input type="hidden" id="assignmentId" name="assignmentId" value="'+ this.assignmentId +'" /><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" /><input disabled="true" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript:document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value;" /></form></td></tr></table>';                
+               }
+				else if (threed_mt_mode == 'support_label'){
+					if (test_mode == true){
+							var html_str = '<table><tr><td><font size="2"><b>' + this.mt_instructions + '  </b></font></td></tr></table>';
+					html_str += '<input disabled="false" type="button" id="mt_submit" name="Submit" value="Submit" onmousedown="javascript: window.parent.test_submitted();" />'
+					html_str += '<input type="submit" id="skip" name="skip" value="Skip this image" onmousedown="javascript: window.parent.test_skip();"/>'
+						$('#mt_submit_form').append(html_str);
+					if (window.parent.test_status[window.parent.img_id]) document.getElementById("skip").style.display = "none";
+					
+						document.getElementById('mt_submit').disabled=false;
+					}else{
+						if (image_count == 9){
+							var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td><form><input type="hidden" id="assignmentId" name="assignmentId" value="'+ this.assignmentId +'" /><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" /></form></td></tr></table>';
+							html_str += 'You are at image number '+ image_number  + ' out of 10<br/>';
+							html_str += '<input disabled="false" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript: window.parent.document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value; window.parent.submit_AMT();" />';
+							$('#mt_submit_form').append(html_str);
+							var html_str2 = '<font size="3">(Optional) Do you wish to provide any feedback on this HIT?</font><br /><textarea id="mt_comments_textbox" name="mt_comments_texbox" cols="94" nrows="5" />';
+							$('#mt_feedback').append(html_str2);
+							document.getElementById('mt_submit').disabled=false;
+						}else{
+							 var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td></td></tr></table>';
+							html_str += 'You are at image number '+ image_number  + ' out of 10<br/>';
+							html_str += '<input type="submit" id="mt_submit" name="Submit" value="Submit Image" onmousedown="javascript:AMTLoadNextImage();" />';
+							$('#mt_submit_form').append(html_str);
+						}
+						}
+						var html_str3 = '<a href="support_instr/support_labeling_instr.htm" id="instr_full"  style = "text-decoration: none; color:#000000;" class="button2">Instructions</a>';
+						$('#mt_submit_form').append(html_str3);
+						$('#instr_full').click(function(){ $('#instr_full').colorbox({iframe:true,width:1100,height:700,transition:"none",closeButton:true});
+					});
+						$("#mt_submit_form").css('z-index', '3');
+						$("#mt_submit").css('z-index', '3');
+						document.getElementById('mt_submit').disabled=false;
+						
+				}else{ var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  Scroll down to see the entire image. &#160;&#160;&#160; </b></font></td><td><form action="' + externalSubmitURL + '"><input type="hidden" id="assignmentId" name="assignmentId" value="'+ this.assignmentId +'" /><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" /><input disabled="true" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript:document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value;" /></form></td></tr></table>';                
                     $('#mt_submit_form').append(html_str);
                     var html_str2 = '<font size="4"><b>Scroll up to see the entire image</b></font>&#160;&#160;&#160;<font size="3">(Optional) Do you wish to provide any feedback on this HIT?</font><br /><textarea id="mt_comments_textbox" name="mt_comments_texbox" cols="94" nrows="5" />';
             		  $('#mt_feedback').append(html_str2);
@@ -397,7 +439,8 @@ on_CreatePolygon = 1;
     /** Gets full image name */
     this.GetFullName = function () {
         if (threed_mode ==true && this.mode== 'mt' && test_mode == false) return this.dir_name + '/' + parseInt(filename);
-        if (threed_mode ==true && this.mode== 'mt' && test_mode == true) return this.dir_name + '/test_' + parseInt(filename);
+		if (threed_mode == true && this.mode == 'mt' && test_mode == true && threed_mt_mode == "support_label") return this.dir_name + '/support_test_' + parseInt(filename);
+        else if (threed_mode ==true && this.mode== 'mt' && test_mode == true) return this.dir_name + '/test_' + parseInt(filename);
         else if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return this.dir_name + '/' + this.im_name;
     };
     
