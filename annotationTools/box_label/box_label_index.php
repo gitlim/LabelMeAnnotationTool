@@ -39,9 +39,12 @@
 
 
 <script>
+  var num_boxes_labeled = 0;
+  var required_num = 30;
   var time_string = '';
   var userid = gup('workerId');
   var image_list_id = gup('image_list'); // the list number (of ten images) that the user is labeling for the HIT
+  var image_index = gup('image');
 	if (!image_list_id) image_list_id = 0;
 var FAKE_TEST = 10;
   	var img_id = parseInt(gup('image'));
@@ -90,10 +93,26 @@ var FAKE_TEST = 10;
 	$('#mainframe').attr('src', 'fail_page.html');
       } else if (passed == 1) {
 	  //TODO: starting image id
-	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=example_folder&threed_mt_mode=box_label&image_list='+ image_list_id + '&image=0');
+	FFF = $.ajax({
+			type: "POST",
+			url:"../php/3d/imageLoadHandler.php",
+			data: {
+				"task": 'check_curr_index',
+				"current_index": image_index 
+			},
+			async: false,
+			dataType: "html", 
+		});	
+	image_index = FFF.responseText;
+	  
+	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=example_folder&threed_mt_mode=box_label&image_list=0&image=' + image_index);
       }  
   }
    function submit_AMT() {
+	if (num_boxes_labeled < required_num){
+		console.log("You have not labeled the correct number of boxes");
+		return;
+	}
 	if (iframe_window.wait_for_input == 1){
 		alert("You must close the popup window before you submit.");
 		return;
@@ -102,7 +121,6 @@ var FAKE_TEST = 10;
 	  var time = (Date.now() - iframe_window.start_time)/1000;
 	  time_string += time + ' ';
 	  opener.document.getElementById('hitId').value = hitId;
-	  opener.document.getElementById('img_list_id').value = image_list_id;
 	  opener.document.getElementById('workerId').value = userid;
 	  opener.document.getElementById('assignmentId').value = assignmentId;
 	  opener.document.getElementById('comment').value = document.getElementById('mt_comments').value;

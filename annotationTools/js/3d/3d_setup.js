@@ -371,15 +371,28 @@ function AMTLoadNextImage(gp_incorrect){
 	window.parent.time_string += time + ' ';
     var current_url = window.location.href;
     var new_count = parseInt(image_count) + 1;
-	var new_url = window.location.href;
-	if (screenshot_mode == true && image_count == 4){
-		new_count = 0;
-		var new_list_count = parseInt(image_list_number) + 1;
-		new_url = current_url.replace("image_list=" + image_list_number, "image_list=" + new_list_count).replace("image=" + image_count, "image=0");
-		image_count = 0;
+	if (threed_mt_mode == "box_label" && !test_mode){
+		console.log("run script");
+		var image_index = parseInt(parseInt(image_count) + 5*parseInt(image_list_number));
+		if (gp_incorrect != true) var task = 'get_next_image';
+		else var task = 'gp_incorrect';
+		DDD = $.ajax({
+			type: "POST",
+			url:"annotationTools/php/3d/imageLoadHandler.php",
+			data: {
+				"task": task,
+				"current_index": image_index 
+			},
+			async: false,
+			dataType: "html", 
+		});	
+	var new_index = DDD.responseText;
+	var new_count = new_index; 
 	}
 	console.log(new_count);
+	var new_url = window.location.href;
    	new_url = current_url.replace("image=" + image_count, "image=" + new_count);
+	console.log(new_url);
     window.location.assign(new_url);
 }
 function getAnswers(){

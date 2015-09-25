@@ -372,7 +372,10 @@ function update_plane(noRender) {
     }else if (window.select){
 		selected_object = window.select;
         selected_plane = window.select.plane;
-    }
+    }else{
+		selected_object = ID_dict[groundplane_id];
+		selected_plane = plane;
+	}
     if (window.select){
         //CalculateChildrenHeightDifferences(window.select);
        //SynchronizeSupportPlanes();
@@ -522,13 +525,13 @@ function update_plane(noRender) {
     K[12] = -(axis_x[0]+axis_y[0]) + (selected_object.op_x - op_x_orig)/gp_f;//converting canvas to three js coordinates
     img_height = document.getElementById("im").height;
     bounding_top = 0;
-    if (op_y > 0.95*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE) {
-        op_y = 0.95*img_height;
-        pt_layer.children[0].x(op_x);
+    if (selected_object.op_y > 0.95*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE) {
+        selected_object.op_y = 0.95*img_height;
+        pt_layer.children[0].x(selected_object.op_x);
     }
-    if (op_y < 0.05*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE){
-        op_y = 0.05*img_height;
-        pt_layer.children[0].y(op_y);
+    if (selected_object.op_y < 0.05*img_height && current_mode == VERTICAL_PLANE_MOVE_MODE){
+        selected_object.op_y = 0.05*img_height;
+        pt_layer.children[0].y(selected_object.op_y);
     }   
     K[13] = (axis_x[1]+axis_y[1]) - (selected_object.op_y - op_y_orig)/gp_f;
     //console.log((axis_x[1]+axis_y[1]) - (op_y - document.getElementById("im").height/2)/gp_f);

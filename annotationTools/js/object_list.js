@@ -281,6 +281,7 @@ function drag(event, part_id) {
   // stores the object id in the data that is being dragged.
   if (threed_mt_mode == "box_label") return;
   console.log(event);
+  if (ID_dict[part_id]) ThreeDHoverHighlight(ID_dict[part_id]);
   event.dataTransfer.effectAllowed = "all";
   event.dataTransfer.setData("Text", part_id);
   }
@@ -306,7 +307,6 @@ function drop(event, object_id) {
   if (threed_mt_mode == "box_label") return;
   event.preventDefault();
   var part_id=event.dataTransfer.getData("Text");
-console.log(part_id);
   event.stopPropagation();
   var threed_is_position_possible = true;
   

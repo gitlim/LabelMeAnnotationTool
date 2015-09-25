@@ -150,6 +150,15 @@ function threed_handler(){
 			document.getElementById('LMurl').value = LMbaseurl + '?collection=LabelMe&mode=i&folder=' + main_media.GetFileInfo().GetDirName() + '&image=' + main_media.GetFileInfo().GetImName();
 		if(global_count >= mt_N) document.getElementById('mt_submit').disabled=false ;
 		}*/
+		if (threed_mt_mode == "box_label"){
+		 	window.parent.num_boxes_labeled = window.parent.num_boxes_labeled + 1;
+			document.getElementById("indicator").innerHTML = 'You have labeled ' + window.parent.num_boxes_labeled + ' out of ' + window.parent.required_num + ' boxes.';
+			if (window.parent.num_boxes_labeled > window.parent.required_num){
+				document.getElementById('mt_submit').disabled = false;
+				var html_str2 = '<font size="3">(Optional) Do you wish to provide any feedback on this HIT?</font><br /><textarea id="mt_comments_textbox" name="mt_comments_texbox" cols="94" nrows="5" />';
+				$('#mt_feedback').append(html_str2);
+			}
+		}
 		vp_label = [];
 		vp_s = [];
 		for (var i = 0; i < lines_array.length; i+=5){
@@ -564,6 +573,12 @@ function threed_handler(){
 		new_name = old_name;
 		WriteLogMsg('*Deleting_object');
 		InsertServerLogData('cpts_not_modified');
+		if (threed_mt_mode == "box_label"){
+			window.parent.num_boxes_labeled = window.parent.num_boxes_labeled - 1;
+			document.getElementById("indicator").innerHTML = 'You have labeled ' + window.parent.num_boxes_labeled + ' out of ' + window.parent.required_num + ' boxes.';
+
+			if (window.parent.num_boxes_labeled < window.parent.required_num) document.getElementById('mt_submit').disabled = true;
+		}
 		
 		// Set <deleted> in LM_xml:
 		LMsetObjectField(LM_xml, idx, "deleted", "1");
@@ -880,7 +895,7 @@ function threed_handler(){
 			    new_box_object.ID = i; 
 			    ID_dict[i] = new_box_object;
 			    var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
-			    var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 20, 20);
+			    var new_plane_geometry = new THREE.PlaneGeometry(5, 5, 20, 20);
 			    var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
 			    new_plane.matrixWorld.elements = LMgetObjectField(LM_xml, i, 'plane_matrix');
 			    //console.log(new_plane.matrixWorld.elements);

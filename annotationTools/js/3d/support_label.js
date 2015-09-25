@@ -92,12 +92,12 @@ ans_array[0][7] = [5, -0.12105156481266022];
 ans_array[0][8] = [9, -0.15424903743419127];
 ans_array[0][9] = [0, -0.1718221753835678];
 ans_array[0][10] = [0, -0.17171263694763184];
-ans_array[1][1] = [0, -0.22214293479919434];
-ans_array[1][2] = [0, -0.22214293479919434];
-ans_array[1][3] = [0, -0.22214293479919434];
-ans_array[1][4] = [3, -0.07993891384529661];
-ans_array[1][5] = [0, -0.22214293479919434];
-ans_array[1][6] = [1, -0.0681827445528711];
+ans_array[1][7] = [0, -0.22210924327373505];
+ans_array[1][8] = [0, -0.22210924327373505];
+ans_array[1][9] = [0, -0.22210924327373505];
+ans_array[1][10] = [9, -0.07472963631153107];
+ans_array[1][11] = [8, -0.07145713269710541];
+ans_array[1][12] = [0, -0.22210924327373505];
 ans_array[2][1] = [0, -0.23044688999652863];
 ans_array[2][2] = [0, -0.23044688999652863];
 ans_array[2][3] = [2, -0.10042988312483203];
@@ -187,8 +187,8 @@ function test_submitted(){
 	else {
 		for (var j = 0; j < wrong_answers.length; j++){
 			var name = iframe_window.LMgetObjectField(iframe_window.LM_xml, wrong_answers[j][0], "name"); 
-			if (wrong_answers[j][1] == 1) feedback += "Your support object assignment for the "+ name + " is <font color = 'red'>INCORRECT</font></br>";
-			if (wrong_answers[j][2] == 1) feedback += "Your height assignment for the "+ name + " is <font color = 'red'>INCORRECT</font></br>";
+			if (wrong_answers[j][1] == 1) feedback += "Your support object assignment for the "+ name + " is <font color = 'red'>INCORRECT</font> - refer to step 1 in the instructions.</br>";
+			if (wrong_answers[j][2] == 1) feedback += "Your height assignment for the "+ name + " is <font color = 'red'>INCORRECT</font> - refer to step 2 in the instructions.</br>";
 		}
 		feedback += "</br>Everything else is correct.</center>";
 		pass_status1 = false;

@@ -84,6 +84,9 @@ function file_info() {
                 if(par_field=='image_list') {
                     image_list_number = par_value;
                 }
+				if (par_field == 'test_edit'){
+					test_edit == par_value;
+				}
                 if(par_field=='image') {
                     if (threed_mode == true && this.mode=='mt'){
                         /*getDataArray();
@@ -104,6 +107,20 @@ function file_info() {
 								 async: false,
 								 dataType: "html",
 							 });
+						}else if (threed_mt_mode == "box_label"){
+							console.log(par_value);
+							CCC = $.ajax({
+								 type: "POST",
+								 url: "../LabelMeAnnotationTool/annotationTools/php/3d/imageList.php",
+								 data: {
+								 "list_length": 0,
+								 "task": "get_box_list",
+								 "file_list_number": parseInt(par_value),
+								 "list_name": "img.list"
+								 },
+								 async: false,
+								 dataType: "html",
+							 });
 						}else{
 							CCC = $.ajax({
 								 type: "POST",
@@ -118,11 +135,19 @@ function file_info() {
 								 dataType: "html",
 							 });
 						}
-                        image_count = par_value;
-                        image_list = CCC.responseText;
-                        image_list = image_list.split("\n");
-                        address = image_list[par_value];
-                        filename = parseInt(parseInt(image_list_number)*image_list_length + parseInt(par_value));
+						if (threed_mt_mode == "box_label"){
+							address = CCC.responseText;
+							image_count = par_value;
+						}else{
+							image_count = par_value;
+							image_list = CCC.responseText;
+							image_list = image_list.split("\n");
+							address = image_list[par_value];
+						}
+						var split = address.split("\n")[0].split("/");
+						filename = split[split.length-1];
+                        //filename = parseInt(parseInt(image_list_number)*image_list_length + parseInt(par_value));
+						//filename = filename.substring(0, substring.indexOf('.'));
                         this.im_name = filename;
                     }else{
                         this.im_name = par_value;
@@ -326,7 +351,7 @@ on_CreatePolygon = 1;
 						$('#mt_submit_form').append(html_str);
 					if (window.parent.test_status[window.parent.img_id]) document.getElementById("skip").style.display = "none";
 					}else{
-						if (image_count == 4){
+						/*if (image_count == 4){
 							var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td><form><input type="hidden" id="assignmentId" name="assignmentId" value="'+ this.assignmentId +'" /><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" /></form></td></tr></table>';
 							html_str += 'You are at image number '+ image_number  + ' out of 5<br/>';
 							html_str += '<input disabled="false" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript: window.parent.document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value; window.parent.submit_AMT();" />';
@@ -334,14 +359,15 @@ on_CreatePolygon = 1;
 							$('#mt_submit_form').append(html_str);
 							var html_str2 = '<font size="3">(Optional) Do you wish to provide any feedback on this HIT?</font><br /><textarea id="mt_comments_textbox" name="mt_comments_texbox" cols="94" nrows="5" />';
 							$('#mt_feedback').append(html_str2);
-							document.getElementById('mt_submit').disabled=false;
-						}else{
-							 var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td></td></tr></table>';
-							html_str += 'You are at image number '+ image_number  + ' out of 5<br/>';
-							html_str += '<input type="submit" id="mt_submit" name="Submit" value="Submit Image" onmousedown="javascript:AMTLoadNextImage();" />';
+						}else{*/
+							 var html_str = '<table><tr><td><font size="3"><b>' + this.mt_instructions + '  </b></font></td><td></td></tr></table>';
+							html_str += '<table id = "indicator">You have labeled ' + window.parent.num_boxes_labeled + ' out of ' + window.parent.required_num + ' boxes.</table>';
+							html_str += '<input disabled="false" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript: window.parent.document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value; window.parent.submit_AMT();" />';
+
+							html_str += '<input type="submit" id="mt_submit" name="Submit" value="Image Done" onmousedown="javascript:AMTLoadNextImage();" />';
 							html_str += '<input type="submit" id="plane_mislabled" name="plane_mislabeled" value="Orientation is incorrect" onmousedown="javascript: window.parent.gp_incorrect();"/>'
 							$('#mt_submit_form').append(html_str);
-						}
+						//}
 					}
 					var html_str3 = '<a href="box_instr/box_labeling_instr.htm" id="instr_full"  style = "text-decoration: none; color:#000000;" class="button2">Instructions</a>';
 					$('#mt_submit_form').append(html_str3);
@@ -349,7 +375,6 @@ on_CreatePolygon = 1;
 				});
 					$("#mt_submit_form").css('z-index', '3');
 					$("#mt_submit").css('z-index', '3');
-				document.getElementById('mt_submit').disabled=false;
                }
 				else if (threed_mt_mode == 'support_label'){
 					if (test_mode == true){
@@ -432,16 +457,16 @@ on_CreatePolygon = 1;
     
     /** Gets annotation path */
     this.GetAnnotationPath = function () {
-		 if(test_mode == true) return 'Annotations/' + this.dir_name + '/test_' + this.im_name + '.xml';
-		else if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return 'Annotations/' + this.dir_name + '/' + this.im_name.substr(0,this.im_name.length-4) + '.xml';
+		 //if(test_mode == true) return 'Annotations/' + this.dir_name + '/'  + this.im_name.substr(0, this.im_name.length-4) + '.xml';
+		if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return 'Annotations/' + this.dir_name + '/' + this.im_name.substr(0,this.im_name.length-4) + '.xml';
     };
     
     /** Gets full image name */
     this.GetFullName = function () {
-        if (threed_mode ==true && this.mode== 'mt' && test_mode == false) return this.dir_name + '/' + parseInt(filename);
-		if (threed_mode == true && this.mode == 'mt' && test_mode == true && threed_mt_mode == "support_label") return this.dir_name + '/support_test_' + parseInt(filename);
-        else if (threed_mode ==true && this.mode== 'mt' && test_mode == true) return this.dir_name + '/test_' + parseInt(filename);
-        else if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return this.dir_name + '/' + this.im_name;
+        //if (threed_mode ==true && this.mode== 'mt' && test_mode == false) return this.dir_name + '/' + parseInt(filename);
+		//if (threed_mode == true && this.mode == 'mt' && test_mode == true && threed_mt_mode == "support_label") return this.dir_name + '/support_test_' + parseInt(filename);
+        //else if (threed_mode ==true && this.mode== 'mt' && test_mode == true) return this.dir_name + '/test_' + parseInt(filename);
+       if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return this.dir_name + '/' + this.im_name;
     };
     
     /** Gets template path */

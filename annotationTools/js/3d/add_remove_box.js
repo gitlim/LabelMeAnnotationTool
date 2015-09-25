@@ -21,7 +21,7 @@ function add_box_internal() {
     sp_plane.matrixWorld = plane.matrixWorld.clone();
     sp_plane.material.visible = false;*/
     var new_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
-    var new_plane_geometry = new THREE.PlaneGeometry(2, 2, 20, 20);
+    var new_plane_geometry = new THREE.PlaneGeometry(5, 5, 20, 20);
     var new_plane = new THREE.Mesh(new_plane_geometry, new_plane_material.clone());
     new_plane.frustumCulled = false;
     new_plane.matrixWorld = plane.matrixWorld.clone();
@@ -59,6 +59,8 @@ function add_box_internal() {
     window.select.cube.position.setY(position.y);
     window.select.cube.position.setZ(position.z);
     window.select.plane.matrixWorldNeedsUpdate = false;
+	window.select.op_x = ID_dict[groundplane_id].op_x;
+	window.select.op_y = ID_dict[groundplane_id].op_y;
     for (var i = 0; i < stage.children.length; i++) {
         stage.children[i].hide();
     }

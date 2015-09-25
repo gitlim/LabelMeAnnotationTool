@@ -15,6 +15,9 @@ $old_url = $old_line[0];
 $old_name = end(explode('/', $old_url));
 $old_name = substr($old_name, 0, -4);
 $lines_length = count($lines);
+if ($_POST['task'] == 'check_curr_index'){
+	$current_index = $current_index - 1;
+}
 while ($found_image == false){
 	$current_index = $current_index + 1;
 	if ($current_index > $lines_length){

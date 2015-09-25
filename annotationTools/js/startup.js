@@ -47,8 +47,8 @@ function StartupLabelMe() {
 
           // Read the XML annotation file: this needs to be replaced with something that reads the gp data
           var anno_file = main_media.GetFileInfo().GetFullName();
-      	  if (main_media.GetFileInfo().GetMode() == 'mt') anno_file = anno_file + '.xml' + '?' + Math.random();
-          anno_file = 'Annotations/' + anno_file.substr(0,anno_file.length-4) + '.xml' + '?' + Math.random();
+      	  anno_file = 'Annotations/' + anno_file.substr(0,anno_file.length-4) + '.xml' + '?' + Math.random();
+		  console.log(anno_file);
           ReadXML(anno_file,LoadAnnotationSuccess,LoadAnnotation404);
       };
       // Get the image:
@@ -249,6 +249,8 @@ function FinishStartup() {
       Initialize3dButtons(); //create tool buttons and icon container
   }
   if (threed_mode){
+	  LM_xml.getElementsByTagName("filename")[0].firstChild.nodeValue = '\n'+main_media.GetFileInfo().GetImName()+'\n';
+  	  LM_xml.getElementsByTagName("folder")[0].firstChild.nodeValue = '\n'+main_media.GetFileInfo().GetDirName()+'\n';
 	  start_time = Date.now();
       init_kinetic_stage();
       init();
