@@ -363,8 +363,8 @@ function AMTLoadNextImage(gp_incorrect){
 		alert("You must close the popup window before you submit.");
 		return;
 	}
-	if (object_list.length < 11 && gp_incorrect != true && threed_mt_mode != "support_label"){
-		var answer = confirm("You labeled less than 10 objects. Are you sure that there are no more objects in the image to label?");
+	if (object_list.length < 11 && gp_incorrect != true && threed_mt_mode != "support_label" && threed_mt_mode != "gp"){
+		var answer = confirm("Less than 10 objects in this image have been labeled. Are you sure that there are no more objects in the image to label?");
 		if (answer == false) return; 		
 	}
 	var time = (Date.now() - start_time)/1000;

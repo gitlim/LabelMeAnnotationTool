@@ -72,13 +72,8 @@ function DisplayVPTools(){
 
 
 function changeColor(container, color) {
-	console.trace();
-    for (var i = 0; i < container.children.length; i++) {
-        if (container.children[i].material) {
-            if (container.children[i].material.color) {
-                container.children[i].material.color.setHex(color);
-            }
-        }
-    changeColor(container.children[i], color);
-    }
+    for (var i = 0; i < container.children[0].material.materials.length; i++) {
+		if (i == 1) continue;
+    	container.children[0].material.materials[i].color.setHex(color);      
+	}
 }

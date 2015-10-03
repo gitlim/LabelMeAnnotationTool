@@ -82,7 +82,7 @@ var FAKE_TEST = 10;
       if (passed == -1) {
 		img_id = 0;
 	  // run the tester
-	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=example_folder&tester=true&view_only=true&threed_mt_mode=support_label&image=0');
+	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=test_folder&tester=true&view_only=true&threed_mt_mode=support_label&image=0');
 	tester_init();
       } else if (passed == 0) {
 	  // failed user
@@ -90,7 +90,7 @@ var FAKE_TEST = 10;
 	$('#mainframe').attr('src', 'fail_page.html');
       } else if (passed == 1) {
 	  //TODO: starting image id
-	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=example_folder&threed_mt_mode=support_label&image_list='+ image_list_id + '&image=0');
+	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=test_folder&threed_mt_mode=support_label&image_list='+ image_list_id + '&image=0');
       }  
   }
    function submit_AMT() {

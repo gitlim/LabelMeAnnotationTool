@@ -81,6 +81,9 @@ function file_info() {
                 if(par_field=='folder') {
                     this.dir_name = par_value;
                 }
+				if (par_field == 'cleanup'){
+					if (par_value == "true") cleanup_mode == true;
+				}
                 if(par_field=='image_list') {
                     image_list_number = par_value;
                 }
@@ -88,7 +91,30 @@ function file_info() {
 					test_edit == par_value;
 				}
                 if(par_field=='image') {
-                    if (threed_mode == true && this.mode=='mt'){
+						if (cleanup_mode == true){
+							console.log(par_value);
+							CCC = $.ajax({
+								 type: "POST",
+								 url: "../LabelMeAnnotationTool/annotationTools/php/3d/imageList.php",
+								 data: {
+								 "list_length": 0,
+								 "task": "get_box_list",
+								 "file_list_number": parseInt(par_value),
+								 "list_name": "img.list"
+								 },
+								 async: false,
+								 dataType: "html",
+							 });
+							address = CCC.responseText;
+							image_count = par_value;
+						var split = address.split("\n")[0].split("/");
+						filename = split[split.length-1];
+                        //filename = parseInt(parseInt(image_list_number)*image_list_length + parseInt(par_value));
+						//filename = filename.substring(0, substring.indexOf('.'));
+                        this.im_name = filename;
+
+					}
+                    else if (threed_mode == true && this.mode=='mt'){
                         /*getDataArray();
                         image_list = loadImageList(image_list_number);
                         address = image_list[par_value];*/
@@ -107,7 +133,7 @@ function file_info() {
 								 async: false,
 								 dataType: "html",
 							 });
-						}else if (threed_mt_mode == "box_label"){
+						}else if ((threed_mt_mode == "box_label" && !test_mode) || cleanup_mode == true){
 							console.log(par_value);
 							CCC = $.ajax({
 								 type: "POST",
@@ -135,7 +161,7 @@ function file_info() {
 								 dataType: "html",
 							 });
 						}
-						if (threed_mt_mode == "box_label"){
+						if (threed_mt_mode == "box_label" && !test_mode){
 							address = CCC.responseText;
 							image_count = par_value;
 						}else{
@@ -327,6 +353,12 @@ on_CreatePolygon = 1;
                 }
                 if(mt_N=='inf') mt_N = 1;
                 var image_number = parseInt(image_count) + parseInt(1);
+				/*if (cleanup_mode == true){
+						html_str = '<input type="submit" id = "GP_wrong" onmousedown="javascript: window.parent.saveGPWrong();">GP Wrong</input>';
+						html_str = '<input type="submit" id = "boxes_wrong" onmousedown="javascript: window.parent.saveBoxesWrong;">Boxes Wrong</input>';
+						html_str = '<input type="submit" id = "Next" onmousedown="javascript: AMTLoadNextImage();">Next</input>';
+						$('#mt_submit_form').append(html_str);
+				}*/
                 if (threed_mt_mode == 'gp' && threed_mode == true){
                     if (image_count == 9){ var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td><form><input type="hidden" id="assignmentId" name="assignmentId" value="'+ this.assignmentId +'" /><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" /><input disabled="false" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript: window.parent.document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value; window.parent.submit_AMT();" /></form></td></tr></table>';
                        	html_str += 'You are at image number '+ image_number + ' out of 10<br/>';
@@ -350,9 +382,10 @@ on_CreatePolygon = 1;
 					html_str += '<input type="submit" id="skip" name="skip" value="Skip this image" onmousedown="javascript: window.parent.test_skip();"/>'
 						$('#mt_submit_form').append(html_str);
 					if (window.parent.test_status[window.parent.img_id]) document.getElementById("skip").style.display = "none";
-					}else{
-						/*if (image_count == 4){
-							var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td><form><input type="hidden" id="assignmentId" name="assignmentId" value="'+ this.assignmentId +'" /><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" /></form></td></tr></table>';
+					document.getElementById('mt_submit').disabled=false;
+				}else{
+					/*if (image_count == 4){
+						var html_str = '<table><tr><td><font size="4"><b>' + this.mt_instructions + '  </b></font></td><td><form><input type="hidden" id="assignmentId" name="assignmentId" value="'+ this.assignmentId +'" /><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" /></form></td></tr></table>';
 							html_str += 'You are at image number '+ image_number  + ' out of 5<br/>';
 							html_str += '<input disabled="false" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript: window.parent.document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value; window.parent.submit_AMT();" />';
 							html_str += '<input type="submit" id="plane_mislabled" name="plane_mislabeled" value="Orientation is incorrect" onmousedown="javascript: window.parent.gp_incorrect();"/>'
@@ -451,8 +484,8 @@ on_CreatePolygon = 1;
     
     /** Gets image path */
     this.GetImagePath = function () {
-        if (threed_mode ==true && this.mode== 'mt') return address;
-        else if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return 'Images/' + this.dir_name + '/' + this.im_name;
+        //if ((threed_mode ==true && this.mode== 'mt') || cleanup_mode == true) return address;
+        if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return 'Images/' + this.dir_name + '/' + this.im_name;
     };
     
     /** Gets annotation path */

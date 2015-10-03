@@ -150,10 +150,10 @@ function threed_handler(){
 			document.getElementById('LMurl').value = LMbaseurl + '?collection=LabelMe&mode=i&folder=' + main_media.GetFileInfo().GetDirName() + '&image=' + main_media.GetFileInfo().GetImName();
 		if(global_count >= mt_N) document.getElementById('mt_submit').disabled=false ;
 		}*/
-		if (threed_mt_mode == "box_label"){
+		if (threed_mt_mode == "box_label" && !test_mode){
 		 	window.parent.num_boxes_labeled = window.parent.num_boxes_labeled + 1;
 			document.getElementById("indicator").innerHTML = 'You have labeled ' + window.parent.num_boxes_labeled + ' out of ' + window.parent.required_num + ' boxes.';
-			if (window.parent.num_boxes_labeled > window.parent.required_num){
+			if (window.parent.num_boxes_labeled >= window.parent.required_num){
 				document.getElementById('mt_submit').disabled = false;
 				var html_str2 = '<font size="3">(Optional) Do you wish to provide any feedback on this HIT?</font><br /><textarea id="mt_comments_textbox" name="mt_comments_texbox" cols="94" nrows="5" />';
 				$('#mt_feedback').append(html_str2);
@@ -230,6 +230,7 @@ function threed_handler(){
 		// Remove all the part dependencies for the deleted object
 		removeAllParts(idx);
 		
+		if(view_ObjList) RenderObjectList();
 		// Write XML to server:
 		WriteXML(SubmitXmlUrl,LM_xml,function(){return;});
 		threed_anno = null;
@@ -573,7 +574,7 @@ function threed_handler(){
 		new_name = old_name;
 		WriteLogMsg('*Deleting_object');
 		InsertServerLogData('cpts_not_modified');
-		if (threed_mt_mode == "box_label"){
+		if (threed_mt_mode == "box_label" && !test_mode){
 			window.parent.num_boxes_labeled = window.parent.num_boxes_labeled - 1;
 			document.getElementById("indicator").innerHTML = 'You have labeled ' + window.parent.num_boxes_labeled + ' out of ' + window.parent.required_num + ' boxes.';
 
@@ -595,6 +596,7 @@ function threed_handler(){
 		selected_poly = -1;
 		unselectObjects(); // Perhaps this should go elsewhere...
 		this.StopEditEvent();
+		
 		if (document.getElementById('Link'+ 0)) document.getElementById('Link'+0).style.color = '#FF0000';
 
 	};
@@ -881,6 +883,7 @@ function threed_handler(){
 					window.select = ID_dict[i];
 					this.LoadDifferentPlane(i);
 					window.select = null;
+					update_plane();
   				}else{
   					new_plane_object.plane = new_plane;
   					scene.add(new_plane);
@@ -908,7 +911,23 @@ function threed_handler(){
 			    new_plane.material.visible = false;
 			    new_box_object.plane = new_plane;
 			    var cubeGeometry = new THREE.CubeGeometry(small_w, small_h, small_d);
-			    var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true});
+			    //var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true});
+				var cubeMaterials = [ 
+
+    new THREE.MeshBasicMaterial({color:0xFFFFFF, transparent:false, opacity:1, wireframe: true, wireframeLinewidth: 2}), 
+ 	 new THREE.MeshBasicMaterial({color:0x00FF00, transparent:false, opacity:1, wireframe: true, wireframeLinewidth: 2}),
+    new THREE.MeshBasicMaterial({color:0xFFFFFF, transparent:false, opacity:1, wireframe: true, wireframeLinewidth: 2}),   
+
+    new THREE.MeshBasicMaterial({color:0xFFFFFF, transparent:false, opacity:1, wireframe: true, wireframeLinewidth: 2}), 
+    new THREE.MeshBasicMaterial({color:0xFFFFFF, transparent:false, opacity:1, wireframe: true, wireframeLinewidth: 2}), 
+    new THREE.MeshBasicMaterial({color:0xFFFFFF, transparent:false, opacity:1, wireframe: true, wireframeLinewidth: 2}), 
+    /*new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.2, side: THREE.DoubleSide}),
+    new THREE.MeshBasicMaterial({color:0xFF0000, transparent:true, opacity:0.8, side: THREE.DoubleSide}), 
+    new THREE.MeshBasicMaterial({color:0xFF0000, transparent:true, opacity:0.8, side: THREE.DoubleSide}), 
+    new THREE.MeshBasicMaterial({color:0x5555AA, transparent:true, opacity:0.8, side: THREE.DoubleSide}), */
+]; 
+	var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
+
 			    cubeMaterial.wireframeLinewidth = 2;
 			    var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
 			   	new_box_object.cube = new THREE.Object3D();

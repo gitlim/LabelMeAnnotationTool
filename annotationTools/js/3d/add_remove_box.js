@@ -29,12 +29,26 @@ function add_box_internal() {
     new_plane.matrixWorldNeedsUpdate = false;
     new_plane.material.visible = false;
     window.select.plane = new_plane;
-    var cubeGeometry = new THREE.CubeGeometry(small_w, small_h, small_d);
-    var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true});
+	var cubeGeometry = new THREE.CubeGeometry(small_w, small_h, small_d);
+	var cubeMaterials = [ 
+	new THREE.MeshBasicMaterial({color:0xFFFFFF, transparent:false, opacity:1, wireframe: true, wireframeLinewidth: 2}), 
+	new THREE.MeshBasicMaterial({color:0x00FF00, transparent:false, opacity:1, wireframe: true, wireframeLinewidth: 2}),
+    new THREE.MeshBasicMaterial({color:0xFFFFFF, transparent:false, opacity:1, wireframe: true, wireframeLinewidth: 2}), 
+    new THREE.MeshBasicMaterial({color:0xFFFFFF, transparent:false, opacity:1, wireframe: true, wireframeLinewidth: 2}), 
+    new THREE.MeshBasicMaterial({color:0xFFFFFF, transparent:false, opacity:1, wireframe: true, wireframeLinewidth: 2}), 
+    new THREE.MeshBasicMaterial({color:0xFFFFFF, transparent:false, opacity:1, wireframe: true, wireframeLinewidth: 2}), 
+    /*new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.2, side: THREE.DoubleSide}),
+    new THREE.MeshBasicMaterial({color:0xFF0000, transparent:true, opacity:0.8, side: THREE.DoubleSide}), 
+    new THREE.MeshBasicMaterial({color:0xFF0000, transparent:true, opacity:0.8, side: THREE.DoubleSide}), 
+    new THREE.MeshBasicMaterial({color:0x5555AA, transparent:true, opacity:0.8, side: THREE.DoubleSide}), */
+]; 
+	var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
+   // var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true, vertexColors: THREE.FaceColors});
     cubeMaterial.wireframeLinewidth = 2;
-    var cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
+    var cube = new THREE.Mesh( cubeGeometry, cubeMaterial);
     window.select.cube = new THREE.Object3D();
     window.select.cube.add(cube);
+
     scene.add(window.select.plane);
     //new_box_object.plane.add(new_box_object.cube);
 	var box_plane_geometry = new THREE.PlaneGeometry(10, 10, 20, 20);

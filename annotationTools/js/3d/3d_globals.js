@@ -138,3 +138,4 @@ var screenshot_mode = false;
 var image_list_length;
 var image_count = 0;
 var test_edit;
+var cleanup_mode = false;

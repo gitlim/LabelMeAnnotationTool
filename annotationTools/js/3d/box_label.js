@@ -123,26 +123,26 @@ ans_position[9][1] = {x: 0.9428110036541488, y: 1.1644034882428804, z: 0.1406842
 
 
 // rotation - answer sheet
-ans_rotation[0][0] = 0;
+ans_rotation[0][0] = 1*Math.PI/2;
 ans_rotation[0][1] = 0;
-ans_rotation[1][0] = -0.06283185307179587;
-ans_rotation[1][1] = 0.025132741228718346;
-ans_rotation[2][0] =  -0.0879645943005142;
-ans_rotation[2][1] = 0.012566370614359165;
-ans_rotation[3][0] = 0.5906194188748811;
+ans_rotation[1][0] = 1*Math.PI/2;
+ans_rotation[1][1] = -3.204424506661589;
+ans_rotation[2][0] = 1.4828317324943825;
+ans_rotation[2][1] = 1*Math.PI/2;
+ans_rotation[3][0] = 2.1614157456697773;
 ans_rotation[3][1] = 0;
-ans_rotation[4][0] = -0.10053096491487339;
+ans_rotation[4][0] = 1.457698991265664;
 ans_rotation[4][1] = 0;
-ans_rotation[5][0] = -0.02513274122871834;
-ans_rotation[5][1] = 0;
+ans_rotation[5][0] = Math.PI/2;
+ans_rotation[5][1] = Math.PI/2;
 ans_rotation[6][0] = 0;
 ans_rotation[6][1] = 0.06283185307179587;
-ans_rotation[7][0] = -1.6336281798666925 
+ans_rotation[7][0] = 1.5456635855661782; 
 ans_rotation[7][1] = 0;
 ans_rotation[8][0] = 0; 
-ans_rotation[8][1] = 0;
+ans_rotation[8][1] = Math.PI/2;
 ans_rotation[9][0] = 0.012566370614359173;
-ans_rotation[9][1] = 0;
+ans_rotation[9][1] = Math.PI/2;
 // cube scale answer sheet
 ans_scale_vector[0][0] = {x: 3.467472545138127, y: 1.0681669490670427, z: 2.4244595501717847};
 ans_scale_vector[0][1] = {x: 0.7081470346853347, y: 0.6183705290636358, z: 1.604132335180849};
@@ -224,14 +224,14 @@ var sin_rotation = Math.abs(Math.sin(rotation));
 console.log(sin_rotation);
 var sin_ans_rotation = Math.abs(Math.sin(ans_rotation[img_id][0]));
 checkN1 = Math.abs(sin_ans_rotation - sin_rotation) < k2;
-if (checkN1 == false){
+/*if (checkN1 == false){
 	var ans_x_bigger = ans_scale_vector[img_id][0]["x"] > ans_scale_vector[img_id][0]["y"];
 	var x_bigger = scale_vector.x > scale_vector.y;
 	if (ans_x_bigger != x_bigger) checkN1 = Math.abs(Math.abs(Math.sin(rotation + Math.PI/2)) - sin_ans_rotation) < k2;
 }
 if (checkN1 == false && img_id == 7){
 	checkN1 = Math.abs(Math.abs(Math.sin(rotation + Math.PI/2)) - sin_ans_rotation) < k2;
-}
+}*/
 
 var width = Math.max(scale_vector.x, scale_vector.y)/camera_distance;
 var depth = Math.min(scale_vector.x, scale_vector.y)/camera_distance;
@@ -298,11 +298,11 @@ var sin_rotation = Math.abs(Math.sin(rotation));
 var sin_ans_rotation = Math.abs(Math.sin(ans_rotation[img_id][1]));
 checkN2 = Math.abs(sin_ans_rotation - sin_rotation) < k2;
 
-if (checkN2 == false){
+/*if (checkN2 == false){
 	var ans_x_bigger = ans_scale_vector[img_id][1]["x"] > ans_scale_vector[img_id][1]["y"];
 	var x_bigger = scale_vector.x > scale_vector.y;
 	if (ans_x_bigger != x_bigger) checkN2 = Math.abs(Math.abs(Math.sin(rotation + Math.PI/2)) - sin_ans_rotation) < k2;
-}
+}*/
 var width = Math.max(scale_vector.x, scale_vector.y)/camera_distance;
 var depth = Math.min(scale_vector.x, scale_vector.y)/camera_distance;
 var height = scale_vector.z/camera_distance;
@@ -463,7 +463,7 @@ function next()// load next question, also called upon skip
 	    var next_page = 'fail_page.html';
 	    pass_this_user(false, 'You failed the qualification.', next_page);
 	} else {
-	    $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&threed=true&folder=example_folder&tester=true&threed_mt_mode=box_label&image=' + img_id + '&userid=' + gup("workerId")+ "&next="+next_val);// this will have to be changed to reflect labelme
+	    $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&threed=true&folder=test_folder&tester=true&threed_mt_mode=box_label&image=' + img_id + '&userid=' + gup("workerId")+ "&next="+next_val);// this will have to be changed to reflect labelme
 	feedback = '<center>';
 	pass_status = false;
 	tester_init();

@@ -268,7 +268,7 @@ function FinishStartup() {
 				stage.children[i].hide();
 			}	
 		}else if (threed_mt_mode == 'box_label'){
-			/*if (screenshot_mode == true){
+			/*if (screenshot_mode == true)
 				AMTLoadNextImage();
 				return;
 			}*/
