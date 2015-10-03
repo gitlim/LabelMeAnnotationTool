@@ -1,0 +1,16 @@
+<annotation>
+<filename>
+0
+</filename>
+<folder>
+example_folder
+</folder>
+<source>
+<sourceImage>
+The MIT-CSAIL database of objects and scenes
+</sourceImage>
+<sourceAnnotation>
+LabelMe Webtool
+</sourceAnnotation>
+</source>
+<object xmlns="http://www.w3.org/1999/xhtml"><name>groundplane</name><deleted>0</deleted><verified>0</verified><parts><hasparts></hasparts><ispartof></ispartof></parts><date>29-Aug-2015 05:15:52</date><id>0</id><type>plane</type><plane><lines><vp_line><x1>0.007692307692307693</x1><y1>0.346360153256705</y1><x2>0.31666666666666665</x2><y2>0.3916858237547892</y2><label>1</label></vp_line><vp_line><x1>0.11025641025641025</x1><y1>0.7015325670498084</y1><x2>0.367948717948718</x2><y2>0.6362068965517241</y2><label>1</label></vp_line><vp_line><x1>0.8192307692307692</x1><y1>0.1931034482758621</y1><x2>0.3923076923076923</x2><y2>0.24609195402298847</y2><label>2</label></vp_line><vp_line><x1>0.8256410256410256</x1><y1>0.7494252873563219</y1><x2>0.38846153846153847</x2><y2>0.6687739463601533</y2><label>2</label></vp_line></lines><op_points>0.28717948717948716 0.8409961685823755</op_points><plane_matrix>0.48704883456230164 0.009858333505690098 -0.8733190894126892 0 -0.8729177117347717 0.033014148473739624 -0.48674914240837097 0 0.024033350870013237 0.9994062781333923 0.02468501590192318 0 0.1279309093952179 -0.319456547498703 0.3600682318210602 1 </plane_matrix><focal_length>915.8433556716258</focal_length></plane></object></annotation>
