@@ -1,0 +1,314 @@
+<html>
+
+<head>
+  <style>
+    .stage {margin: 20px 0 30px; width:1000px; padding: 20px; text-align: left; }
+    .stage_title {font-size:20px; margin:0px;}
+    .stage_img {width:800px; margin-left: auto; margin-right: auto; display: block; }
+
+    .step {border: 2px solid; border-radius: 25px; margin: 20px 0 100px; width: 980px; padding: 20px; text-align: left; }
+    .substep {border: 2px solid; border-radius: 25px; margin: 20px; width: 800px; padding: 10px;}
+    .step_title {font-size:20px; margin:0px 0px 10px;}
+    .step_img {width:750px; margin-left: auto; margin-right: auto; display: block; }
+    .step_instr {}
+  </style>
+</head>
+<script>
+	if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1){
+		alert("This tool does not work with Safari. Please use a different browser.");
+	}
+</script>
+<body>
+  <center>
+
+    <div class="stage">
+	<b>Please note that it is recommended that you use Chrome or Firefox for this task. It might not work in Safari or other browsers.</b><br><br>
+      In this task, your job is to correctly align the ground plane inside the image. The ground plane is represented by the <font color="cyan">cyan grid</font> as shown below
+      <center>
+	<table>
+	  <tr>
+	    <td>
+	      <img src = "1.png" width = "380px"/>
+	      </td>
+	    <td width=10px>
+	    </td>
+	    <td>
+	      <img src = "2.png" width = "380px"/>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><center>(a) Initial view of tool</center></td>
+	    <td></td>
+	    <td><center>(b) Result example</center></td>
+	  </tr>
+	</table>
+      </center>
+
+      <br>
+      <center>
+	<p style="font-size:20px">
+	  <font color="red">WARNING:</font> The alignment needs to be precise. It takes about 1 minute per image and please do NOT RUSH.<br>
+	  Systematic bad results will be rejected. But, if you pay attention, the answers should generally be correct.<br>
+	</p>
+      </center><br>
+      There are 3 main steps to go through. Please read the following instructions very carefully.<br>
+      <center>
+	<p style="font-size:20px">
+	  <font color="blue">
+	    The goal is to align the groundplane (cyan grid) so that it is parallel to all lines parallel to the wall!<br>
+	  </font>
+	</p>
+      </center>
+
+      <div class="step">
+	<p class="step_title">(1) Parallel line alignment</p>
+	The goal for this step is to select and align <font color = "red">red</font> and <font color = "green">green</font> lines to the parallel lines in the image.<br>
+	<!--<center><br>
+	<img src = "9.png" width = "600px" /><br>
+	  Figure: Alignment example
+	</center>-->
+	<br>
+	Find two walls that meet together to create a corner that is 90 degrees.
+	All the dotted lines of each color need to be aligned to lines in the image that are parallel to one of the walls.<br><br>
+	<center>
+	<img src = "5.png" width = "600px" /><br>
+	  Figure: Respective walls highlighted
+	</center>
+	<br>
+	For example, the <font color="green">green lines</font> should be aligned so that they are parallel to one of the walls, and the <font color="red">red lines</font> should be aligned so that they are parallel to the other. "Parallel" does not mean parallel in the 2d image, but in the 3D space of the room shown in the image. There must be at least two lines of each color (<font color = "green">green</font> and <font color = "red">red</font>) in order for the groundplane to be calculated.<br>
+	<center>
+	  <p style="font-size:20px">
+	    Green-green lines should be parallel to each other in 3D space.<br>
+	    Red-red lines should be parallel to each other in 3D space.<br>
+	    It is NOT about aligning to any random straight line.<br>
+	    It is about aligning to lines that are parallel in 3D space.
+	  </p>
+	</center>
+	<br>
+	<font color = "blue"><b>The accuracy of the groundplane depends on the precision with which the dotted lines are aligned.</b> Please press the magnifying glass icons in the upper left corner to zoom in and out as necessary. (<font color = "green">Green</font> and <font color = "red">red</font>) lines can be adjusted by clicking and dragging the circles at the end of each line. You can also double click on anywhere in the image to create a new line.</font><br>
+	<br>
+	<dl>
+	  <dd>
+	    Tip 1:
+	    If possible, first find an edge created by the ceiling and one of the walls. Align one of the dotted lines (say, red) with the edge by pressing "z" to zoom and by then aligning one side of the dotted line with the edge so that it is flush. Then, find another line that is parallel to the one you just have aligned, and close to the floor. Align another dotted line of the same color (again red) to this.
+	  <br><br>
+	  	<center>
+		<table>
+	  <tr>
+	    <td>
+		<center>
+	      <img src = "17.png" width = "380px"/>
+		  </center>
+	      </td>
+	    <td width=10px>
+	    </td>
+	    <td>
+		<center>
+	      <img src = "18.png" width = "380px"/>
+		  </center>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><center>(a) Top of dotted line is aligned (flush) with edge on wall.</center></td>
+	    <td></td>
+	    <td><center>(b) Bottom of dotted line is aligned (flush) with edge of painting.</center></td>
+	  </tr>
+	</table>
+
+
+	<!--[TODO: I would show before and after] Not sure how necessary this is. IMO it's kind of obvious. :/ -->
+	</center>
+	<br>
+	</dd>
+	  <dd>
+	    Tip 2: The farther away the second line is the better. It will lead to more accurate results later. Try NOT to place the second line on the same wall, or on the edge created by the same wall and the floor.
+	    <center>
+	      <table>
+		<tr>
+		  <td>
+		    <center>
+		      <img src = "10.png" width = "380px" />
+		    </center>
+		  </td>
+		  <td width=10px>
+		  </td>
+		  <td>
+		    <center>
+		      <img src = "11.png" width = "380px"/>
+		    </center>
+		  </td>
+		</tr>
+		<tr>
+		  <td>
+		    <center>
+		      (a) Lines of the same color (<font color="red">red to red</font> and <font color="green">green to green</font>)
+are far away from each other. One is across the from the other.
+		    </center>
+		  </td>
+		  <td></td>
+		  <td>
+		    <center>
+		      (b)
+		      Lines of the same color (<font color="red">red to red</font> and <font color="green">green to green</font>) are closer.
+		      They are on the same wall.
+		    </center>
+		  </td>
+		</tr>
+	      </table>
+	      <b>Figure:</b> The groundplane in (a) is much more accurate (<b>FARTHER</b> within each color pair is better). However, this is not a strict rule.
+	    </center>
+	  </dd>
+	  <br>
+	  <dd>
+	    Tip 3: You can also align lines between two points that don't actually have an edge.
+	    For example,
+	    connecting the two legs on the bottom of a table to create a line is fine,
+	    as long as it creates a line that is parallel to the wall (the other line of the same color).<br>
+	    <br>
+		<center>
+		  <img src = "6.png" width = "600px" /><br>
+		  Figure: A line is drawn between the two legs of the bed.
+		</center>
+	  </dd>
+	</dl>
+      </div>
+
+      <div class="step">
+	<p class="step_title">(2) Corner alignment</p>
+	After step (1) above, move the blue circle to the corner made by the floor and the walls.
+	This will move the groundplane so that it is in the same position as the floor.
+	It is very important that the groundplane be positioned as similar to the floor as possible.
+	<center>
+		<table>
+	  <tr>
+	    <td>
+	      <img src = "4.png" width = "380px"/>
+	      </td>
+	    <td width=10px>
+	    </td>
+	    <td>
+	      <img src = "3.png" width = "380px"/>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><center>(a) Before corner alignment</center></td>
+	    <td></td>
+	    <td><center>(b) After corner alignment</center></td>
+	  </tr>
+	</table>
+
+	<!--[TODO: I would show before and after] Not sure how necessary this is. IMO it's kind of obvious. :/ -->
+	</center>
+	<br>
+	 There are usually several places to look at to make sure that the groundplane is accurate:<br>
+	<ul>
+	  <li>
+	    The edges of the groundplane should be aligned closely the edges created by the floor and the walls.
+		<br>
+	    <center>
+		<img src = "20.png" width = "600px" /><br>
+	      Figure. Example A
+	    </center>
+	    <br>
+	  </li>
+
+	  <li>
+	    The grid lines on the groundplane should look parallel to the lines created by the edges of furniture that are aligned to the walls.
+	    <center>
+		<img src = "21.png" width = "600px" /><br>
+	      Figure. Example B
+	    </center>
+	  </li>
+	</ul>
+      </div>
+
+      <div class="step">
+	<p class="step_title">(3) Refinement</p>
+	If you notice any error in the ground plane, you can move around the dotted lines (typically small size of pixels) to adjust it until it is correct.
+	<center>
+	  <p style="font-size:20px">
+	    <font color="blue">
+	      The final goal is not about aligning green/red lines.<br>
+	      The goal is to align the groundplane (cyan grid) so that it is parallel to all lines parallel to the wall!
+	    </font>
+	  </p>
+	</center>
+      </div>
+
+    </div>
+
+    <hr>
+    <div class="stage">
+      <p class="step_title">Final Result</p>
+    </div>
+    <div class="step">
+      <center>
+	<img class="step_img" src="2.png">
+      </center>
+      <p class="step_instr">Done!</p>
+    </div>
+    <p style="font-size:20px">
+      Below are examples of pictures with bad and good alignments.<br>
+      The red ovals show places to pay attention to to determine if the alignment is off.<br>
+      Generally, you need to adjust green/red dots to correct the alignments.
+    </p>
+	<div class="step">
+	  <table>
+	    <tr>
+	      <td><center>Bad alignment</center></td>
+	      <td width=10px></td>
+	      <td><center>Good alignment</center></td>
+	    </tr>
+	    <tr>
+	      <td>
+		(1) The groundplane is not aligned well with the edges of the floor.<br>
+		<center>
+		  <img src = "14.png" width = "490px">
+		</center>
+	      </td>
+	      <td>
+	      </td>
+	      <td>
+		<center>
+		  <br>
+		  <img src = "2.png" width = "490px">
+		</center>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>
+		<br>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>
+		(2) Gridlines are not parallel with the lines of the bed (that are parallel in 3D to the wall).<br>
+		<center>
+		  <img src = "15.png" width = "490px" />
+		</center>
+	      </td>
+	      <td>
+	      </td>
+	      <td>
+		<br>
+		<center>
+		  <img src = "16.png" width = "490px"/>
+		</center>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>
+		<br>
+	      </td>
+	    </tr>
+	    <tr>
+	    </tr>
+	    <tr>
+	      <td><center>Bad alignment</center></td>
+	      <td width=10px></td>
+	      <td><center>Good alignment</center></td>
+	    </tr>
+	  </table>
+    </div>
+</body>
+</html>
