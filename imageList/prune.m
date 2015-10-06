@@ -6,7 +6,9 @@ list = textread('img_copy.list', '%s', 'delimiter', '\n');
 new_list = {};
 for i=1:164
 	if not(ismember(list{i}, whole_list))
-		new_list = {new_list{1:end} list{i}};	
+		new_line = strsplit(list{i}, '/');
+		new_line = ['ikea/' new_line{end}];
+		new_list = {new_list{1:end} new_line};	
 	end
 end
 new_file = fopen('pruned_list.list', 'w');
