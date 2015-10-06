@@ -268,7 +268,7 @@ function next()// load next question, also called upon skip
 	    var next_page = 'fail_page.html';
 	    pass_this_user(false, 'You failed the qualification.', next_page);
 	} else {
-	    $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&threed=true&folder=test_folder&tester=true&threed_mt_mode=support_label&image=' + img_id + '&userid=' + gup("workerId")+ "&next="+next_val);// this will have to be changed to reflect labelme
+	    $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&threed=true&folder=3dataset&tester=true&threed_mt_mode=support_label&image=' + img_id + '&userid=' + gup("workerId")+ "&next="+next_val);// this will have to be changed to reflect labelme
 	feedback = '<center>';
 	pass_status = false;
 	tester_init();

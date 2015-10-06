@@ -47,7 +47,7 @@ function StartupLabelMe() {
 
           // Read the XML annotation file: this needs to be replaced with something that reads the gp data
           var anno_file = main_media.GetFileInfo().GetFullName();
-      	  anno_file = 'Annotations/' + anno_file.substr(0,anno_file.length-4) + '.xml' + '?' + Math.random();
+      	  anno_file = 'Annotations/' + anno_file.replace('.jpg', '.xml').replace('.png', '.xml') + '?' + Math.random();
 		  console.log(anno_file);
           ReadXML(anno_file,LoadAnnotationSuccess,LoadAnnotation404);
       };

@@ -1,7 +1,7 @@
 <?php
 //ini_set('display_errors', 1);
 //error_reporting(E_ALL);
-$listname = 'box_img.list';
+$listname = 'ADE20K_box_img.list';
 $dir = '../../../imageList/';
 $lock_dir = './lock/';
 $filename = $dir . $listname;

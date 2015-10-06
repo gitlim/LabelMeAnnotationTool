@@ -142,7 +142,7 @@ function file_info() {
 								 "list_length": 0,
 								 "task": "get_box_list",
 								 "file_list_number": parseInt(par_value),
-								 "list_name": "img.list"
+								 "list_name": "ADE20K_img.list"
 								 },
 								 async: false,
 								 dataType: "html",
@@ -155,7 +155,7 @@ function file_info() {
 								 "list_length": image_list_length,
 								 "task": "get_list",
 								 "file_list_number": image_list_number,
-								 "list_name": "img.list"
+								 "list_name": "ADE20K_img.list"
 								 },
 								 async: false,
 								 dataType: "html",
@@ -179,6 +179,7 @@ function file_info() {
                         this.im_name = par_value;
                             if(this.im_name.indexOf('.jpg')==-1 && this.im_name.indexOf('.png')==-1) {
                             this.im_name = this.im_name + '.jpg';
+							address = this.im_name;
                         }
                     }
                 }
@@ -377,7 +378,7 @@ on_CreatePolygon = 1;
                   }
 				else if (threed_mt_mode == 'box_label' && threed_mode == true){
 					if (test_mode == true){
-							var html_str = '<table><tr><td><font size="2"><b>' + this.mt_instructions + '  </b></font></td></tr></table>';
+							var html_str = '<table><tr><td><font size="2"><b>' + this.mt_instructions + '  </b></font></td></tr></table><input type="hidden" id="number_objects" name="number_objects" value="" /><input type="hidden" id="object_name" name="object_name" value="" /><input type="hidden" id="LMurl" name="LMurl" value="" /><input type="hidden" id="mt_comments" name="mt_comments" value="" />';
 					html_str += '<input disabled="false" type="button" id="mt_submit" name="Submit" value="Submit" onmousedown="javascript: window.parent.test_submitted();" />'
 					html_str += '<input type="submit" id="skip" name="skip" value="Skip this image" onmousedown="javascript: window.parent.test_skip();"/>'
 						$('#mt_submit_form').append(html_str);
@@ -397,7 +398,7 @@ on_CreatePolygon = 1;
 							html_str += '<table id = "indicator">You have labeled ' + window.parent.num_boxes_labeled + ' out of ' + window.parent.required_num + ' boxes.</table>';
 							html_str += '<input disabled="false" type="submit" id="mt_submit" name="Submit" value="Submit HIT" onmousedown="javascript: window.parent.document.getElementById(\'mt_comments\').value=document.getElementById(\'mt_comments_textbox\').value; window.parent.submit_AMT();" />';
 
-							html_str += '<input type="submit" id="mt_submit" name="Submit" value="Image Done" onmousedown="javascript:AMTLoadNextImage();" />';
+							html_str += '<input type="submit" id="mt_submit" name="done" value="Image Done" onmousedown="javascript:AMTLoadNextImage();" />';
 							html_str += '<input type="submit" id="plane_mislabled" name="plane_mislabeled" value="Orientation is incorrect" onmousedown="javascript: window.parent.gp_incorrect();"/>'
 							$('#mt_submit_form').append(html_str);
 						//}
@@ -485,13 +486,13 @@ on_CreatePolygon = 1;
     /** Gets image path */
     this.GetImagePath = function () {
         //if ((threed_mode ==true && this.mode== 'mt') || cleanup_mode == true) return address;
-        if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return 'Images/' + this.dir_name + '/' + this.im_name;
+        if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return 'Images/' + this.dir_name + '/' + address;
     };
     
     /** Gets annotation path */
     this.GetAnnotationPath = function () {
 		 //if(test_mode == true) return 'Annotations/' + this.dir_name + '/'  + this.im_name.substr(0, this.im_name.length-4) + '.xml';
-		if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return 'Annotations/' + this.dir_name + '/' + this.im_name.substr(0,this.im_name.length-4) + '.xml';
+		if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return 'Annotations/' + this.dir_name + '/' + address.replace('jpg', '.xml').replace('.png', '.xml') + '.xml';
     };
     
     /** Gets full image name */
@@ -499,7 +500,7 @@ on_CreatePolygon = 1;
         //if (threed_mode ==true && this.mode== 'mt' && test_mode == false) return this.dir_name + '/' + parseInt(filename);
 		//if (threed_mode == true && this.mode == 'mt' && test_mode == true && threed_mt_mode == "support_label") return this.dir_name + '/support_test_' + parseInt(filename);
         //else if (threed_mode ==true && this.mode== 'mt' && test_mode == true) return this.dir_name + '/test_' + parseInt(filename);
-       if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return this.dir_name + '/' + this.im_name;
+       if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return this.dir_name + '/' + address;
     };
     
     /** Gets template path */

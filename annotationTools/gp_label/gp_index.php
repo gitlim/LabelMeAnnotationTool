@@ -80,7 +80,7 @@
 	$('#mainframe').attr('src', 'fail_page.html');
       } else if (passed == 1) {
 	  //TODO: starting image id
-	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=ikea&threed_mt_mode=gp&image_list='+ image_list_id + '&image=0');
+	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=3dataset&threed_mt_mode=gp&image_list='+ image_list_id + '&image=0');
       }  
   }
   function submit_AMT() {

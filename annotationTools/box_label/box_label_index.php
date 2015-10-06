@@ -40,7 +40,7 @@
 
 <script>
   var num_boxes_labeled = 0;
-  var required_num = 30;
+  var required_num = 10;
   var time_string = '';
   var userid = gup('workerId');
   var image_list_id = gup('image_list'); // the list number (of ten images) that the user is labeling for the HIT
@@ -85,7 +85,7 @@ var FAKE_TEST = 10;
       if (passed == -1) {
 		img_id = 0;
 	  // run the tester
-	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=test_folder&tester=true&view_only=true&threed_mt_mode=box_label&image=0');
+	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=3dataset&tester=true&view_only=true&threed_mt_mode=box_label&image=0');
 	tester_init();
       } else if (passed == 0) {
 	  // failed user
@@ -105,7 +105,7 @@ var FAKE_TEST = 10;
 		});	
 	image_index = FFF.responseText;
 	  
-	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=test_folder&threed_mt_mode=box_label&image_list=0&image=' + image_index);
+	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=3dataset&threed_mt_mode=box_label&image_list=0&image=' + image_index);
       }  
   }
    function submit_AMT() {
