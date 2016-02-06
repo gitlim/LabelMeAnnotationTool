@@ -43,7 +43,8 @@ function threed_handler(){
 		InsertServerLogData('cpts_not_modified');
 		
 		// Insert data into XML:
-		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+		//var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+		//var scale_factor = main_media.orig_width/document.getElementById("im").naturalWidth;
 		var lines_array = LMgetObjectField(LM_xml, groundplane_id, 'lines');
 		var op_points = LMgetObjectField(LM_xml, groundplane_id, 'op_points');
 		ID_dict[groundplane_id].op_x = op_points[0]*scale_factor_x;
@@ -61,7 +62,7 @@ function threed_handler(){
 		if(ts.length==20) html_str += '<date>' + ts + '</date>';
 		html_str += '<id>' + anno.anno_id + '</id>';
 		if(anno.GetType() == 2) {//for planes
-			var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+			//var scale_factor = main_media.width_orig/document.getElementById("im").naturalWidth;
 			html_str += '<type>';
 			html_str += 'plane';
 			html_str += '</type>';
@@ -89,7 +90,7 @@ function threed_handler(){
 			$(LM_xml).children("annotation").append($(html_str));
 
 		}else {//for cubes
-			var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+			//var scale_factor = main_media.width_orig/document.getElementById("im").naturalWidth;
 			var scale = '';
 			var position = '';
 			html_str += '<type>';
@@ -384,7 +385,7 @@ function threed_handler(){
 		window.select = ID_dict[idx];
 		//p_plane.material.visible = false;
         if (ID_dict[idx].cube){
-        	var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+        	//var scale_factor = main_media.width_orig/document.getElementById("im").naturalWidth;
         	for (var i = 0; i < stage.children.length; i++) {
 	            stage.children[i].hide();
 	        }
@@ -604,7 +605,7 @@ function threed_handler(){
 	this.CreateGroundplane = function(){//for creation of the first plane (groundplane)
 		console.log("create groundplane");
 		var numItems = $(LM_xml).children('annotation').children('object').length;
-		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+		//var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
 		scale_factor_x = stage.width()/stage.getScaleX();
 	    scale_factor_y = stage.height()/stage.getScaleY();
 		console.log(scale_factor);
@@ -697,7 +698,8 @@ function threed_handler(){
 		}
 		if (vp_s.length < 4) return;
 		if (index == groundplane_id) var f = gp_f;
-		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+		//var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+		//var scale_factor = main_media.width_orig/document.getElementById("im").naturalWidth;
 		scale_factor_x = stage.width()/stage.getScaleX();
 	    scale_factor_y = stage.height()/stage.getScaleY();
 		var lines = "";
@@ -724,13 +726,12 @@ function threed_handler(){
 	    WriteXML(SubmitXmlUrl,LM_xml,function(){return;});
 	    console.log("done saving");
 	};
-
 	this.LoadDifferentPlane = function(idx){
 		vp_layer.removeChildren(); // purges all previous lines
 		scale_factor_x = stage.width()/stage.getScaleX();
 	    scale_factor_y = stage.height()/stage.getScaleY();
 		K = LMgetObjectField(LM_xml, idx, 'plane_matrix');
-		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+		//var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
 		lines_array = LMgetObjectField(LM_xml, idx, 'lines');
 		var op_points = LMgetObjectField(LM_xml, idx, 'op_points');
 		ID_dict[idx].op_x = op_points[0]*scale_factor_x;
@@ -858,7 +859,7 @@ function threed_handler(){
 	this.LoadThreeDObjectsOnStartup = function(){
 		var obj_elts = LM_xml.getElementsByTagName("object");
   		var num_obj = obj_elts.length;
-		var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+		//var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
   		for (var i = 0; i < num_obj; i++){
   			if (LMgetObjectField(LM_xml, i, 'deleted') != 0){
   				continue;

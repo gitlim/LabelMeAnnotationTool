@@ -139,3 +139,5 @@ var image_list_length;
 var image_count = 0;
 var test_edit;
 var cleanup_mode = false;
+var list_name = null;
+var fix_mode = false;

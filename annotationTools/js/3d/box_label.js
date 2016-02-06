@@ -58,7 +58,7 @@ function tester_init() {
 		feedback += '<p class="tester_large">This is part of the <font color="red"><b>test</b></font>.</p>';
 		feedback += '- You are at ' + (img_id-FIRST_TEST + 1) + '/' + (MAX_Q - FIRST_TEST) + ' test images (and got ' + next_val + ' correctly).';
 		feedback += '<ul><li>You need at least ' + PASS_COUNT + ' correct answers out of 5 to pass the qualificaiton.</li>';
-		feedback += '<li>You have only <font color="red">3 submissions per test image.</font></li></ul>.<br>';
+		feedback += '<li>You have only <font color="red">5 submissions per test image.</font></li></ul>.<br>';
 
     } else {
 		feedback += '[QUALIFICATION <b>TRAINING</b> for FIRST TIME USERS]</center><br>';
@@ -69,7 +69,7 @@ function tester_init() {
 		feedback += '<li>You can submit as many times as you want for training. The training images are a bit harder than those for the test - use them for practice.</li></ul>';
 		feedback += '- There are ' + (MAX_Q - FIRST_TEST) + ' test images after the training.';
 		feedback += '<ul><li>You need to get at least ' + PASS_COUNT + ' images correct out of 5.</li>'
-		feedback += '<li>You have only 3 submissions per test image.</li></ul><br>';
+		feedback += '<li>You have only 5 submissions per test image.</li></ul><br>';
 		feedback += 'For the training and test ONLY, place the boxes around the two indicated objects. <br><br>For the REAL HIT, you will label around <font color = "red">10</font> objects per image.<br>';
 	}
 	feedback += '<br><br><br><br><br><br><center>[Click outside this popup to close it.]</center>';
@@ -227,6 +227,7 @@ checkN1 = Math.abs(sin_ans_rotation - sin_rotation) < k2;
 /*if (checkN1 == false){
 	var ans_x_bigger = ans_scale_vector[img_id][0]["x"] > ans_scale_vector[img_id][0]["y"];
 	var x_bigger = scale_vector.x > scale_vector.y;
+	console.log(Math.abs(Math.abs(Math.sin(rotation + Math.PI/2)) - sin_ans_rotation));
 	if (ans_x_bigger != x_bigger) checkN1 = Math.abs(Math.abs(Math.sin(rotation + Math.PI/2)) - sin_ans_rotation) < k2;
 }
 if (checkN1 == false && img_id == 7){
@@ -297,8 +298,8 @@ checkF2 = Math.abs(distance) < k1;
 var sin_rotation = Math.abs(Math.sin(rotation));
 var sin_ans_rotation = Math.abs(Math.sin(ans_rotation[img_id][1]));
 checkN2 = Math.abs(sin_ans_rotation - sin_rotation) < k2;
-
-/*if (checkN2 == false){
+/*
+if (checkN2 == false){
 	var ans_x_bigger = ans_scale_vector[img_id][1]["x"] > ans_scale_vector[img_id][1]["y"];
 	var x_bigger = scale_vector.x > scale_vector.y;
 	if (ans_x_bigger != x_bigger) checkN2 = Math.abs(Math.abs(Math.sin(rotation + Math.PI/2)) - sin_ans_rotation) < k2;
@@ -403,7 +404,7 @@ function test_submitted(){
     else if (test_status[img_id]) { //if failed and is test question
 	ans_count++;
 
-	if (ans_count > 2) {
+	if (ans_count > 4) {
 	    feedback += "<p class='tester_large'>You failed this question.</p>";
 	    /*feedback += "Correct Answer";
 	    feedback += '<img width=600px src="box_label/'+img_id+'_answers.png">';*/
@@ -414,7 +415,7 @@ function test_submitted(){
 		ans_count = 0;
 	    open_popup();
 	} else {
-	    feedback += "<p class='tester_large'>You have " + ((3) - ans_count) + " more chances for this question.</p>";
+	    feedback += "<p class='tester_large'>You have " + ((5) - ans_count) + " more chances for this question.</p>";
 	    /*feedback += "Correct Answer";
 	    feedback += '<img width=600px src="box_label/'+img_id+'_answers.png">';*/
 	    POPUP_WIDTH=700;

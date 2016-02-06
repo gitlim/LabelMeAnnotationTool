@@ -43,6 +43,7 @@
   var userid = gup('workerId');
   var image_list_id = gup('image_list'); // the list number (of ten images) that the user is labeling for the HIT
 	if (!image_list_id) image_list_id = 0;
+ var list_name = gup('list_name');
 var FAKE_TEST = 10;
   	var img_id = parseInt(gup('image'));
 	var amt_imgid = 0;
@@ -75,6 +76,7 @@ var FAKE_TEST = 10;
 
   function init_frame() {
 		console.trace();
+		iframe_window = document.getElementById("mainframe").contentWindow;
       //document.getElementById('img_list_id').value = image_list_id;
       //document.getElementById('hitId').value = hitId;
       //document.getElementById('workerId').value = userid;
@@ -82,7 +84,7 @@ var FAKE_TEST = 10;
       if (passed == -1) {
 		img_id = 0;
 	  // run the tester
-	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=3dataset&tester=true&view_only=true&threed_mt_mode=support_label&image=0');
+	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=3dataset&list_name='+ list_name + '&tester=true&view_only=true&threed_mt_mode=support_label&image=0');
 	tester_init();
       } else if (passed == 0) {
 	  // failed user
@@ -90,11 +92,13 @@ var FAKE_TEST = 10;
 	$('#mainframe').attr('src', 'fail_page.html');
       } else if (passed == 1) {
 	  //TODO: starting image id
-	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=3dataset&threed_mt_mode=support_label&image_list='+ image_list_id + '&image=0');
+	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=3dataset&list_name=' + list_name + '&threed_mt_mode=support_label&image_list='+ image_list_id + '&image=0');
       }  
   }
    function submit_AMT() {
 	  try {
+	  var time = (Date.now() - iframe_window.start_time)/1000;
+	  time_string += time + ' ';
 	  opener.document.getElementById('hitId').value = hitId;
 	  opener.document.getElementById('img_list_id').value = image_list_id;
 	  opener.document.getElementById('workerId').value = userid;

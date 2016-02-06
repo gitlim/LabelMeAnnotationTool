@@ -35,7 +35,8 @@ if (assignmentId == 'ASSIGNMENT_ID_NOT_AVAILABLE')
  
 <form style="display:none" id="mturk_form" method="POST" action="">
   <input id="img_list_id" name="img_list_id" value=""></input>
-  <input id="workerId"     name="workerId" value=""></input>
+  <input id="workerId"     name="workerId" value=""></input> 
+  <input id="time" name="time" value=""></input>
   <input id="assignmentId" name="assignmentId" value=""></input>
   <input id="hitId" name="hitId" value=""></input>
   <input id="comment" name="comment" value=""></input>

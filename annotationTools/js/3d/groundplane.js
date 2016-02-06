@@ -386,12 +386,13 @@ function update_plane(noRender) {
     current_time = d.getTime();
     if (current_time - last_update > 100) {
     last_update = current_time;
-    } else if (typeof K != "undefined"){
+    } else if (!isNaN(K[12]) && !isNaN(K[13])){
         console.log("skipping plane update");
         return r;
     }
     if (selected_plane == null){
         console.log("update error");
+		console.trace();
         return;
     } 
     if ((typeof GLOBAL_DEBUG != 'undefined') &&(GLOBAL_DEBUG)) {
@@ -656,7 +657,7 @@ function addVPline(id, layer) {
                     strokeWidth: 2,
                     name: 'l'+id
                 });
-    line.on("click", changeLineType);
+    //line.on("click", changeLineType);
     line.on("mouseover", onMouseOver);
     line.on("mouseout", onMouseOut);
     layer.add(line);
@@ -694,11 +695,11 @@ function addVPCircles(id, layer){
         name: 'd'+(id*2)
     });
     circle.on("dragmove", point_drag);
-    circle.on("click", changeLineType);
+    //circle.on("click", changeLineType);
     circle.on("mouseover", onMouseOver);
     circle.on("mouseout", onMouseOut);
     circle.on("mouseup", function(){main_threed_handler.PlaneAutoSave(window.select.ID);});
-    dot.on("click", changeLineType);
+    //dot.on("click", changeLineType);
     dot.on("mouseover", onMouseOver);
     dot.on("mouseout", onMouseOut);
     circle.add(circle_actual);
@@ -731,11 +732,11 @@ function addVPCircles(id, layer){
         name: 'd'+(id*2 + 1)
     });
     circle.on("dragmove", point_drag);
-    circle.on("click", changeLineType);
+    //circle.on("click", changeLineType);
     circle.on("mouseover", onMouseOver);
     circle.on("mouseleave", onMouseOut);
     circle.on("mouseup", function(){main_threed_handler.PlaneAutoSave(window.select.ID);});
-    dot.on("click", changeLineType);
+    //dot.on("click", changeLineType);
     dot.on("mouseover", onMouseOver);
     dot.on("mouseout", onMouseOut);
     circle.add(circle_actual);
@@ -914,7 +915,8 @@ function rerender_plane(K) {//where K is the new matrix after vanishing point re
 }*/
 
 function CalculateNewOp(L){
-    var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+    //var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
+    //var scale_factor = main_media.width_orig/document.getElementById("im").naturalWidth;
     gp_f = LMgetObjectField(LM_xml, groundplane_id, 'focal_length')*scale_factor;
     var op_y = ((axis_x[1]+axis_y[1]) - L[13])*gp_f + op_y_orig;
     var op_x = (L[12] + (axis_x[0] + axis_y[0]))*gp_f + op_x_orig;

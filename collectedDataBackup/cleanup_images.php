@@ -40,7 +40,7 @@ function init(){
 	var boxes_incorrect = document.getElementById("boxes_incorrect");
 	var bad_image = document.getElementById("bad_image");
 		image_name = 0;
-	$('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=i&threed=true&folder=example_folder&cleanup=true&view_only=true&image_list=0&image=' + image_name);
+	$('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=i&threed=true&folder=3dataset&cleanup=true&view_only=true&image_list=0&image=' + image_name);
 	
 	gp_incorrect.href = 'javascript: next("gp_incorrect")';
 	boxes_incorrect.href = 'javascript: next("boxes_incorrect")';
@@ -64,7 +64,7 @@ function init(){
 			dataType: "html",
 			});
 			image_name = FFF.responseText;
-			$('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=i&threed=true&folder=example_folder&cleanup=true&image_list=0&view_only=true&image=' + image_name);
+			$('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=i&threed=true&folder=3dataset&cleanup=true&image_list=0&view_only=true&image=' + image_name);
 			}
 
 

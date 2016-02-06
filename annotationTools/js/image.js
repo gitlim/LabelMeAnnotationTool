@@ -203,7 +203,6 @@ function image(id) {
         $("#boxCanvas").width(this.width_curr).height(this.height_curr);
         $("#clipCanvas").width(this.width_curr).height(this.height_curr);
         $("#container").width(this.width_curr).height(this.height_curr);
-        //var scale_factor = document.getElementById("im").width/document.getElementById("im").naturalWidth;
         stage.setWidth(this.width_curr);
         stage.setHeight(this.height_curr);
         if (amt != "fitted"){
@@ -216,6 +215,7 @@ function image(id) {
         }
         scale_factor_x = stage.width()/stage.getScaleX();
         scale_factor_y = stage.height()/stage.getScaleY();
+        //scale_factor = document.getElementById("im").width*stage.getScaleX()/document.getElementById("im").naturalWidth;
         //op_x = pt_layer.children[0].x()*stage.getScaleX();
         //op_y = pt_layer.children[0].y()*stage.getScaleY();
         stage.draw();

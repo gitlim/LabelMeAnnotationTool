@@ -17,16 +17,19 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       xmlns:svg="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink">
 
+<html><div id= "tool_loading">The tool and image might take a few seconds to load. Please be patient.</div></html>
 <head>
 <title>LabelMe: The open annotation tool</title>
-<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE,NO-STORE,MUST-REVALIDATE" />
+<!--<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="MAX-AGE=3600, MUST-REVALIDATE" />-->
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="PUBLIC" />
 <META HTTP-EQUIV="imagetoolbar" CONTENT="no" />
 <link rel="shortcut icon" href="Icons/favicon16.ico" />
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r59/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/kineticjs/5.0.1/kinetic.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <script type="text/javascript">
 // <![CDATA[
-<!--#include virtual="./annotationTools/js/jquery-1.9.1.js" -->
-<!--#include virtual="./annotationTools/js/jquery-ui.js" -->
 <!--#include virtual="./annotationTools/js/browser.js" -->
 <!--#include virtual="./annotationTools/js/globals.js" -->
 <!--#include virtual="./annotationTools/js/io.js" -->
@@ -49,9 +52,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 <!--#include virtual="./annotationTools/js/adjust_event.js" -->
 <!--#include virtual="./annotationTools/js/scribble.js" -->
 <!--#include virtual="./annotationTools/js/xml_accessors.js" -->
-<!--#include virtual="./annotationTools/js/kinetic-v5.0.1.min.js" -->
 <!--#include virtual="./annotationTools/js/Detector.js" -->
-<!--#include virtual="./annotationTools/js/three_r59.min.js" -->
 <!--#include virtual="./annotationTools/js/3d/3d_setup.js" -->
 <!--#include virtual="./annotationTools/js/3d/groundplane.js" -->
 <!--#include virtual="./annotationTools/js/3d/3d_globals.js" -->
@@ -171,6 +172,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       <canvas width="100%" height="100%" id="cnvs" style = "position:absolute"></canvas> <!--HTML 5 canvas-->
       <canvas id="clipCanvas" style = "position:absolute"></canvas> <!--HTML 5 canvas-->
       <canvas id="boxCanvas" style = "position:absolute"></canvas> <!--HTML 5 canvas-->
+
       <div id = "container" style = "position:absolute"> </div>
       <div id="myCanvas_bg_div" style="position:absolute;left:0px;top:0px;z-index:0;cursor:crosshair;width:100%;height:100%;background-color:rgba(128,64,0,0);">
         <svg:svg

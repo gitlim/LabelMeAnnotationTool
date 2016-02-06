@@ -4,11 +4,11 @@
 <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 <meta http-equiv="pragma" content="no-cache" />
 
-<script src="../js/jquery-1.9.1.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <script src="../amt_util/util.js"></script>
 <script src="../js/3d/box_label.js"></script>
-<script src="../js/3d/jquery.colorbox.js"></script>
-<script src="../js/three_r59.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.6.3/jquery.colorbox-min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r59/three.min.js"></script>
 
 <link rel="stylesheet" href="../css/colorbox.css">
 <?php
@@ -78,6 +78,7 @@ var FAKE_TEST = 10;
 
   function init_frame() {
 		iframe_window = document.getElementById("mainframe").contentWindow;
+		document.getElementById("mainframe").onload = function(){$('#load_message').hide();};
       //document.getElementById('img_list_id').value = image_list_id;
       //document.getElementById('hitId').value = hitId;
       //document.getElementById('workerId').value = userid;
@@ -106,7 +107,8 @@ var FAKE_TEST = 10;
 	image_index = FFF.responseText;
 	  
 	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=3dataset&threed_mt_mode=box_label&image_list=0&image=' + image_index);
-      }  
+      }
+	//$('#mainframe').ready(function(){$('#load_message').hide();});
   }
    function submit_AMT() {
 	if (num_boxes_labeled < required_num){

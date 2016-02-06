@@ -1,3 +1,27 @@
+<IfModule mod_deflate.c>
+  SetOutputFilter DEFLATE
+  SetEnvIfNoCase Request_URI \
+  \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive on
+  ExpiresByType image/jpg "access 1 day"
+  ExpiresByType image/gif "access 1 day"
+  ExpiresByType image/jpeg "access 1 day"
+  ExpiresByType image/png "access 1 day"
+  ExpiresByType text/css "access 1 day"
+  ExpiresByType application/x-javascript "access plus 1 day"
+  ExpiresByType text/javascript "access plus 1 day"
+  ExpiresByType application/javascript "access plus 1 day"
+  ExpiresByType image/x-icon "access plus 1 day"
+  ExpiresByType image/icon "access plus 1 day"
+  ExpiresByType application/x-ico "access plus 1 day"
+  ExpiresByType application/ico "access plus 1 day"
+ExpiresByType text/x-javascript "access plus 1 day"  
+ExpiresByType application/javascript "access plus 1 day"  
+ExpiresByType application/x-javascript "access plus 1 day"
+</IfModule>
 Options +Includes +ExecCGI
 AddHandler cgi-script .cgi .sh .pl
 AddType text/html .shtml

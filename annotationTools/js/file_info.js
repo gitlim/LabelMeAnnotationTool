@@ -82,13 +82,20 @@ function file_info() {
                     this.dir_name = par_value;
                 }
 				if (par_field == 'cleanup'){
-					if (par_value == "true") cleanup_mode == true;
+					if (par_value == "true") cleanup_mode = true;
 				}
                 if(par_field=='image_list') {
                     image_list_number = par_value;
                 }
+				if (par_field == 'list_name'){
+					list_name = par_value + '.list';
+					console.log(list_name);
+				}
 				if (par_field == 'test_edit'){
 					test_edit == par_value;
+				}
+				if (par_field == 'fix_mode'){
+					if (par_value == "true") fix_mode = true;
 				}
                 if(par_field=='image') {
 						if (cleanup_mode == true){
@@ -100,7 +107,7 @@ function file_info() {
 								 "list_length": 0,
 								 "task": "get_box_list",
 								 "file_list_number": parseInt(par_value),
-								 "list_name": "img.list"
+								 "list_name": "ADE20K_img.list"
 								 },
 								 async: false,
 								 dataType: "html",
@@ -119,8 +126,8 @@ function file_info() {
                         image_list = loadImageList(image_list_number);
                         address = image_list[par_value];*/
 						if (test_mode == true){
-							if (threed_mt_mode == "box_label") var list_name = "test_img.list";
-							else if (threed_mt_mode == "support_label") var list_name = "support_test_img.list"
+							if (threed_mt_mode == "box_label") list_name = "test_img.list";//lists with test image urls
+							else if (threed_mt_mode == "support_label") list_name = "support_test_img.list"
 							CCC = $.ajax({
 								 type: "POST",
 								 url: "../LabelMeAnnotationTool/annotationTools/php/3d/imageList.php",
@@ -133,8 +140,7 @@ function file_info() {
 								 async: false,
 								 dataType: "html",
 							 });
-						}else if ((threed_mt_mode == "box_label" && !test_mode) || cleanup_mode == true){
-							console.log(par_value);
+						}else if ((threed_mt_mode == "box_label" && !test_mode) || cleanup_mode == true){// this is for box labeling. It is different b/c the PHP backend requires extra work for locking/skipping
 							CCC = $.ajax({
 								 type: "POST",
 								 url: "../LabelMeAnnotationTool/annotationTools/php/3d/imageList.php",
@@ -148,6 +154,7 @@ function file_info() {
 								 dataType: "html",
 							 });
 						}else{
+							if (list_name == null) list_name = 'img.list';
 							CCC = $.ajax({
 								 type: "POST",
 								 url: "../LabelMeAnnotationTool/annotationTools/php/3d/imageList.php",
@@ -155,7 +162,7 @@ function file_info() {
 								 "list_length": image_list_length,
 								 "task": "get_list",
 								 "file_list_number": image_list_number,
-								 "list_name": "ADE20K_img.list"
+								 "list_name": list_name 
 								 },
 								 async: false,
 								 dataType: "html",
@@ -494,6 +501,10 @@ on_CreatePolygon = 1;
 		 //if(test_mode == true) return 'Annotations/' + this.dir_name + '/'  + this.im_name.substr(0, this.im_name.length-4) + '.xml';
 		if((this.mode=='i') || (this.mode=='c') || (this.mode=='f') || (this.mode=='im') || (this.mode=='mt')) return 'Annotations/' + this.dir_name + '/' + address.replace('jpg', '.xml').replace('.png', '.xml') + '.xml';
     };
+	
+	this.GetAddress = function() {
+		return address;
+	}
     
     /** Gets full image name */
     this.GetFullName = function () {

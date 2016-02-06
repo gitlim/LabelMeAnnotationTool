@@ -11,13 +11,13 @@ if ($_GET['task'] == "register") {
   $userid = $_GET['userid'];
   $passed = $_GET['passed'];
 
-  $query = "SELECT * from modeltown_box where workerid = '" . $userid . "'";
+  $query = "SELECT * from modeltown_height where workerid = '" . $userid . "'";
   $q = mysql_query($query, $con);
   if (mysql_num_rows($q)) {
     $row = mysql_fetch_array($q);
     echo "user already registered as " . $row['passed'] . "</br>";
   } else {
-    $query = "INSERT INTO modeltown_box VALUES (";
+    $query = "INSERT INTO modeltown_height VALUES (";
     $query = $query . "NULL,";
     $query = $query . "'" . $userid . "',";
     $query = $query . "" .  $passed . "";
@@ -30,7 +30,7 @@ if ($_GET['task'] == "register") {
   }
 } elseif ($_GET['task'] == "lookup") {
   $userid = $_GET['userid'];
-  $query = "SELECT * from modeltown_box where workerid = '" . $userid . "'";
+  $query = "SELECT * from modeltown_height where workerid = '" . $userid . "'";
   $q = mysql_query($query, $con);
   if (mysql_num_rows($q)) {
     $row = mysql_fetch_array($q);

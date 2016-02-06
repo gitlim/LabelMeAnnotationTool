@@ -116,9 +116,9 @@ function createWorld() {// split into different parts for 3d and gp later
     var gp_plane_geometry = new THREE.PlaneGeometry(2, 2, 20, 20);
     //gp_plane_geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 10, -10, 0 ) );
     //plane_geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 10, -10, 0 ) );
-    var vert_plane_geometry = new THREE.PlaneGeometry(200, 200, 400, 400);
+    var vert_plane_geometry = new THREE.PlaneGeometry(200, 200, 1, 1);
     var vert_plane_material = new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide, wireframe: true});
-    var collision_plane_geometry = new THREE.PlaneGeometry(50, 50, 25, 25);
+    var collision_plane_geometry = new THREE.PlaneGeometry(50, 50, 1, 1);
     var collision_plane_material = new THREE.MeshBasicMaterial({color:0x000000, side:THREE.DoubleSide, wireframe: true});; 
     var plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
     var gp_plane_material = new THREE.MeshBasicMaterial({color:0x00E6E6, side:THREE.DoubleSide, wireframe: true});
@@ -366,6 +366,10 @@ function AMTLoadNextImage(gp_incorrect){
 	if (object_list.length < 11 && gp_incorrect != true && threed_mt_mode != "support_label" && threed_mt_mode != "gp"){
 		var answer = confirm("Less than 10 objects in this image have been labeled. Are you sure that there are no more objects in the image to label?");
 		if (answer == false) return; 		
+	}
+	if (threed_mt_mode == 'support_label'){
+		var answer = confirm("Did you label the heights of objects correctly by clicking and dragging the grid? Make sure that you did, or you will not receieve credit! See step 2 of the instructions.");
+		if (answer == false) return; 	
 	}
 	var time = (Date.now() - start_time)/1000;
 	window.parent.time_string += time + ' ';

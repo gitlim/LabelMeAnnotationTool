@@ -4,6 +4,7 @@
 /** Main entry point for the annotation tool. */
 function StartupLabelMe() {
   console.time('startup');
+	$("#tool_loading").hide();
 
   // Check browser:
   GetBrowserInfo();
@@ -199,7 +200,7 @@ function LoadTemplateSuccess(xml) {
   LM_xml = xml;
 
   // Set folder and image filename:
-  LM_xml.getElementsByTagName("filename")[0].firstChild.nodeValue = '\n'+main_media.GetFileInfo().GetImName()+'\n';
+  LM_xml.getElementsByTagName("filename")[0].firstChild.nodeValue = '\n'+main_media.GetFileInfo().GetAddress()+'\n';
   LM_xml.getElementsByTagName("folder")[0].firstChild.nodeValue = '\n'+main_media.GetFileInfo().GetDirName()+'\n';
 
   // Set global variable:
@@ -249,7 +250,7 @@ function FinishStartup() {
       Initialize3dButtons(); //create tool buttons and icon container
   }
   if (threed_mode){
-	  LM_xml.getElementsByTagName("filename")[0].firstChild.nodeValue = '\n'+main_media.GetFileInfo().GetImName()+'\n';
+	  LM_xml.getElementsByTagName("filename")[0].firstChild.nodeValue = '\n'+main_media.GetFileInfo().GetAddress()+'\n';
   	  LM_xml.getElementsByTagName("folder")[0].firstChild.nodeValue = '\n'+main_media.GetFileInfo().GetDirName()+'\n';
 	  start_time = Date.now();
       init_kinetic_stage();
@@ -284,6 +285,13 @@ function FinishStartup() {
 			document.getElementById('Link'+groundplane_id).style.color = '#FF0000';
 			main_threed_handler.LoadDifferentPlane(groundplane_id);
 			render();
+		}
+		if (fix_mode == true){
+			main_threed_handler.PlaneAutoSave(groundplane_id);
+			if (parseInt(image_count) < 900){
+				image_count = parseInt(parseInt(image_count)+1);
+				location.replace('https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid=11&threed=true&folder=3dataset&threed_mt_mode=box_label&fix_mode=true&image_list=0&image='+ image_count);
+			}	
 		}
   }
   // Set action when the user presses a key:

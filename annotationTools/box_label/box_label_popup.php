@@ -16,9 +16,7 @@ if (assignmentId == 'ASSIGNMENT_ID_NOT_AVAILABLE')
 }
 
   function open_link() {
-	if (navigator.userAgent.indexOf('Chrome') == -1){
-		alert("This tool will be significantly slower if you do not use Chrome. Please use Chrome instead.");
-	}
+		alert("For Windows, this tool is fastest on Firefox. For Mac and Linux, this tool is fastest on Chrome.");
     var s = document.URL;
     var queryString = s.substring(s.lastIndexOf("?"));
     window.open('box_label_index.php'+queryString, '_blank');

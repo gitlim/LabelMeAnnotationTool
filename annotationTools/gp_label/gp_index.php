@@ -37,6 +37,8 @@
 <script>
   var userid = gup('workerId');
   var image_list_id = gup('image_list'); // the list number (of ten images) that the user is labeling for the HIT
+  var list_name = gup('list_name'); 
+  var time_string = '';
   var FAKE_TEST = 10;
   var amt_imgid = 0;
   if (FAKE_TEST) {
@@ -70,7 +72,7 @@
       //document.getElementById('hitId').value = hitId;
       //document.getElementById('workerId').value = userid;
       //document.getElementById('assignmentId').value = assignmentId;
-
+	  iframe_window = document.getElementById("mainframe").contentWindow;
       if (passed == -1) {
 	  // run the tester
 	  $('#mainframe').attr('src', 'gp_tester.php?img=0&userid='+userid);
@@ -80,16 +82,19 @@
 	$('#mainframe').attr('src', 'fail_page.html');
       } else if (passed == 1) {
 	  //TODO: starting image id
-	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=3dataset&threed_mt_mode=gp&image_list='+ image_list_id + '&image=0');
+	  $('#mainframe').attr('src', 'https://people.csail.mit.edu/hairuo/test/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=mt&userid='+ userid + '&threed=true&folder=3dataset&list_name='+ list_name + '&threed_mt_mode=gp&image_list='+ image_list_id + '&image=0');
       }  
   }
   function submit_AMT() {
-      try {
+      try { 
+	  var time = (Date.now() - iframe_window.start_time)/1000;
+	  time_string += time + ' ';
 	  opener.document.getElementById('hitId').value = hitId;
 	  opener.document.getElementById('img_list_id').value = image_list_id;
 	  opener.document.getElementById('workerId').value = userid;
 	  opener.document.getElementById('assignmentId').value = assignmentId;
 	  opener.document.getElementById('comment').value = document.getElementById('mt_comments').value;
+	  opener.document.getElementById('time').value = time_string;
 	  opener.document.getElementById('mturk_form').action = turkSubmit + "/mturk/externalSubmit";
 	  opener.submit_AMT();
 	  window.close();

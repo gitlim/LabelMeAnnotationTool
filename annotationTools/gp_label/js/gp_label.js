@@ -51,7 +51,7 @@ function tester_init() {
 	DEFAULT_INSTR += '<br>';
 	DEFAULT_INSTR += '<li>Press the magnifying glass icons on the upper left corner to zoom in and out.</li>';
 	DEFAULT_INSTR += '<li>You can resize image view window</li>';
-	DEFAULT_INSTR += '<li>You can drag and move this instruciton window.</li>';
+	DEFAULT_INSTR += '<li>You can drag and move this instruction window.</li>';
 	instruct(DEFAULT_INSTR);
 
 	feedback += '[QUALIFICATION]<br>';

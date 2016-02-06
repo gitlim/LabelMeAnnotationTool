@@ -29,12 +29,12 @@ while ($found_image == false){
 	$name = end(explode('/', $url));
 	$name = substr($name, 0, -4);
 	if (array_key_exists(1, $line_array)){
-		if ((int)$line_array[1] >= 5){
+		if ((int)$line_array[1] >= 3){
 			continue;
 		}
 	}
 	if (array_key_exists(2, $line_array)){
-		if ((int)$line_array[2] >= 5){
+		if ((int)$line_array[2] >= 3){
 			continue;
 		}
 	}

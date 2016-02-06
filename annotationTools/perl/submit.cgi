@@ -105,6 +105,18 @@ foreach $i (@all_folders) {
     }
     $accum_path = "$accum_path$i/";
 }
+@all_name = split("/", $fname);
+$accum_path = "";
+foreach $i (@all_name) {
+    unless(-d "$tmpPath/$folder/$accum_path$i") {
+	mkdir "$tmpPath/$folder/$accum_path$i" or die;
+    }
+    unless(-d "$path/$folder/$accum_path$i") {
+	mkdir "$path/$folder/$accum_path$i" or die;
+    }
+    $accum_path = "$accum_path$i/";
+}
+
 open(FP,">$tmpPath/$folder/$fname.xml");
 print FP $stdin;
 close(FP);
